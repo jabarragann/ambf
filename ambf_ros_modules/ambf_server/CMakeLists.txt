@@ -46,18 +46,108 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED
-geometry_msgs
-ambf_msgs
-tf
-message_generation)
 
-catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES ambf_server
-    CATKIN_DEPENDS ambf_msgs message_runtime
-#  DEPENDS system_lib
-)
+## Pre-ros2 change
+# find_package(catkin REQUIRED
+# geometry_msgs
+# ambf_msgs
+# tf
+# message_generation)
+
+# catkin_package(
+#     INCLUDE_DIRS include
+#     LIBRARIES ambf_server
+#     CATKIN_DEPENDS ambf_msgs message_runtime
+# #  DEPENDS system_lib
+# )
+
+# ###########
+# ## Build ##
+# ###########
+
+# ## Specify additional locations of header files
+# ## Your package locations should be listed before other locations
+# include_directories( include ${catkin_INCLUDE_DIRS})
+
+# set (HDR_FILES
+#     include/${PROJECT_NAME}/RosComBase.h
+#     include/${PROJECT_NAME}/CmdWatchDog.h
+#     include/${PROJECT_NAME}/Actuator.h
+#     include/${PROJECT_NAME}/ActuatorRosCom.h
+#     include/${PROJECT_NAME}/Camera.h
+#     include/${PROJECT_NAME}/CameraRosCom.h
+#     include/${PROJECT_NAME}/Light.h
+#     include/${PROJECT_NAME}/LightRosCom.h
+#     include/${PROJECT_NAME}/Object.h
+#     include/${PROJECT_NAME}/ObjectRosCom.h
+#     include/${PROJECT_NAME}/RigidBody.h
+#     include/${PROJECT_NAME}/RigidBodyRosCom.h
+#     include/${PROJECT_NAME}/Sensor.h
+#     include/${PROJECT_NAME}/SensorRosCom.h
+#     include/${PROJECT_NAME}/Vehicle.h
+#     include/${PROJECT_NAME}/VehicleRosCom.h
+#     include/${PROJECT_NAME}/World.h
+#     include/${PROJECT_NAME}/WorldRosCom.h)
+
+# set (SRC_FILES
+#     src/RosComBase.cpp
+#     src/Actuator.cpp
+#     src/ActuatorRosCom.cpp
+#     src/Camera.cpp
+#     src/CameraRosCom.cpp
+#     src/Light.cpp
+#     src/LightRosCom.cpp
+#     src/Object.cpp
+#     src/ObjectRosCom.cpp
+#     src/RigidBody.cpp
+#     src/RigidBodyRosCom.cpp
+#     src/Sensor.cpp
+#     src/SensorRosCom.cpp
+#     src/Vehicle.cpp
+#     src/VehicleRosCom.cpp
+#     src/World.cpp
+#     src/WorldRosCom.cpp
+#     )
+
+# ## Declare a C++ library
+# add_library(ambf_server ${HDR_FILES} ${SRC_FILES})
+
+# add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
+
+# ## Specify libraries to link a library or executable target against
+# target_link_libraries(ambf_server ${catkin_LIBRARIES})
+
+## UPDATED
+
+find_package (catkin QUIET
+  COMPONENTS
+  geometry_msgs
+  ambf_msgs
+  tf
+  message_generation)
+
+
+# ROS 1
+if (catkin_FOUND)
+  add_definitions (-DROS1)
+  set (ROS_VERSION 1)
+else (catkin_FOUND)
+
+  # look for ROS2
+  find_package (ament_cmake QUIET)
+  if (ament_cmake_FOUND)
+    add_definitions (-DROS2)
+    set (ROS_VERSION 2)
+    find_package (rclcpp REQUIRED)
+    find_package (std_msgs REQUIRED)
+    find_package (geometry_msgs REQUIRED)
+    find_package (sensor_msgs REQUIRED)
+    find_package (diagnostic_msgs REQUIRED)
+    find_package (tf2_ros REQUIRED)
+    find_package (tf2_msgs REQUIRED)
+
+  endif (ament_cmake_FOUND)
+endif (catkin_FOUND)
 
 ###########
 ## Build ##
@@ -110,7 +200,17 @@ set (SRC_FILES
 ## Declare a C++ library
 add_library(ambf_server ${HDR_FILES} ${SRC_FILES})
 
-add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
+# if (catkin_FOUND)
+#     add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
+
+# else (catkin_FOUND)
+#     ament_target_dependencies(
+#         ambf_server
+#         std_msgs
+#         geometry_msgs
+#     )
+
+
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(ambf_server ${catkin_LIBRARIES})

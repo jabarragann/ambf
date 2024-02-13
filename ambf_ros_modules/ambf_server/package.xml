@@ -39,7 +39,8 @@
   <!--   <run_depend>message_runtime</run_depend> -->
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- <buildtool_depend>catkin</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>ambf_msgs</build_depend>
   <build_depend>tf</build_depend>
@@ -47,12 +48,37 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>ambf_msgs</run_depend>
   <run_depend>tf</run_depend>
-  <run_depend>message_runtime</run_depend>
+  <run_depend>message_runtime</run_depend> -->
 
 
-  <!-- The export tag contains other, unspecified, tags -->
+
+  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
+
+  <!-- <build_depend condition="$ROS_VERSION == 1">cisst_ros_crtk</build_depend> -->
+  <build_depend condition="$ROS_VERSION == 1">roscpp</build_depend>
+  <build_depend condition="$ROS_VERSION == 1">roslib</build_depend>
+  <build_depend condition="$ROS_VERSION == 1">geometry_msgs</build_depend>
+  <build_depend condition="$ROS_VERSION == 1">ambf_msgs</build_depend>
+  <build_depend condition="$ROS_VERSION == 1">tf</build_depend>
+  <build_depend condition="$ROS_VERSION == 1">message_generation</build_depend>
+
+  <exec_depend condition="$ROS_VERSION == 1">roscpp</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 1">roslib</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 1">geometry_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 1">ambf_msgs</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 1">tf</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 1">message_runtime</exec_depend>
+
+  <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
+  <depend condition="$ROS_VERSION == 2">rclcpp</depend>
+  <depend condition="$ROS_VERSION == 2">geometry_msgs</depend>
+  <depend condition="$ROS_VERSION == 2">ambf_msgs</depend>
+  <depend condition="$ROS_VERSION == 2">tf2</depend>
+  <depend condition="$ROS_VERSION == 2">message_generation</depend>
+  <!-- <depend condition="$ROS_VERSION == 2">cisst_ros2_crtk</depend> -->
+
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
+    <build_type condition="$ROS_VERSION == 2">ament_cmake</build_type>
   </export>
+
 </package>
