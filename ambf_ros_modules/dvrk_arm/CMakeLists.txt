@@ -37,7 +37,7 @@
 #  $Date:  $
 #  $Rev: $
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.10)
 if (POLICY CMP0048)
 cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
@@ -49,7 +49,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
+find_package(catkin QUIET COMPONENTS
   geometry_msgs
   roscpp
   roslib
@@ -58,6 +58,55 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
 )
+
+# ROS 1
+if (catkin_FOUND)
+  add_definitions (-DROS1)
+  set (ROS_VERSION 1)
+  message(STATUS "ROS VERSION = 1")
+
+  ###################################
+  ## catkin specific configuration ##
+  ###################################
+  ## The catkin_package macro generates cmake config files for your package
+  ## Declare things to be passed to dependent projects
+  ## INCLUDE_DIRS: uncomment this if your package contains header files
+  ## LIBRARIES: libraries you create in this project that dependent projects also need
+  ## CATKIN_DEPENDS: catkin_packages dependent projects also need
+  ## DEPENDS: system dependencies of this project that dependent projects also need
+  catkin_package(
+    INCLUDE_DIRS include
+    LIBRARIES dvrk_arm
+  #  CATKIN_DEPENDS geometry_msgs roscpp roslib rospy sensor_msgs std_msgs tf
+  #  DEPENDS system_lib
+  )
+
+  ###########
+  ## Build ##
+  ###########
+
+  ## Specify additional locations of header files
+  ## Your package locations should be listed before other locations
+  include_directories(
+    include
+    ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS}
+  )
+else (catkin_FOUND)
+
+  # look for ROS2
+  find_package(ament_cmake QUIET)
+  if(ament_cmake_FOUND)
+    add_compile_definitions(ROS2)
+    set(ROS_VERSION 2)
+    find_package(rosidl_default_generators REQUIRED)
+    find_package(std_msgs REQUIRED)
+    find_package(geometry_msgs REQUIRED)
+    find_package(rclcpp REQUIRED)
+    find_package(rclpy REQUIRED)
+    find_package(sensor_msgs REQUIRED)
+    find_package(tf2 REQUIRED)
+  endif(ament_cmake_FOUND)
+endif(catkin_FOUND)
 
 find_package(Eigen3 REQUIRED)
 
@@ -141,32 +190,7 @@ find_package(Eigen3 REQUIRED)
 #   cfg/DynReconf2.cfg
 # )
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES dvrk_arm
-#  CATKIN_DEPENDS geometry_msgs roscpp roslib rospy sensor_msgs std_msgs tf
-#  DEPENDS system_lib
-)
 
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS}
-)
 
 set(SRC_FILES
    src/Arm.cpp
@@ -212,12 +236,14 @@ set(HDR_FILES
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+if (catkin_FOUND)
  target_link_libraries(dvrk_arm
    ${catkin_LIBRARIES}
  )
  target_link_libraries(${PROJECT_NAME}_test
         dvrk_arm
         )
+endif(catkin_FOUND)
 #############
 ## Install ##
 #############

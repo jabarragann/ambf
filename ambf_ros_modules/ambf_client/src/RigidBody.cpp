@@ -286,7 +286,7 @@ float RigidBody::get_joint_effort(std::string joint_name){
 
 tf::Vector3 RigidBody::get_inertia() {
     tf::Vector3 I(0.0, 0.0, 0.0);
-    tf::pointMsgToTF(m_State.pInertia, I);
+    tf::pointMsgToTF(m_State.p_inertia, I);
     return I;
 }
 
