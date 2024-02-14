@@ -37,48 +37,140 @@
 #  $Date:  $
 #  $Rev: $
 cmake_minimum_required(VERSION 2.8.3)
-if (POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif (POLICY CMP0048)
+if(POLICY CMP0057)
+  cmake_policy(SET CMP0057 NEW)
+endif()
 project(ambf_msgs)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS
+# find_package(catkin REQUIRED COMPONENTS
+#   message_generation
+#   std_msgs
+#   geometry_msgs
+# )
+
+#  add_message_files(
+#    FILES
+#    ObjectState.msg
+#    ObjectCmd.msg
+#    ActuatorState.msg
+#    ActuatorCmd.msg
+#    SensorState.msg
+#    SensorCmd.msg
+#    CameraState.msg
+#    CameraCmd.msg
+#    LightState.msg
+#    LightCmd.msg
+#    RigidBodyState.msg
+#    RigidBodyCmd.msg
+#    VehicleState.msg
+#    VehicleCmd.msg
+#    WorldState.msg
+#    WorldCmd.msg
+#  )
+#   generate_messages(
+#    DEPENDENCIES
+#    geometry_msgs
+#    std_msgs
+#  )
+#  catkin_package(
+#   CATKIN_DEPENDS message_runtime
+#   )
+
+# include_directories(
+#   ${catkin_INCLUDE_DIRS}
+# )
+
+find_package(catkin QUIET COMPONENTS
   message_generation
   std_msgs
   geometry_msgs
 )
 
- add_message_files(
-   FILES
-   ObjectState.msg
-   ObjectCmd.msg
-   ActuatorState.msg
-   ActuatorCmd.msg
-   SensorState.msg
-   SensorCmd.msg
-   CameraState.msg
-   CameraCmd.msg
-   LightState.msg
-   LightCmd.msg
-   RigidBodyState.msg
-   RigidBodyCmd.msg
-   VehicleState.msg
-   VehicleCmd.msg
-   WorldState.msg
-   WorldCmd.msg
- )
+# ROS 1
+if (catkin_FOUND)
+  add_definitions (-DROS1)
+  set (ROS_VERSION 1)
+  message(STATUS "ROS VERSION = 1")
+else (catkin_FOUND)
+
+  # look for ROS2
+  find_package(ament_cmake QUIET)
+  if(ament_cmake_FOUND)
+    add_compile_definitions(ROS2)
+    set(ROS_VERSION 2)
+    find_package(rosidl_default_generators REQUIRED)
+    find_package(std_msgs REQUIRED)
+    find_package(geometry_msgs REQUIRED)
+  endif(ament_cmake_FOUND)
+endif(catkin_FOUND)
+
+if (catkin_FOUND)
+  add_message_files(
+    FILES
+    ObjectState.msg
+    ObjectCmd.msg
+    ActuatorState.msg
+    ActuatorCmd.msg
+    SensorState.msg
+    SensorCmd.msg
+    CameraState.msg
+    CameraCmd.msg
+    LightState.msg
+    LightCmd.msg
+    RigidBodyState.msg
+    RigidBodyCmd.msg
+    VehicleState.msg
+    VehicleCmd.msg
+    WorldState.msg
+    WorldCmd.msg
+  )
   generate_messages(
-   DEPENDENCIES
-   geometry_msgs
-   std_msgs
- )
- catkin_package(
+    DEPENDENCIES
+    geometry_msgs
+    std_msgs
+  )
+
+  # not sure what the ros2 equivalent of this is
+  catkin_package(
   CATKIN_DEPENDS message_runtime
   )
 
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+
+  include_directories(
+    ${catkin_INCLUDE_DIRS}
+  )
+elseif(catkin_FOUND)
+  set(msg_files
+      FILES
+      ObjectState.msg
+      ObjectCmd.msg
+      ActuatorState.msg
+      ActuatorCmd.msg
+      SensorState.msg
+      SensorCmd.msg
+      CameraState.msg
+      CameraCmd.msg
+      LightState.msg
+      LightCmd.msg
+      RigidBodyState.msg
+      RigidBodyCmd.msg
+      VehicleState.msg
+      VehicleCmd.msg
+      WorldState.msg
+      WorldCmd.msg
+    )  
+    rosidl_generate_interfaces(${ambf_msgs}
+    ${msg_files}
+  )
+
+  ament_export_dependencies(rosidl_default_runtime)
+
+  install(DIRECTORY
+  launch
+  DESTINATION share/${ambf_msgs}/
+  )
+endif(catkin_FOUND)
+

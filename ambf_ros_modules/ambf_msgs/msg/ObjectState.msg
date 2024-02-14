@@ -5,7 +5,7 @@ std_msgs/String name
 float32 wall_time
 float32 sim_time
 float32 mass
-geometry_msgs/Point pInertia
+geometry_msgs/Point p_inertia
 geometry_msgs/Pose pose
 geometry_msgs/Wrench wrench
 string userdata_description

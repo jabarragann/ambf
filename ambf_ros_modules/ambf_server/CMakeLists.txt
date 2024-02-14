@@ -37,7 +37,7 @@
 #  $Date:  $
 #  $Rev: $
 
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.10)
 project(ambf_server)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -131,6 +131,7 @@ find_package (catkin QUIET
 if (catkin_FOUND)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
+  message(STATUS "ROS VERSION = 1")
 else (catkin_FOUND)
 
   # look for ROS2
@@ -138,6 +139,7 @@ else (catkin_FOUND)
   if (ament_cmake_FOUND)
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
+    message(STATUS "ROS VERSION = 2")
     find_package (rclcpp REQUIRED)
     find_package (std_msgs REQUIRED)
     find_package (geometry_msgs REQUIRED)

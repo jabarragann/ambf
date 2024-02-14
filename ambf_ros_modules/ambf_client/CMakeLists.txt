@@ -37,7 +37,7 @@
 #  $Date:  $
 #  $Rev: 1.0$
 
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.10)
 project(ambf_client)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -46,20 +46,47 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED
+find_package(catkin QUIET COMPONENTS
 geometry_msgs
 ambf_msgs
 tf
 message_generation)
 
-catkin_python_setup()
 
-catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES ambf_client_cpp
-    CATKIN_DEPENDS ambf_msgs message_runtime
-#  DEPENDS system_lib
-)
+
+if (catkin_FOUND)
+    catkin_python_setup()
+    catkin_package(
+        INCLUDE_DIRS include
+        LIBRARIES ambf_client_cpp
+        CATKIN_DEPENDS ambf_msgs message_runtime
+    #  DEPENDS system_lib
+    )
+
+    include_directories( include ${catkin_INCLUDE_DIRS})
+
+else(catkin_FOUND)
+    # look for ROS2
+    find_package (ament_cmake QUIET)
+    if (ament_cmake_FOUND)
+        add_definitions (-DROS2)
+        set (ROS_VERSION 2)
+        message(STATUS "ROS VERSION = 2")
+        find_package(ament_cmake REQUIRED)
+        # find_package(ambf_msgs REQUIRED)
+        find_package(rclcpp REQUIRED)
+        find_package(std_msgs REQUIRED)
+        find_package (geometry_msgs REQUIRED)
+        find_package (tf2 REQUIRED)
+        find_package (rosidl_default_generators REQUIRED)
+        # Add other ROS2 dependencies as needed
+
+        ament_export_include_directories(include)
+        ament_export_libraries(ambf_client_cpp)
+        ament_export_dependencies(ambf_msgs rclcpp std_msgs geometry_msgs tf2 rosidl_default_generators)
+        ament_package()
+    endif (ament_cmake_FOUND)
+endif (catkin_FOUND)
 
 
 ###########
@@ -68,7 +95,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories( include ${catkin_INCLUDE_DIRS})
+
 
 set (ENV_HDR_FILES
     include/${PROJECT_NAME}/ambf_client.h
@@ -123,7 +150,9 @@ set (ENV_SRC_FILES
 ## Declare a C++ library
 add_library(ambf_client_cpp ${ENV_HDR_FILES} ${ENV_SRC_FILES})
 
-add_dependencies(ambf_client_cpp ${catkin_EXPORTED_TARGETS})
+if (catkin_FOUND)
+    add_dependencies(ambf_client_cpp ${catkin_EXPORTED_TARGETS})
+endif(catkin_FOUND)
 
 
 ## Specify libraries to link a library or executable target against
