@@ -54,7 +54,7 @@ message_generation)
 
 
 
-if (catkin_FOUND)
+if (ROS_VERSION EQUAL 1)
     catkin_python_setup()
     catkin_package(
         INCLUDE_DIRS include
@@ -65,7 +65,7 @@ if (catkin_FOUND)
 
     include_directories( include ${catkin_INCLUDE_DIRS})
 
-else(catkin_FOUND)
+else(ROS_VERSION EQUAL 2)
     # look for ROS2
     find_package (ament_cmake QUIET)
     if (ament_cmake_FOUND)
@@ -86,7 +86,7 @@ else(catkin_FOUND)
         ament_export_dependencies(ambf_msgs rclcpp std_msgs geometry_msgs tf2 rosidl_default_generators)
         ament_package()
     endif (ament_cmake_FOUND)
-endif (catkin_FOUND)
+endif ()
 
 
 ###########
@@ -150,9 +150,9 @@ set (ENV_SRC_FILES
 ## Declare a C++ library
 add_library(ambf_client_cpp ${ENV_HDR_FILES} ${ENV_SRC_FILES})
 
-if (catkin_FOUND)
+if (ROS_VERSION EQUAL 1)
     add_dependencies(ambf_client_cpp ${catkin_EXPORTED_TARGETS})
-endif(catkin_FOUND)
+endif(ROS_VERSION EQUAL 1)
 
 
 ## Specify libraries to link a library or executable target against

@@ -43,95 +43,21 @@ project(ambf_server)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-
-## Pre-ros2 change
-# find_package(catkin REQUIRED
-# geometry_msgs
-# ambf_msgs
-# tf
-# message_generation)
-
-# catkin_package(
-#     INCLUDE_DIRS include
-#     LIBRARIES ambf_server
-#     CATKIN_DEPENDS ambf_msgs message_runtime
-# #  DEPENDS system_lib
-# )
-
-# ###########
-# ## Build ##
-# ###########
-
-# ## Specify additional locations of header files
-# ## Your package locations should be listed before other locations
-# include_directories( include ${catkin_INCLUDE_DIRS})
-
-# set (HDR_FILES
-#     include/${PROJECT_NAME}/RosComBase.h
-#     include/${PROJECT_NAME}/CmdWatchDog.h
-#     include/${PROJECT_NAME}/Actuator.h
-#     include/${PROJECT_NAME}/ActuatorRosCom.h
-#     include/${PROJECT_NAME}/Camera.h
-#     include/${PROJECT_NAME}/CameraRosCom.h
-#     include/${PROJECT_NAME}/Light.h
-#     include/${PROJECT_NAME}/LightRosCom.h
-#     include/${PROJECT_NAME}/Object.h
-#     include/${PROJECT_NAME}/ObjectRosCom.h
-#     include/${PROJECT_NAME}/RigidBody.h
-#     include/${PROJECT_NAME}/RigidBodyRosCom.h
-#     include/${PROJECT_NAME}/Sensor.h
-#     include/${PROJECT_NAME}/SensorRosCom.h
-#     include/${PROJECT_NAME}/Vehicle.h
-#     include/${PROJECT_NAME}/VehicleRosCom.h
-#     include/${PROJECT_NAME}/World.h
-#     include/${PROJECT_NAME}/WorldRosCom.h)
-
-# set (SRC_FILES
-#     src/RosComBase.cpp
-#     src/Actuator.cpp
-#     src/ActuatorRosCom.cpp
-#     src/Camera.cpp
-#     src/CameraRosCom.cpp
-#     src/Light.cpp
-#     src/LightRosCom.cpp
-#     src/Object.cpp
-#     src/ObjectRosCom.cpp
-#     src/RigidBody.cpp
-#     src/RigidBodyRosCom.cpp
-#     src/Sensor.cpp
-#     src/SensorRosCom.cpp
-#     src/Vehicle.cpp
-#     src/VehicleRosCom.cpp
-#     src/World.cpp
-#     src/WorldRosCom.cpp
-#     )
-
-# ## Declare a C++ library
-# add_library(ambf_server ${HDR_FILES} ${SRC_FILES})
-
-# add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
-
-# ## Specify libraries to link a library or executable target against
-# target_link_libraries(ambf_server ${catkin_LIBRARIES})
-
-## UPDATED
-
+set (ROS1_depends geometry_msgs ambf_msgs tf message_generation)
 find_package (catkin QUIET
-  COMPONENTS
-  geometry_msgs
-  ambf_msgs
-  tf
-  message_generation)
-
+  COMPONENTS ${ROS1_depends})
 
 # ROS 1
 if (catkin_FOUND)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
   message(STATUS "ROS VERSION = 1")
+  catkin_package(
+    INCLUDE_DIRS include
+    LIBRARIES ambf_server
+    CATKIN_DEPENDS ${ROS1_depends}
+#  DEPENDS system_lib
+)
 else (catkin_FOUND)
 
   # look for ROS2
@@ -140,14 +66,11 @@ else (catkin_FOUND)
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
-    find_package (rclcpp REQUIRED)
-    find_package (std_msgs REQUIRED)
-    find_package (geometry_msgs REQUIRED)
-    find_package (sensor_msgs REQUIRED)
-    find_package (diagnostic_msgs REQUIRED)
-    find_package (tf2_ros REQUIRED)
-    find_package (tf2_msgs REQUIRED)
-
+    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs)
+    foreach (_dep ${ROS2_depends})
+        find_package (${_dep} REQUIRED)
+    endforeach()
+    find_package(rclcpp REQUIRED)
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
 
@@ -157,7 +80,15 @@ endif (catkin_FOUND)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories( include ${catkin_INCLUDE_DIRS})
+if (ROS_VERSION EQUAL 1)
+  include_directories( include ${catkin_INCLUDE_DIRS})
+else(ROS_VERSION 2)
+  include_directories(
+    include
+    ${rclcpp_INCLUDE_DIRS}
+  )
+endif()
+
 
 set (HDR_FILES
     include/${PROJECT_NAME}/RosComBase.h
@@ -202,17 +133,17 @@ set (SRC_FILES
 ## Declare a C++ library
 add_library(ambf_server ${HDR_FILES} ${SRC_FILES})
 
-# if (catkin_FOUND)
-#     add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
-
-# else (catkin_FOUND)
-#     ament_target_dependencies(
-#         ambf_server
-#         std_msgs
-#         geometry_msgs
-#     )
-
-
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(ambf_server ${catkin_LIBRARIES})
+if (ROS_VERSION EQUAL 1)
+    add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
+    ## Specify libraries to link a library or executable target against
+    target_link_libraries(ambf_server ${catkin_LIBRARIES})
+else(ROS_VERSION EQUAL 2)
+    ament_target_dependencies(
+        ambf_server
+        ${ROS2_depends}
+    )
+    target_link_libraries(ambf_server
+      ${rclcpp_LIBRARIES}
+    )
+    ament_package ()
+endif()

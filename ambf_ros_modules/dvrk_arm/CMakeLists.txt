@@ -236,14 +236,14 @@ set(HDR_FILES
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-if (catkin_FOUND)
+if (ROS_VERSION EQUAL 1)
  target_link_libraries(dvrk_arm
    ${catkin_LIBRARIES}
  )
  target_link_libraries(${PROJECT_NAME}_test
         dvrk_arm
         )
-endif(catkin_FOUND)
+endif(ROS_VERSION EQUAL 1)
 #############
 ## Install ##
 #############

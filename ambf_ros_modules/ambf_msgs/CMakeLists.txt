@@ -45,43 +45,6 @@ project(ambf_msgs)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-# find_package(catkin REQUIRED COMPONENTS
-#   message_generation
-#   std_msgs
-#   geometry_msgs
-# )
-
-#  add_message_files(
-#    FILES
-#    ObjectState.msg
-#    ObjectCmd.msg
-#    ActuatorState.msg
-#    ActuatorCmd.msg
-#    SensorState.msg
-#    SensorCmd.msg
-#    CameraState.msg
-#    CameraCmd.msg
-#    LightState.msg
-#    LightCmd.msg
-#    RigidBodyState.msg
-#    RigidBodyCmd.msg
-#    VehicleState.msg
-#    VehicleCmd.msg
-#    WorldState.msg
-#    WorldCmd.msg
-#  )
-#   generate_messages(
-#    DEPENDENCIES
-#    geometry_msgs
-#    std_msgs
-#  )
-#  catkin_package(
-#   CATKIN_DEPENDS message_runtime
-#   )
-
-# include_directories(
-#   ${catkin_INCLUDE_DIRS}
-# )
 
 find_package(catkin QUIET COMPONENTS
   message_generation
@@ -106,6 +69,8 @@ else (catkin_FOUND)
     find_package(geometry_msgs REQUIRED)
   endif(ament_cmake_FOUND)
 endif(catkin_FOUND)
+
+
 
 if (catkin_FOUND)
   add_message_files(

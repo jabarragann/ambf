@@ -43,7 +43,12 @@
 #ifndef CMDWATCHDOG_H
 #define CMDWATCHDOG_H
 
+#if ROS1
 #include <ros/rate.h>
+#elif ROS2
+std::cerr << "ROS2" << std::endl;
+#include <rclcpp/rate.hpp>
+#endif
 
 class CmdWatchDog{
 public:
@@ -70,7 +75,7 @@ public:
             std::cerr << "WatchDog expired, Resetting \"" << class_name << "\" command" << std::endl;
         }
     }
-    boost::shared_ptr<ros::Rate> m_ratePtr;
+    +    boost::shared_ptr<ros::Rate> m_ratePtr;
 
 protected:
     int m_freq_min, m_freq_max;

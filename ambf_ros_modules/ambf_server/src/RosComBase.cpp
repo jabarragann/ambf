@@ -59,6 +59,7 @@
 #include "ambf_msgs/WorldCmd.h"
 #include "ambf_msgs/WorldState.h"
 
+// #if ROS1
 bool afROSNode::s_initialized;
 ros::NodeHandle* afROSNode::s_nodePtr;
 unsigned int afROSNode::s_registeredInstances = 0;
@@ -104,3 +105,50 @@ template RosComBase<ambf_msgs::RigidBodyState, ambf_msgs::RigidBodyCmd>::RosComB
 template RosComBase<ambf_msgs::SensorState, ambf_msgs::SensorCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
 template RosComBase<ambf_msgs::VehicleState, ambf_msgs::VehicleCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
 template RosComBase<ambf_msgs::WorldState, ambf_msgs::WorldCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+
+// #elif ROS2
+
+// bool afROS2Node::s_initialized;
+// rclcpp::Node::SharedPtr afROS2Node::s_nodePtr;
+// unsigned int afROS2Node::s_registeredInstances = 0;
+
+// template<class T_state, class T_cmd>
+// void RosComBase<T_state, T_cmd>::cleanUp(){
+//     m_pub.reset();
+//     m_sub.reset();
+// }
+
+// template<class T_state, class T_cmd>
+// RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out)
+// {
+//     m_name = a_name;
+//     m_namespace = a_namespace;
+//     m_enableComm = false;
+
+//     m_freq_min = a_freq_min;
+//     m_freq_max = a_freq_max;
+//     nodePtr = afROS2Node::getNodeAndRegister();
+//     m_watchDogPtr.reset(new CmdWatchDog(a_freq_min, a_freq_max, time_out));
+
+//     // ROS2 uses a different mechanism for spinning and callback queues
+//     m_callback_group = nodePtr->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+//     auto options = rclcpp::SubscriptionOptions();
+//     options.callback_group = m_callback_group;
+
+//     // Adjust publisher and subscriber creation to use ROS2 syntax
+//     m_pub = nodePtr->create_publisher<T_cmd>(m_name, rclcpp::QoS(rclcpp::KeepLast(10)));
+//     m_sub = nodePtr->create_subscription<T_state>(m_name, rclcpp::QoS(rclcpp::KeepLast(10)),
+//         std::bind(&RosComBase<T_state, T_cmd>::callback, this, std::placeholders::_1), options);
+// }
+
+// // Explicit template instantiations for ROS2
+// template class RosComBase<ambf_msgs::msg::ActuatorState, ambf_msgs::msg::ActuatorCmd>;
+// template class RosComBase<ambf_msgs::msg::CameraState, ambf_msgs::msg::CameraCmd>;
+// template class RosComBase<ambf_msgs::msg::LightState, ambf_msgs::msg::LightCmd>;
+// template class RosComBase<ambf_msgs::msg::ObjectState, ambf_msgs::msg::ObjectCmd>;
+// template class RosComBase<ambf_msgs::msg::RigidBodyState, ambf_msgs::msg::RigidBodyCmd>;
+// template class RosComBase<ambf_msgs::msg::SensorState, ambf_msgs::msg::SensorCmd>;
+// template class RosComBase<ambf_msgs::msg::VehicleState, ambf_msgs::msg::VehicleCmd>;
+// template class RosComBase<ambf_msgs::msg::WorldState, ambf_msgs::msg::WorldCmd>;
+
+// #endif

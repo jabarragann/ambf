@@ -178,7 +178,7 @@ set(AMBF_ROS_INCLUDE_DIRS "")
 set(AMBF_ROS_LIBRARIES "")
 # ROS Dependency
 if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
-    find_package(catkin COMPONENTS
+    find_package(catkin QUIET COMPONENTS
       roscpp
     )
     if (catkin_FOUND)
@@ -234,20 +234,21 @@ if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
 
       message("-- *** FOUND ROS2 ON THIS MACHINE, ENABLING SUPPORT FOR AMBF_ROS MODULES")
       add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_ros_modules)
-      add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf2)
+      # add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf2)
       # In ROS2, find_package is used directly without the QUIET option for required components
       # Assuming 'ambf_server', 'ambf_msgs', 'dvrk_arm', 'razer_hydra', 'cv_bridge', and 'image_transport' are available as ROS2 packages or have equivalents
       find_package(ament_cmake REQUIRED)
-      find_package(ambf_server REQUIRED)
-      find_package(ambf_msgs REQUIRED)
-      find_package(dvrk_arm REQUIRED)
-      find_package(razer_hydra REQUIRED)
-      find_package(cv_bridge REQUIRED)
-      find_package(image_transport REQUIRED)
-      find_package(tf2 REQUIRED)
-      find_package(sensor_msgs REQUIRED)
-      find_package(geometry_msgs REQUIRED)
-      find_package(OpenCV QUIET) # OpenCV is not a ROS2 package but is often used alongside ROS2
+      # set(ambf_server_DIR "{CMAKE_CURRENT_SOURCE_DIR}/ambf_ros_modules/ambf_server")
+      # find_package(ambf_server REQUIRED) # TODO: this causes the build to fail
+      # find_package(ambf_msgs REQUIRED)
+      # find_package(dvrk_arm REQUIRED)
+      # find_package(razer_hydra REQUIRED)
+      # find_package(cv_bridge REQUIRED)
+      # find_package(image_transport REQUIRED)
+      # find_package(tf2 REQUIRED)
+      # find_package(sensor_msgs REQUIRED)
+      # find_package(geometry_msgs REQUIRED)
+      # find_package(OpenCV QUIET) # OpenCV is not a ROS2 package but is often used alongside ROS2
       
       # if(ambf_server_FOUND AND ambf_msgs_FOUND AND dvrk_arm_FOUND AND ambf_client_FOUND)
       #     message(STATUS "-- *** FOUND AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM, ENABLING DVRK DEVICE SUPPORT")
@@ -285,10 +286,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
       #     message(STATUS "-- *** AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM NOT FOUND")
       # endif()
       
-      # Other configurations like installing the executable and declaring dependencies for package.xml
-      ament_package()
-    
-      
+      # # Other configurations like installing the executable and declaring dependencies for package.xml
+      # ament_package()
 
     endif()
     include_directories(${catkin_INCLUDE_DIRS})
@@ -524,6 +523,12 @@ add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_simulator)
 if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
   if (catkin_FOUND AND ambf_server_FOUND)
     add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_controller)
+  else(catkin_FOUND)
+    find_package(ament_cmake REQUIRED)
+    # find_package(ambf_server REQUIRED)
+    if(ament_cmake_FOUND AND ambf_server_FOUND)
+      add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_controller)
+    endif()
   endif()
 endif()
 
