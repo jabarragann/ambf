@@ -88,9 +88,9 @@ if (catkin_FOUND)
   ## Specify additional locations of header files
   ## Your package locations should be listed before other locations
   include_directories(
-    include
-    ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS}
+    ${catkin_INCLUDE_DIRS}
   )
+  
 else (catkin_FOUND)
 
   # look for ROS2
@@ -98,17 +98,25 @@ else (catkin_FOUND)
   if(ament_cmake_FOUND)
     add_compile_definitions(ROS2)
     set(ROS_VERSION 2)
-    find_package(rosidl_default_generators REQUIRED)
-    find_package(std_msgs REQUIRED)
-    find_package(geometry_msgs REQUIRED)
-    find_package(rclcpp REQUIRED)
-    find_package(rclpy REQUIRED)
-    find_package(sensor_msgs REQUIRED)
-    find_package(tf2 REQUIRED)
+    set (REQUIRED_AMENT_PACKAGES rosidl_default_generators std_msgs geometry_msgs rclcpp rclpy sensor_msgs tf2)
+    foreach (_dep ${REQUIRED_AMENT_PACKAGES})
+        find_package (${_dep} REQUIRED)
+    endforeach()
+    # find_package(rosidl_default_generators REQUIRED)
+    # find_package(std_msgs REQUIRED)
+    # find_package(geometry_msgs REQUIRED)
+    # find_package(rclcpp REQUIRED)
+    # find_package(rclpy REQUIRED)
+    # find_package(sensor_msgs REQUIRED)
+    # find_package(tf2 REQUIRED)
   endif(ament_cmake_FOUND)
 endif(catkin_FOUND)
 
 find_package(Eigen3 REQUIRED)
+include_directories(
+    include
+    ${EIGEN_INCLUDE_DIRS}
+  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -244,6 +252,12 @@ if (ROS_VERSION EQUAL 1)
         dvrk_arm
         )
 endif(ROS_VERSION EQUAL 1)
+
+if (ROS_VERSION EQUAL 2)
+  ament_target_dependencies (dvrk_arm ${REQUIRED_AMENT_PACKAGES})
+  ament_target_dependencies (dvrk_arm_test ${REQUIRED_AMENT_PACKAGES})
+  ament_package()
+endif()
 #############
 ## Install ##
 #############

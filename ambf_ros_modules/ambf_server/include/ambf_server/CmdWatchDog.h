@@ -75,7 +75,7 @@ public:
             std::cerr << "WatchDog expired, Resetting \"" << class_name << "\" command" << std::endl;
         }
     }
-    +    boost::shared_ptr<ros::Rate> m_ratePtr;
+    boost::shared_ptr<ros::Rate> m_ratePtr;
 
 protected:
     int m_freq_min, m_freq_max;

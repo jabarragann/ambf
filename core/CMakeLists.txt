@@ -177,121 +177,120 @@ include_directories(${YAML_CPP_INCLUDE_DIR})
 set(AMBF_ROS_INCLUDE_DIRS "")
 set(AMBF_ROS_LIBRARIES "")
 # ROS Dependency
-if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
-    find_package(catkin QUIET COMPONENTS
-      roscpp
-    )
-    if (catkin_FOUND)
-        message("-- *** FOUND ROS ON THIS MACHINE, ENABLING SUPPORT FOR AMBF_ROS MODULES")
-        add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_ros_modules)
-        add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf_function)
-        # Call find catkin again, with REQUIRED this time, it's okay to write over previously
-        # imported catkin variables
-        find_package(catkin QUIET COMPONENTS ambf_server ambf_msgs dvrk_arm razer_hydra cv_bridge image_transport ambf_client)
-              find_package(tf_function REQUIRED)
+# if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
+#     find_package(catkin QUIET COMPONENTS
+#       roscpp
+#     )
+#     if (catkin_FOUND)
+#         message("-- *** FOUND ROS ON THIS MACHINE, ENABLING SUPPORT FOR AMBF_ROS MODULES")
+#         add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_ros_modules)
+#         add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf_function)
+#         # Call find catkin again, with REQUIRED this time, it's okay to write over previously
+#         # imported catkin variables
+#         find_package(catkin QUIET COMPONENTS ambf_server ambf_msgs dvrk_arm razer_hydra cv_bridge image_transport ambf_client)
+#               find_package(tf_function REQUIRED)
 
-        if(ambf_server_FOUND AND ambf_msgs_FOUND AND dvrk_arm_FOUND AND ambf_client_FOUND)
-            message(STATUS "-- *** FOUND AMBF_COMM, AMBF_MSGS, AMBF_CLIENT and DVRK_ARM, ENABLING DVRK DEVICE SUPPORT")
+#         if(ambf_server_FOUND AND ambf_msgs_FOUND AND dvrk_arm_FOUND AND ambf_client_FOUND)
+#             message(STATUS "-- *** FOUND AMBF_COMM, AMBF_MSGS, AMBF_CLIENT and DVRK_ARM, ENABLING DVRK DEVICE SUPPORT")
 
-            set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
-            set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${catkin_LIBRARIES})
+#             set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+#             set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${catkin_LIBRARIES})
 
-            list(APPEND AMBF_DEFINITIONS -DAF_ENABLE_AMBF_COMM_SUPPORT)
-            list(APPEND CHAI3D_DEFINITIONS -DC_ENABLE_AMBF_DVRK_DEVICE_SUPPORT)
+#             list(APPEND AMBF_DEFINITIONS -DAF_ENABLE_AMBF_COMM_SUPPORT)
+#             list(APPEND CHAI3D_DEFINITIONS -DC_ENABLE_AMBF_DVRK_DEVICE_SUPPORT)
 
-        else()
-            message(STATUS "-- *** AMBF_COMM, AMBF_MSGS, AMBF_CLIENT and DVRK_ARM NOT FOUND")
-        endif()
+#         else()
+#             message(STATUS "-- *** AMBF_COMM, AMBF_MSGS, AMBF_CLIENT and DVRK_ARM NOT FOUND")
+#         endif()
 
-        find_package(OpenCV QUIET)
-        if(OpenCV_FOUND)
-            message(STATUS "-- *** FOUND OPENCV")
-            if(cv_bridge_FOUND AND image_transport_FOUND)
-                message(STATUS "-- *** FOUND ROS_CV_BRIDGE and IMAGE_TRANSPORT, ENABLING VIDEO PUBLISHING SUPPORT")
+#         find_package(OpenCV QUIET)
+#         if(OpenCV_FOUND)
+#             message(STATUS "-- *** FOUND OPENCV")
+#             if(cv_bridge_FOUND AND image_transport_FOUND)
+#                 message(STATUS "-- *** FOUND ROS_CV_BRIDGE and IMAGE_TRANSPORT, ENABLING VIDEO PUBLISHING SUPPORT")
 
-                list(APPEND AMBF_DEFINITIONS -DAF_ENABLE_OPEN_CV_SUPPORT)
-                set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
-                set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${OpenCV_LIBRARIES})
-            else()
-                message(STATUS "-- *** ROS CV_BRIDGE and IMAGE_TRANSPORT NOT FOUND")
-            endif()
-        endif()
+#                 list(APPEND AMBF_DEFINITIONS -DAF_ENABLE_OPEN_CV_SUPPORT)
+#                 set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+#                 set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${OpenCV_LIBRARIES})
+#             else()
+#                 message(STATUS "-- *** ROS CV_BRIDGE and IMAGE_TRANSPORT NOT FOUND")
+#             endif()
+#         endif()
 
-        if (razer_hydra_FOUND)
-            message(STATUS "-- *** FOUND RAZER HYDRA'S ROS PACKAGE, ENABLING DEVICE SUPPORT")
+#         if (razer_hydra_FOUND)
+#             message(STATUS "-- *** FOUND RAZER HYDRA'S ROS PACKAGE, ENABLING DEVICE SUPPORT")
 
-            set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${razer_hydra_INCLUDE_DIRS})
-            set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${razer_hydra_LIBRARIES})
+#             set(AMBF_ROS_INCLUDE_DIRS ${AMBF_ROS_INCLUDE_DIRS} ${razer_hydra_INCLUDE_DIRS})
+#             set(AMBF_ROS_LIBRARIES ${AMBF_ROS_LIBRARIES} ${razer_hydra_LIBRARIES})
 
-            list(APPEND AMBF_DEFINITIONS -DC_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT)
-            list(APPEND CHAI3D_DEFINITIONS -DC_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT)
+#             list(APPEND AMBF_DEFINITIONS -DC_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT)
+#             list(APPEND CHAI3D_DEFINITIONS -DC_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT)
 
-        else()
-        message(STATUS "-- *** RAZER HYDRA'S ROS PACKAGE NOT FOUND")
-        endif()
+#         else()
+#         message(STATUS "-- *** RAZER HYDRA'S ROS PACKAGE NOT FOUND")
+#         endif()
       
-    else(catkin_FOUND)
+#     else(catkin_FOUND)
 
-      message("-- *** FOUND ROS2 ON THIS MACHINE, ENABLING SUPPORT FOR AMBF_ROS MODULES")
-      add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_ros_modules)
-      # add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf2)
-      # In ROS2, find_package is used directly without the QUIET option for required components
-      # Assuming 'ambf_server', 'ambf_msgs', 'dvrk_arm', 'razer_hydra', 'cv_bridge', and 'image_transport' are available as ROS2 packages or have equivalents
-      find_package(ament_cmake REQUIRED)
-      # set(ambf_server_DIR "{CMAKE_CURRENT_SOURCE_DIR}/ambf_ros_modules/ambf_server")
-      # find_package(ambf_server REQUIRED) # TODO: this causes the build to fail
-      # find_package(ambf_msgs REQUIRED)
-      # find_package(dvrk_arm REQUIRED)
-      # find_package(razer_hydra REQUIRED)
-      # find_package(cv_bridge REQUIRED)
-      # find_package(image_transport REQUIRED)
-      # find_package(tf2 REQUIRED)
-      # find_package(sensor_msgs REQUIRED)
-      # find_package(geometry_msgs REQUIRED)
-      # find_package(OpenCV QUIET) # OpenCV is not a ROS2 package but is often used alongside ROS2
+#       message("-- *** FOUND ROS2 ON THIS MACHINE, ENABLING SUPPORT FOR AMBF_ROS MODULES")
+#       add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_ros_modules)
+#       # add_subdirectory(${PROJECT_SOURCE_DIR}/external/tf2)
+#       # In ROS2, find_package is used directly without the QUIET option for required components
+#       # Assuming 'ambf_server', 'ambf_msgs', 'dvrk_arm', 'razer_hydra', 'cv_bridge', and 'image_transport' are available as ROS2 packages or have equivalents
+#       find_package(ament_cmake REQUIRED)
+#       # set(ambf_server_DIR "{CMAKE_CURRENT_SOURCE_DIR}/ambf_ros_modules/ambf_server")
+#       find_package(ambf_msgs REQUIRED)
+#       find_package(ambf_server REQUIRED) # TODO: this causes the build to fail
+#       find_package(dvrk_arm REQUIRED)
+#       find_package(razer_hydra REQUIRED)
+#       find_package(cv_bridge REQUIRED)
+#       find_package(image_transport REQUIRED)
+#       find_package(tf2 REQUIRED)
+#       find_package(sensor_msgs REQUIRED)
+#       find_package(geometry_msgs REQUIRED)
+#       find_package(OpenCV QUIET) # OpenCV is not a ROS2 package but is often used alongside ROS2
       
-      # if(ambf_server_FOUND AND ambf_msgs_FOUND AND dvrk_arm_FOUND AND ambf_client_FOUND)
-      #     message(STATUS "-- *** FOUND AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM, ENABLING DVRK DEVICE SUPPORT")
+#       if(ambf_server_FOUND AND ambf_msgs_FOUND AND dvrk_arm_FOUND AND ambf_client_FOUND)
+#           message(STATUS "-- *** FOUND AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM, ENABLING DVRK DEVICE SUPPORT")
       
-      #     # In ROS2, include and library directories are often set via ament_target_dependencies or directly linking against imported targets
-      #     ament_auto_add_executable(your_executable_name src/your_source_file.cpp)
-      #     ament_target_dependencies(your_executable_name
-      #       ambf_server
-      #       ambf_msgs
-      #       dvrk_arm
-      #       razer_hydra
-      #       cv_bridge
-      #       image_transport
-      #       tf2
-      #       sensor_msgs
-      #       geometry_msgs
-      #     )
+#       #     ament_auto_add_executable(your_executable_name src/your_source_file.cpp)
+#           ament_target_dependencies(your_executable_name
+#             ambf_server
+#             ambf_msgs
+#             dvrk_arm
+#             razer_hydra
+#             cv_bridge
+#             image_transport
+#             tf2
+#             sensor_msgs
+#             geometry_msgs
+#           )
       
-      #     if(OpenCV_FOUND)
-      #         message(STATUS "-- *** FOUND OPENCV")
-      #         target_include_directories(your_executable_name PRIVATE ${OpenCV_INCLUDE_DIRS})
-      #         target_link_libraries(your_executable_name ${OpenCV_LIBRARIES})
-      #         ament_target_dependencies(your_executable_name OpenCV)
-      #     endif()
+#           if(OpenCV_FOUND)
+#               message(STATUS "-- *** FOUND OPENCV")
+#               target_include_directories(your_executable_name PRIVATE ${OpenCV_INCLUDE_DIRS})
+#               target_link_libraries(your_executable_name ${OpenCV_LIBRARIES})
+#               ament_target_dependencies(your_executable_name OpenCV)
+#           endif()
       
-      #     # Definitions can be added directly to targets
-      #     target_compile_definitions(your_executable_name PRIVATE
-      #       AF_ENABLE_AMBF_COMM_SUPPORT
-      #       AF_ENABLE_OPEN_CV_SUPPORT
-      #       C_ENABLE_AMBF_DVRK_DEVICE_SUPPORT
-      #       C_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT
-      #     )
+#           # Definitions can be added directly to targets
+#           target_compile_definitions(your_executable_name PRIVATE
+#             AF_ENABLE_AMBF_COMM_SUPPORT
+#             AF_ENABLE_OPEN_CV_SUPPORT
+#             C_ENABLE_AMBF_DVRK_DEVICE_SUPPORT
+#             C_ENABLE_RAZER_HYDRA_DEVICE_SUPPORT
+#           )
       
-      # else()
-      #     message(STATUS "-- *** AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM NOT FOUND")
-      # endif()
+#       else()
+#           message(STATUS "-- *** AMBF_COMM, AMBF_MSGS, AMBF_CLIENT, and DVRK_ARM NOT FOUND")
+#       endif()
       
-      # # Other configurations like installing the executable and declaring dependencies for package.xml
-      # ament_package()
+#       # # Other configurations like installing the executable and declaring dependencies for package.xml
+#       ament_package()
 
-    endif()
-    include_directories(${catkin_INCLUDE_DIRS})
-endif()
+#     endif()
+#     include_directories(${catkin_INCLUDE_DIRS})
+# endif()
 
 # Windows global build options
 if (${CMAKE_SYSTEM_NAME} MATCHES Windows)
@@ -468,9 +467,9 @@ target_link_libraries(ambf_framework ${chai3d} ${bullet} ${Boost_LIBRARIES})
 
 # To ensure the ambf_ros_modules are build before the ambf_framework,
 # add catkin's targets as build dependency
- if (catkin_FOUND)
-   add_dependencies(ambf_framework ${catkin_EXPORTED_TARGETS})
- endif()
+#  if (catkin_FOUND)
+#    add_dependencies(ambf_framework ${catkin_EXPORTED_TARGETS})
+#  endif()
 
 # AMBF library exports
 set (AMBF_INCLUDE_DIRS
@@ -520,17 +519,17 @@ add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_simulator)
 
 
 # AMBF Controller. Add if on Linux, Catkin Found and ambf_server Found
-if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
-  if (catkin_FOUND AND ambf_server_FOUND)
-    add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_controller)
-  else(catkin_FOUND)
-    find_package(ament_cmake REQUIRED)
-    # find_package(ambf_server REQUIRED)
-    if(ament_cmake_FOUND AND ambf_server_FOUND)
-      add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_controller)
-    endif()
-  endif()
-endif()
+# if (${CMAKE_SYSTEM_NAME} MATCHES Linux)
+#   if (catkin_FOUND AND ambf_server_FOUND)
+#     add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_controller)
+#   else(catkin_FOUND)
+#     find_package(ament_cmake REQUIRED)
+#     # find_package(ambf_server REQUIRED)
+#     if(ament_cmake_FOUND AND ambf_server_FOUND)
+#       add_subdirectory(${PROJECT_SOURCE_DIR}/ambf_controller)
+#     endif()
+#   endif()
+# endif()
 
 #
 # export package

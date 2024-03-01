@@ -44,7 +44,9 @@
 #ifndef CDVRK_BRIDGEH
 #define CDVRK_BRIDGEH
 
+#if ROS1
 #include "ros/ros.h"
+#include "ros/callback_queue.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "sensor_msgs/JointState.h"
 #include "sensor_msgs/Joy.h"
@@ -52,12 +54,23 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32.h"
 #include "geometry_msgs/WrenchStamped.h"
+#elif ROS2
+#include <rclcpp/rclcpp.hpp>
+// #include "ros/callback_queue.h" # find ROS2 equivalency
+#include "geometry_msgs/msg/transform_stamped.h"
+#include "sensor_msgs/msg/joint_state.h"
+#include "sensor_msgs/msg/joy.h"
+#include "std_msgs/msg/string.h"
+#include "std_msgs/msg/bool.h"
+#include "std_msgs/msg/float32.h"
+#include "geometry_msgs/msg/wrench_stamped.h"
+#endif
 #include "FootPedals.h"
 #include "Console.h"
 #include "string.h"
 #include "boost/bind.hpp"
 #include "boost/function.hpp"
-#include "ros/callback_queue.h"
+
 #include "dvrk_arm/States.h"
 #include "FcnHandle.h"
 #include "dvrk_arm/Timing.h"

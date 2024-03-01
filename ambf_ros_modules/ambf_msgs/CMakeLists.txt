@@ -58,7 +58,6 @@ if (catkin_FOUND)
   set (ROS_VERSION 1)
   message(STATUS "ROS VERSION = 1")
 else (catkin_FOUND)
-
   # look for ROS2
   find_package(ament_cmake QUIET)
   if(ament_cmake_FOUND)
@@ -70,9 +69,7 @@ else (catkin_FOUND)
   endif(ament_cmake_FOUND)
 endif(catkin_FOUND)
 
-
-
-if (catkin_FOUND)
+if (ROS_VERSION EQUAL 1) 
   add_message_files(
     FILES
     ObjectState.msg
@@ -98,7 +95,6 @@ if (catkin_FOUND)
     std_msgs
   )
 
-  # not sure what the ros2 equivalent of this is
   catkin_package(
   CATKIN_DEPENDS message_runtime
   )
@@ -107,35 +103,36 @@ if (catkin_FOUND)
   include_directories(
     ${catkin_INCLUDE_DIRS}
   )
-elseif(catkin_FOUND)
+else(ROS_VERSION EQUAL 2)
+
   set(msg_files
-      FILES
-      ObjectState.msg
-      ObjectCmd.msg
-      ActuatorState.msg
-      ActuatorCmd.msg
-      SensorState.msg
-      SensorCmd.msg
-      CameraState.msg
-      CameraCmd.msg
-      LightState.msg
-      LightCmd.msg
-      RigidBodyState.msg
-      RigidBodyCmd.msg
-      VehicleState.msg
-      VehicleCmd.msg
-      WorldState.msg
-      WorldCmd.msg
+      msg/ObjectState.msg
+      msg/ObjectCmd.msg
+      msg/ActuatorState.msg
+      msg/ActuatorCmd.msg
+      msg/SensorState.msg
+      msg/SensorCmd.msg
+      msg/CameraState.msg
+      msg/CameraCmd.msg
+      msg/LightState.msg
+      msg/LightCmd.msg
+      msg/RigidBodyState.msg
+      msg/RigidBodyCmd.msg
+      msg/VehicleState.msg
+      msg/VehicleCmd.msg
+      msg/WorldState.msg
+      msg/WorldCmd.msg
     )  
-    rosidl_generate_interfaces(${ambf_msgs}
-    ${msg_files}
-  )
+
+  # this doesn't work (causing issues in other parts of the code)
+  # set(msg_dir "${CMAKE_CURRENT_SOURCE_DIR}/msg")
+  rosidl_generate_interfaces(ambf_msgs ${msg_files})
 
   ament_export_dependencies(rosidl_default_runtime)
 
-  install(DIRECTORY
-  launch
-  DESTINATION share/${ambf_msgs}/
-  )
-endif(catkin_FOUND)
+  # install(DIRECTORY
+  # DESTINATION share/${ambf_msgs}/
+  # )
+  ament_package()
+endif()
 

@@ -41,7 +41,7 @@
 //==============================================================================
 
 
-#include "ambf_server//RosComBase.h"
+#include "ambf_server/RosComBase.h"
 #include "ambf_msgs/ActuatorCmd.h"
 #include "ambf_msgs/ActuatorState.h"
 #include "ambf_msgs/CameraState.h"

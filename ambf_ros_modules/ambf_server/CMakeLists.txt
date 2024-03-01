@@ -63,10 +63,13 @@ else (catkin_FOUND)
   # look for ROS2
   find_package (ament_cmake QUIET)
   if (ament_cmake_FOUND)
+    set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${AMBF_BINARY_DIR}/ambf_ros_modules/ambf_msgs/ament_cmake_core")
+    set (ambf_msgs_DIR "${AMBF_BINARY_DIR}/ambf_ros_modules/ambf_msgs/ament_cmake_core")
+    message("--------- ${AMBF_BINARY_DIR}/ambf_ros_modules/ambf_msgs/ament_cmake_core --------------------------------")
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
-    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs)
+    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs)
     foreach (_dep ${ROS2_depends})
         find_package (${_dep} REQUIRED)
     endforeach()
@@ -145,5 +148,8 @@ else(ROS_VERSION EQUAL 2)
     target_link_libraries(ambf_server
       ${rclcpp_LIBRARIES}
     )
+    # target_link_libraries(ambf_server
+    #   ${ambf_msgs_LIBRARIES}
+    # )
     ament_package ()
 endif()

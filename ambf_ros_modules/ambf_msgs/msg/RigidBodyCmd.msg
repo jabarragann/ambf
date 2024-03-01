@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 int8 TYPE_FORCE=0
 int8 TYPE_POSITION=1
 int8 TYPE_VELOCITY=2
