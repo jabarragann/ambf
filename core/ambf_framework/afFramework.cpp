@@ -52,10 +52,10 @@
 #include "BulletSoftBody/btSoftBodySolvers.h"
 //------------------------------------------------------------------------------
 
-#include "ros_comm_plugin/ObjectCommPlugin.h"
-#include "ros_comm_plugin/WorldCommPlugin.h"
-#include "ros_comm_plugin/VideoStreamerPlugin.h"
-#include "ros_comm_plugin/DepthStreamerPlugin.h"
+// #include "ros_comm_plugin/ObjectCommPlugin.h"
+// #include "ros_comm_plugin/WorldCommPlugin.h"
+// #include "ros_comm_plugin/VideoStreamerPlugin.h"
+// #include "ros_comm_plugin/DepthStreamerPlugin.h"
 
 //------------------------------------------------------------------------------
 using namespace ambf;
@@ -1243,16 +1243,16 @@ void afBaseObject::removeAllChildSceneObjects(bool removeFromGraph){
 /// \brief afBaseObject::loadCommunicationPlugin
 /// \return
 ///
-bool afBaseObject::loadCommunicationPlugin(afBaseObjectPtr a_objPtr, afBaseObjectAttribsPtr a_attribs)
-{
-    bool result = false;
-    if (isPassive() == false){
-        afObjectCommunicationPlugin* commPlugin = new afObjectCommunicationPlugin();
-        result = m_pluginManager.loadPlugin(a_objPtr, a_attribs, commPlugin);
-    }
+// bool afBaseObject::loadCommunicationPlugin(afBaseObjectPtr a_objPtr, afBaseObjectAttribsPtr a_attribs)
+// {
+//     bool result = false;
+//     if (isPassive() == false){
+//         afObjectCommunicationPlugin* commPlugin = new afObjectCommunicationPlugin();
+//         result = m_pluginManager.loadPlugin(a_objPtr, a_attribs, commPlugin);
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
 
 ///
@@ -1654,7 +1654,7 @@ bool afConstraintActuator::createFromAttribs(afConstraintActuatorAttributes *a_a
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return result;
 }
@@ -2568,7 +2568,7 @@ bool afRigidBody::createFromAttribs(afRigidBodyAttributes *a_attribs)
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    //loadCommunicationPlugin(this, a_attribs);
 
     // Where to add the visual, collision and this object?
     return true;
@@ -2996,7 +2996,7 @@ bool afSoftBody::createFromAttribs(afSoftBodyAttributes *a_attribs)
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return true;
 }
@@ -3932,7 +3932,7 @@ bool afRayTracerSensor::createFromAttribs(afRayTracerSensorAttributes *a_attribs
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return result;
 }
@@ -5303,16 +5303,16 @@ void afWorld::getEnclosureExtents(double &length, double &width, double &height)
     height = m_enclosureH;
 }
 
-bool afWorld::loadCommunicationPlugin(afWorldPtr a_worldPtr, afWorldAttribsPtr a_attribs)
-{
-    bool result = false;
-    if (isPassive() == false){
-        afWorldCommunicationPlugin* commPlugin = new afWorldCommunicationPlugin();
-        result = m_pluginManager.loadPlugin(a_worldPtr, a_attribs, commPlugin);
-    }
+// bool afWorld::loadCommunicationPlugin(afWorldPtr a_worldPtr, afWorldAttribsPtr a_attribs)
+// {
+//     bool result = false;
+//     if (isPassive() == false){
+//         afWorldCommunicationPlugin* commPlugin = new afWorldCommunicationPlugin();
+//         result = m_pluginManager.loadPlugin(a_worldPtr, a_attribs, commPlugin);
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
 
 ///
@@ -5734,7 +5734,7 @@ bool afWorld::createFromAttribs(afWorldAttributes* a_attribs){
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return true;
 }
@@ -6479,21 +6479,22 @@ bool afCamera::createFromAttribs(afCameraAttributes *a_attribs)
     if (m_publishImage || m_publishDepth){
 
         createPreProcessingShaders(&a_attribs->m_preProcessShaderAttribs);
-
+        std::cerr << "In file " << __FILE__ << " function " << __FUNCTION__ << " line " << __LINE__
+                  << " need to fix this" << std::endl;
         if(m_publishImage){
-            enableImagePublishing(&a_attribs->m_publishImageResolution);
-            afCameraVideoStreamerPlugin* videoPlugin = new afCameraVideoStreamerPlugin();
-            m_pluginManager.loadPlugin(this, a_attribs, videoPlugin);
+            // enableImagePublishing(&a_attribs->m_publishImageResolution);
+            // afCameraVideoStreamerPlugin* videoPlugin = new afCameraVideoStreamerPlugin();
+            // m_pluginManager.loadPlugin(this, a_attribs, videoPlugin);
         }
 
         if (m_publishDepth){
-            enableDepthPublishing(&a_attribs->m_publishImageResolution, &a_attribs->m_depthNoiseAttribs, &a_attribs->m_depthComputeShaderAttribs);
-            afCameraDepthStreamerPlugin* depthPlugin = new afCameraDepthStreamerPlugin();
-            m_pluginManager.loadPlugin(this, a_attribs, depthPlugin);
+            // enableDepthPublishing(&a_attribs->m_publishImageResolution, &a_attribs->m_depthNoiseAttribs, &a_attribs->m_depthComputeShaderAttribs);
+            // afCameraDepthStreamerPlugin* depthPlugin = new afCameraDepthStreamerPlugin();
+            // m_pluginManager.loadPlugin(this, a_attribs, depthPlugin);
         }
     }
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return true;
 }
@@ -7243,7 +7244,7 @@ bool afLight::createFromAttribs(afLightAttributes *a_attribs)
 
     loadPlugins(this, a_attribs, &a_attribs->m_pluginAttribs);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return valid;
 }
@@ -7880,7 +7881,7 @@ bool afVehicle::createFromAttribs(afVehicleAttributes *a_attribs)
     string remap_idx = afUtils::getNonCollidingIdx(getQualifiedIdentifier(), m_afWorld->getVehicleMap());
     setGlobalRemapIdx(remap_idx);
 
-    loadCommunicationPlugin(this, a_attribs);
+    // loadCommunicationPlugin(this, a_attribs);
 
     return result;
 }

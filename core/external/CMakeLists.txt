@@ -36,4 +36,3 @@
 #  $Author: Adnan Munawar $
 #  $Date:  $
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tf_function)

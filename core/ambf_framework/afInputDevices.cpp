@@ -642,7 +642,9 @@ bool afSimulatedDevice::createFromAttribs(afSimulatedDeviceAttribs *a_attribs)
         if(attribs.m_sdeDefined){
             m_rootLink->setPassive(false);
             m_rootLink->setNamespace(m_rootLink->getNamespace() + "/simulated_device/");
-            m_rootLink->loadCommunicationPlugin(m_rootLink, a_attribs);
+            //            m_rootLink->loadCommunicationPlugin(m_rootLink, a_attribs);
+            std::cerr << "In file " << __FILE__ << " function " << __FUNCTION__ << " line " << __LINE__
+                      << " need to fix this" << std::endl;
         }
 
         // Initialize the default controller to be the force controller
