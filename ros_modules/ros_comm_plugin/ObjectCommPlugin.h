@@ -46,7 +46,7 @@
 #include "afFramework.h"
 
 
-#ifdef AF_ENABLE_AMBF_COMM_SUPPORT
+// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 #include "ambf_server/Actuator.h"
 #include "ambf_server/Camera.h"
 #include "ambf_server/Light.h"
@@ -55,7 +55,7 @@
 #include "ambf_server/Sensor.h"
 #include "ambf_server/Vehicle.h"
 #include "ambf_server/World.h"
-#endif
+// #endif
 
 using namespace ambf;
 
@@ -77,7 +77,7 @@ struct afRigidBodyState{
 
 class afObjectCommunicationPlugin: public afObjectPlugin{
 public:
-#ifdef AF_ENABLE_AMBF_COMM_SUPPORT
+// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs) override;
 
     virtual void graphicsUpdate() override;
@@ -141,11 +141,11 @@ private:
     // Counter for the times we have read from ambf_comm API
     // This is only for internal use as it could be reset
     unsigned int m_read_count = 0;
-#else
-    virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
-        return -1;
-    }
-#endif
+// #else
+//     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
+//         return -1;
+//     }
+// #endif
 };
 
 #endif

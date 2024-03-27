@@ -28,6 +28,13 @@ BODY Chassis:
   restitution: 0
   collision groups: [0]
   color rgba: {a: 1.0, b: 0.6619, g: 0.0908, r: 0.2876}
+  plugins: [  # Here we define the plugin
+    {
+      name: external_ros_communication,
+      #path: "/home/lauraconnolly/ros2-changes/restructure/catkin_ws/devel/.private/ros_comm_plugin/lib/",
+      filename: libros_comm_plugin.so
+    },
+  ]
 BODY WheelBL:
   name: WheelBL
   mesh: WheelBL.STL

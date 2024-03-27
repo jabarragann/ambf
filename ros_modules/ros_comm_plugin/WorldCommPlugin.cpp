@@ -1,7 +1,8 @@
 #include "WorldCommPlugin.h"
 
+// AF_REGISTER_WORLD_PLUGIN(afWorldCommunicationPlugin);
 
-#ifdef AF_ENABLE_AMBF_COMM_SUPPORT
+// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 int afWorldCommunicationPlugin::init(const afWorldPtr a_afWorld, const afWorldAttribsPtr a_worldAttribs)
 {
     m_worldPtr = a_afWorld;
@@ -112,4 +113,4 @@ void afWorldCommunicationPlugin::worldUpdateState(afWorldPtr worldPtr, double dt
     m_afWorldCommPtr->set_num_devices(worldPtr->getNumDevices());
 }
 
-#endif
+// #endif

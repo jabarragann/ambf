@@ -41,7 +41,7 @@
 cmake_minimum_required(VERSION 3.10)
 project (ros_comm_plugin)
 
-set (ROS1_depends AMBF)
+set (ROS1_depends AMBF ambf_server)
 find_package (catkin QUIET
   COMPONENTS ${ROS1_depends})
 

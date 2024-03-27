@@ -1,6 +1,8 @@
 #include "DepthStreamerPlugin.h"
 
-#ifdef AF_ENABLE_OPEN_CV_SUPPORT
+// AF_REGISTER_DEPTH_PLUGIN(afCameraDepthStreamerPlugin);
+
+// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 int afCameraDepthStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
 {
     m_objectPtr = a_afObjectPtr;
@@ -68,5 +70,5 @@ bool afCameraDepthStreamerPlugin::close()
     }
     return true;
 }
-#endif
+// #endif
 

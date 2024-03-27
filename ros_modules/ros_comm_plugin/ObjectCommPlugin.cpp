@@ -1,5 +1,7 @@
 #include "ObjectCommPlugin.h"
 
+AF_REGISTER_OBJECT_PLUGIN(afObjectCommunicationPlugin);
+
 void afRigidBodyState::setChildrenNames(afRigidBodyPtr afRBPtr){
     int num_children = afRBPtr->m_CJ_PairsActive.size();
     if (num_children > 0){
@@ -62,7 +64,7 @@ void afRigidBodyState::setJointEfforts(afRigidBodyPtr afRBPtr){
     }
 }
 
-#ifdef AF_ENABLE_AMBF_COMM_SUPPORT
+// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 
 int afObjectCommunicationPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
 {
@@ -1035,5 +1037,5 @@ void afObjectCommunicationPlugin::volumeUpdateState(afVolumePtr volPtr, double d
 {
 
 }
-#endif
+// #endif
 

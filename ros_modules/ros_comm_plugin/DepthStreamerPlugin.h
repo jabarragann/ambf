@@ -45,18 +45,18 @@
 
 #include "afFramework.h"
 
-#ifdef AF_ENABLE_OPEN_CV_SUPPORT
+// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 #include "ambf_server/RosComBase.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "sensor_msgs/point_cloud2_iterator.h"
-#endif
+// #endif
 
 using namespace ambf;
 
 
 class afCameraDepthStreamerPlugin: public afObjectPlugin{
 public:
-#ifdef AF_ENABLE_OPEN_CV_SUPPORT
+// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs) override;
     virtual void graphicsUpdate() override;
     virtual void physicsUpdate(double) override;
@@ -79,11 +79,11 @@ private:
     sensor_msgs::PointCloud2::Ptr m_depthPointCloudMsg;
     sensor_msgs::PointCloud2Modifier* m_depthPointCloudModifier = nullptr;
     ros::Publisher m_depthPointCloudPub;
-#else
-    virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
-        return -1;
-    }
-#endif
+// #else
+//     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
+//         return -1;
+//     }
+// #endif
 };
 
 #endif

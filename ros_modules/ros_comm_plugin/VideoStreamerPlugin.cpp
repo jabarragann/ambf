@@ -1,7 +1,8 @@
 #include "VideoStreamerPlugin.h"
 
+// AF_REGISTER_VIDEO_PLUGIN(afCameraVideoStreamerPlugin);
 
-#ifdef AF_ENABLE_OPEN_CV_SUPPORT
+// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 image_transport::ImageTransport* afCameraVideoStreamerPlugin::s_imageTransport = nullptr;
 int afCameraVideoStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
 {
@@ -47,4 +48,4 @@ bool afCameraVideoStreamerPlugin::close()
     }
     return true;
 }
-#endif
+// #endif
