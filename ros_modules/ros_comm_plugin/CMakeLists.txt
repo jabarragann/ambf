@@ -1,5 +1,5 @@
 #  Software License Agreement (BSD License)
-#  Copyright (c) 2019-2021, AMBF.
+#  Copyright (c) 2019-2024, AMBF.
 #  (https://github.com/WPI-AIM/ambf)
 #
 #  All rights reserved.
@@ -41,7 +41,7 @@
 cmake_minimum_required(VERSION 3.10)
 project (ros_comm_plugin)
 
-set (ROS1_depends AMBF ambf_server)
+set (ROS1_depends ambf_server cv_bridge image_transport)
 find_package (catkin QUIET
   COMPONENTS ${ROS1_depends})
 
@@ -86,7 +86,6 @@ else(ROS_VERSION 2)
 endif()
 
 find_package (AMBF REQUIRED)
-message ("--------------------- ${AMBF_INCLUDE_DIRS} -------------")
 include_directories (${AMBF_INCLUDE_DIRS})
 
 set (HDR_FILES
@@ -103,6 +102,21 @@ set (SRC_FILES
 
 ## Declare a C++ library
 add_library(ros_comm_plugin ${HDR_FILES} ${SRC_FILES})
+
+find_package (OpenCV QUIET)
+if (OpenCV_FOUND)
+  message (STATUS "-- *** FOUND OPENCV")
+  if (cv_bridge_FOUND AND image_transport_FOUND)
+    message(STATUS "-- *** FOUND ROS_CV_BRIDGE and IMAGE_TRANSPORT, ENABLING VIDEO PUBLISHING SUPPORT")
+    add_definitions (-DAF_ENABLE_OPEN_CV_SUPPORT)
+    include_directories (${OpenCV_INCLUDE_DIRS})
+    target_link_libraries (ros_comm_plugin ${OpenCV_LIBRARIES})
+  else()
+    message (STATUS "-- *** ROS CV_BRIDGE and IMAGE_TRANSPORT NOT FOUND")
+  endif ()
+else ()
+  message (STATUS "-- *** OPENCV NOT FOUND")
+endif ()
 
 if (ROS_VERSION EQUAL 1)
   add_dependencies(ros_comm_plugin ${catkin_EXPORTED_TARGETS})

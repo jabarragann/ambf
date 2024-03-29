@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -45,18 +45,18 @@
 
 #include "afFramework.h"
 
-// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
+#ifdef AF_ENABLE_OPEN_CV_SUPPORT
 #include <ambf_server/RosComBase.h>
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
-// #endif
+#endif
 
 using namespace ambf;
 
 class afCameraVideoStreamerPlugin: public afObjectPlugin{
 public:
-// #ifdef AF_ENABLE_OPEN_CV_SUPPORT
+#ifdef AF_ENABLE_OPEN_CV_SUPPORT
     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs) override;
     virtual void graphicsUpdate() override;
     virtual void physicsUpdate(double) override;
@@ -81,11 +81,11 @@ private:
     static image_transport::ImageTransport *s_imageTransport;
     // Image Transport Publisher
     image_transport::Publisher m_imagePublisher;
-// #else
-//     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
-//         return -1;
-//     }
-// #endif
+#else
+    virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
+        return -1;
+    }
+#endif // AF_ENABLE_OPEN_CV_SUPPORT
 };
 
 #endif

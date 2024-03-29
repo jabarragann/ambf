@@ -82,7 +82,8 @@ void afWorldCommunicationPlugin::worldFetchCommand(afWorldPtr worldPtr, double)
                 string topic_name = new_topics[i];
                 afPointCloudPtr afPC = new afPointCloud(worldPtr);
                 afPC->m_topicName = topic_name;
-                afPC->loadCommunicationPlugin(afPC, nullptr);
+                // afPC->loadCommunicationPlugin(afPC, nullptr);
+                std::cerr << __FILE__ << " " << __LINE__ << "Anton: commented out loadCommunicationPlugin" << std::endl;
                 worldPtr->m_pcMap[topic_name] = afPC;
             }
         }
