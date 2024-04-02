@@ -19,6 +19,9 @@
 
   <!-- <build_depend condition="$ROS_VERSION == 1">cisst_ros_crtk</build_depend> -->
   <build_depend condition="$ROS_VERSION == 1">AMBF</build_depend>
+  <exec_depend condition="$ROS_VERSION == 1">AMBF</exec_depend>
+  <build_depend condition="$ROS_VERSION == 1">Boost</build_depend>
+  <exec_depend condition="$ROS_VERSION == 1">Boost</exec_depend>
   <build_depend condition="$ROS_VERSION == 1">ambf_server</build_depend>
   <build_depend condition="$ROS_VERSION == 1">cv_bridge</build_depend>
   <build_depend condition="$ROS_VERSION == 1">image_transport</build_depend>

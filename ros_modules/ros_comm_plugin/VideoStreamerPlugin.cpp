@@ -1,6 +1,6 @@
 #include "VideoStreamerPlugin.h"
 
-// AF_REGISTER_VIDEO_PLUGIN(afCameraVideoStreamerPlugin);
+AF_REGISTER_OBJECT_PLUGIN(afCameraVideoStreamerPlugin);
 
 #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 

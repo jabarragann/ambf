@@ -1,6 +1,6 @@
 #include "WorldCommPlugin.h"
 
-// AF_REGISTER_WORLD_PLUGIN(afWorldCommunicationPlugin);
+AF_REGISTER_WORLD_PLUGIN(afWorldCommunicationPlugin);
 
 // #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 int afWorldCommunicationPlugin::init(const afWorldPtr a_afWorld, const afWorldAttribsPtr a_worldAttribs)

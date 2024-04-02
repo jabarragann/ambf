@@ -1,6 +1,6 @@
 #include "DepthStreamerPlugin.h"
 
-// AF_REGISTER_DEPTH_PLUGIN(afCameraDepthStreamerPlugin);
+AF_REGISTER_OBJECT_PLUGIN(afCameraDepthStreamerPlugin);
 
 // #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 int afCameraDepthStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
