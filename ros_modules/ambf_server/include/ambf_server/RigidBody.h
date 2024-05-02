@@ -60,7 +60,7 @@ public:
     void cur_linear_velocity(double vx, double vy, double vz);
     void cur_angular_velocity(double ax, double ay, double az);
     inline void set_mass(double a_mass){m_State.mass = a_mass;}
-    inline void set_principal_inertia(double Ixx, double Iyy, double Izz){m_State.p_inertia.x = Ixx; m_State.p_inertia.y = Iyy; m_State.p_inertia.z = Izz;}
+    inline void set_principal_inertia(double Ixx, double Iyy, double Izz){m_State.pInertia.x = Ixx; m_State.pInertia.y = Iyy; m_State.pInertia.z = Izz;}
     // This method is to set any additional data that could for debugging purposes or future use
     void set_userdata(std::vector<float> &a_data);
     void set_children_names(std::vector<std::string> children_names);

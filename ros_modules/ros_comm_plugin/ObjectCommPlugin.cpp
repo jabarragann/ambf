@@ -75,6 +75,8 @@ int afObjectCommunicationPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
         return 0;
     }
 
+    cerr  << "****INFO! TEST STATEMENT\n";
+
     string objName = m_objectPtr->getName() + m_objectPtr->getGlobalRemapIdx();
     string objNamespace = m_objectPtr->getNamespace();
     string objQualifiedIdentifier = m_objectPtr->getQualifiedIdentifier() + m_objectPtr->getGlobalRemapIdx();
@@ -594,6 +596,7 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
         break;
     case ambf_msgs::RigidBodyCmd::TYPE_POSITION:{
         afRBPtr->m_activeControllerType = afControlType::POSITION;
+        // cerr << "**** CARTESIAN CMD\n";
         // If the body is kinematic, we just want to control the position
         if (btRBPtr->isStaticOrKinematicObject()){
             btTransform Tcommand;
@@ -648,17 +651,22 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
             // Use the internal Cartesian Rotation Controller to Compute Output
             rCommand = afRBPtr->m_controller.computeOutput<btVector3>(cur_rot, cmd_rot, dt);
 
-            if (afRBPtr->m_controller.m_positionOutputType == afControlType::FORCE){
-                // IF PID GAINS WERE DEFINED, USE THE PID CONTROLLER
-                // Use the internal Cartesian Position Controller
-                btRBPtr->applyCentralForce(pCommand);
-                btRBPtr->applyTorque(rCommand);
+            static bool once = true;
+            if (once){
+                once = false;
+                printf("CONTROLLER VALS %s %f %f %d \n", afRBPtr->getName().c_str(), afRBPtr->m_controller.getP_lin(), afRBPtr->m_controller.getD_lin(), afRBPtr->m_controller.isEnabled());
             }
-            else{
+            // if (afRBPtr->m_controller.m_positionOutputType == afControlType::FORCE){
+            //     // IF PID GAINS WERE DEFINED, USE THE PID CONTROLLER
+            //     // Use the internal Cartesian Position Controller
+            //     btRBPtr->applyCentralForce(pCommand);
+            //     btRBPtr->applyTorque(rCommand);
+            // }
+            // else{
                 // ELSE USE THE VELOCITY INTERFACE
                 btRBPtr->setLinearVelocity(pCommand);
                 btRBPtr->setAngularVelocity(rCommand);
-            }
+            // }
         }
     }
         break;

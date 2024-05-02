@@ -56,9 +56,9 @@ public:
     inline void set_wheel_count(int count){m_State.wheel_count = count;}
     inline void set_mass(double mass){m_State.mass = mass;}
     inline void set_principal_inertia(double ix, double iy, double iz){
-        m_State.p_inertia.x = ix;
-        m_State.p_inertia.y = iy;
-        m_State.p_inertia.z = iz;
+        m_State.pInertia.x = ix;
+        m_State.pInertia.y = iy;
+        m_State.pInertia.z = iz;
     }
 
     void set_type(std::string type);

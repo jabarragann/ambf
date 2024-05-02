@@ -2526,6 +2526,8 @@ bool afRigidBody::createFromAttribs(afRigidBodyAttributes *a_attribs)
 
     m_controller.createFromAttribs(&a_attribs->m_controllerAttribs);
 
+    printf("INFO! CONTROLLER VALS %s %f %f %d \n", getName().c_str(), m_controller.getP_lin(), m_controller.getD_lin(), m_controller.isEnabled());
+
     setMass(a_attribs->m_inertialAttribs.m_mass);
     if(a_attribs->m_inertialAttribs.m_estimateInertia){
         estimateInertia();

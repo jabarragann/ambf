@@ -336,7 +336,7 @@ protected:
     }
 
 #define AF_REGISTER_OBJECT_PLUGIN(PluginClass) \
-    extern "C" ambf::afObjectPlugin* CreateObjectPlugin() \
+    extern "C" ambf::afObjectPlugin* CreatePlugin() \
     {\
         return new PluginClass(); \
     }
