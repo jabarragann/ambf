@@ -89,7 +89,6 @@ endif()
 find_package (AMBF REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem)
 
-message ("--------------------- ${AMBF_INCLUDE_DIRS} -------------")
 include_directories (${AMBF_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 

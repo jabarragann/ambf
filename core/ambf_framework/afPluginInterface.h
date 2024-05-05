@@ -318,19 +318,19 @@ protected:
 }
 
 #define AF_REGISTER_SIMULATOR_PLUGIN(PluginClass) \
-    extern "C" ambf::afSimulatorPlugin* CreateSimulatorPlugin() \
+    extern "C" ambf::afSimulatorPlugin* CreatePlugin() \
     {\
         return new PluginClass(); \
     }
 
 #define AF_REGISTER_MODEL_PLUGIN(PluginClass) \
-    extern "C" ambf::afModelPlugin* CreateModelPlugin() \
+    extern "C" ambf::afModelPlugin* CreatePlugin() \
     {\
         return new PluginClass(); \
     }
 
 #define AF_REGISTER_WORLD_PLUGIN(PluginClass) \
-    extern "C" ambf::afWorldPlugin* CreateWorldPlugin() \
+    extern "C" ambf::afWorldPlugin* CreatePlugin() \
     {\
         return new PluginClass(); \
     }
