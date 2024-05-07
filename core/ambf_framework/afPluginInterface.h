@@ -169,7 +169,7 @@ public: static TPtr Create(const std::string &_filename,
         }
 
         if (!found){
-            cerr << "ERROR! PLUGIN: " << fullname << " NOT FOUND. TRYING WITHOUT PATH!"  "\n";
+            cerr << "WARNING! PLUGIN: " << fullname << " NOT FOUND. TRYING WITHOUT PATH!"  "\n";
             fullname = filename;
         }
 
@@ -183,6 +183,7 @@ public: static TPtr Create(const std::string &_filename,
                   << dlerror() << "!\n";
             return result;
         }
+        cerr << "INFO! FOUND PLUGIN: " << filename << " USING LD_LIBRARY_PATH!" << endl;
 
         registerFunc.ptr = dlsym(dlHandle, registerName.c_str());
 
