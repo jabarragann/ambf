@@ -43,12 +43,9 @@
 #ifndef CAMERAROSCOM_H
 #define CAMERAROSCOM_H
 
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/CameraState.h"
-#include "ambf_msgs/CameraCmd.h"
+#include <ambf_server/RosComBase.h>
 
-
-class CameraRosCom: public RosComBase<ambf_msgs::CameraState, ambf_msgs::CameraCmd>{
+class CameraRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, CameraState), AMBF_RAL_MSG(ambf_msgs, CameraCmd)>{
 public:
     CameraRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
     virtual void init();

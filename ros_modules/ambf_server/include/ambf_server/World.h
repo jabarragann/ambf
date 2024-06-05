@@ -45,9 +45,7 @@
 
 #include <string>
 #include "ambf_server/WorldRosCom.h"
-
-#include "sensor_msgs/PointCloud.h"
-#include "std_msgs/Float32.h"
+#include <ambf_server/ambf_ral.h>
 
 namespace ambf_comm{
 

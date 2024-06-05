@@ -43,12 +43,10 @@
 #ifndef SENSORROSCOM_H
 #define SENSORROSCOM_H
 
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/SensorState.h"
-#include "ambf_msgs/SensorCmd.h"
+#include <ambf_server/RosComBase.h>
 
 
-class SensorRosCom: public RosComBase<ambf_msgs::SensorState, ambf_msgs::SensorCmd>{
+class SensorRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, SensorState), AMBF_RAL_MSG(ambf_msgs, SensorCmd)>{
 public:
     SensorRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
     virtual void init();

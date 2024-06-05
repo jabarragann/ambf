@@ -43,12 +43,9 @@
 #ifndef ACTUATORROSCOM_H
 #define ACTUATORROSCOM_H
 
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/ActuatorState.h"
-#include "ambf_msgs/ActuatorCmd.h"
+#include <ambf_server/RosComBase.h>
 
-
-class ActuatorRosCom: public RosComBase<ambf_msgs::ActuatorState, ambf_msgs::ActuatorCmd>{
+class ActuatorRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, ActuatorState), AMBF_RAL_MSG(ambf_msgs, ActuatorCmd)>{
 public:
     ActuatorRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
     virtual void init();

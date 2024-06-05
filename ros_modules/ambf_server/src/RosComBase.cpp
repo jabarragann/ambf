@@ -40,24 +40,7 @@
 */
 //==============================================================================
 
-
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/ActuatorCmd.h"
-#include "ambf_msgs/ActuatorState.h"
-#include "ambf_msgs/CameraState.h"
-#include "ambf_msgs/CameraCmd.h"
-#include "ambf_msgs/LightState.h"
-#include "ambf_msgs/LightCmd.h"
-#include "ambf_msgs/ObjectCmd.h"
-#include "ambf_msgs/ObjectState.h"
-#include "ambf_msgs/RigidBodyCmd.h"
-#include "ambf_msgs/RigidBodyState.h"
-#include "ambf_msgs/SensorCmd.h"
-#include "ambf_msgs/SensorState.h"
-#include "ambf_msgs/VehicleCmd.h"
-#include "ambf_msgs/VehicleState.h"
-#include "ambf_msgs/WorldCmd.h"
-#include "ambf_msgs/WorldState.h"
+#include <ambf_server/RosComBase.h>
 
 // #if ROS1
 bool afROSNode::s_initialized;

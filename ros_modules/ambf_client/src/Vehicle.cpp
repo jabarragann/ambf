@@ -62,7 +62,7 @@ tf::Quaternion Vehicle::get_orientation() {
 
 tf::Vector3 Vehicle::get_principal_inertia() {
     tf::Vector3 I(0, 0, 0);
-    tf::pointMsgToTF(m_State.pInertia, I);
+    tf::pointMsgToTF(m_State.p_inertia, I);
 
     return I;
 }

@@ -93,6 +93,7 @@ endif()
 
 
 set (HDR_FILES
+    include/${PROJECT_NAME}/ambf_ral.h
     include/${PROJECT_NAME}/RosComBase.h
     include/${PROJECT_NAME}/CmdWatchDog.h
     include/${PROJECT_NAME}/Actuator.h
@@ -113,6 +114,7 @@ set (HDR_FILES
     include/${PROJECT_NAME}/WorldRosCom.h)
 
 set (SRC_FILES
+    src/ambf_ral.cpp
     src/RosComBase.cpp
     src/Actuator.cpp
     src/ActuatorRosCom.cpp
@@ -147,8 +149,8 @@ else(ROS_VERSION EQUAL 2)
     target_link_libraries(ambf_server
       ${rclcpp_LIBRARIES}
     )
-    # target_link_libraries(ambf_server
-    #   ${ambf_msgs_LIBRARIES}
-    # )
+    target_link_libraries(ambf_server
+      ${ROS2_depends}
+    )
     ament_package ()
 endif()

@@ -43,12 +43,9 @@
 #ifndef OBJECTROSCOM_H
 #define OBJECTROSCOM_H
 
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/ObjectState.h"
-#include "ambf_msgs/ObjectCmd.h"
+#include <ambf_server/RosComBase.h>
 
-
-class ObjectRosCom: public RosComBase<ambf_msgs::ObjectState, ambf_msgs::ObjectCmd>{
+class ObjectRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, ObjectState), AMBF_RAL_MSG(ambf_msgs, ObjectCmd)>{
 public:
     ObjectRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
     virtual void init();

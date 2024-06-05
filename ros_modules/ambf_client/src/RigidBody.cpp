@@ -262,6 +262,7 @@ float RigidBody::get_joint_vel(int joint_idx){
 template <>
 float RigidBody::get_joint_vel(std::string joint_name){
 
+
     int joint_idx = get_joint_idx_from_name(joint_name);
 
     return get_joint_vel(joint_idx);
@@ -286,7 +287,7 @@ float RigidBody::get_joint_effort(std::string joint_name){
 
 tf::Vector3 RigidBody::get_inertia() {
     tf::Vector3 I(0.0, 0.0, 0.0);
-    tf::pointMsgToTF(m_State.pInertia, I);
+    tf::pointMsgToTF(m_State.p_inertia, I);
     return I;
 }
 

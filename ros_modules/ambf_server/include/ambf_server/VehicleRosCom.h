@@ -43,12 +43,12 @@
 #ifndef VEHICLEROSCOM_H
 #define VEHICLEROSCOM_H
 
-#include "ambf_server/RosComBase.h"
-#include "ambf_msgs/VehicleState.h"
-#include "ambf_msgs/VehicleCmd.h"
+
+#include <ambf_server/RosComBase.h>
 
 
-class VehicleRosCom: public RosComBase<ambf_msgs::VehicleState, ambf_msgs::VehicleCmd>{
+
+class VehicleRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, VehicleState), AMBF_RAL_MSG(ambf_msgs, VehicleCmd)>{
 public:
     VehicleRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
     virtual void init();

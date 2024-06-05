@@ -58,7 +58,7 @@ public:
     void cur_force(double fx, double fy, double fz);
     void cur_torque(double nx, double ny, double nz);
     inline void set_mass(double a_mass){m_State.mass = a_mass;}
-    inline void set_principal_inertia(double Ixx, double Iyy, double Izz){m_State.pInertia.x = Ixx; m_State.pInertia.y = Iyy; m_State.pInertia.z = Izz;}
+    inline void set_principal_inertia(double Ixx, double Iyy, double Izz){m_State.p_inertia.x = Ixx; m_State.p_inertia.y = Iyy; m_State.p_inertia.z = Izz;}
     // This method is to set the description of additional data that could for debugging purposes or future use
     inline void set_userdata_desc(std::string description){m_State.userdata_description = description;}
     // This method is to set any additional data that could for debugging purposes or future use

@@ -49,15 +49,9 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin QUIET COMPONENTS
-  geometry_msgs
-  roscpp
-  roslib
-  rospy
-  sensor_msgs
-  std_msgs
-  tf
-)
+set (ROS1_depends geometry_msgs roscpp roslib rospy sensor_msgs std_msgs tf)
+find_package (catkin QUIET
+  COMPONENTS ${ROS1_depends})
 
 # ROS 1
 if (catkin_FOUND)
