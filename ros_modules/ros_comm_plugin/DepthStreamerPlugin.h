@@ -75,7 +75,7 @@ private:
     unsigned int m_read_count = 0;
 
     // Image Transport ROS Node
-    ros::NodeHandle* m_rosNode;
+    ambf_ral::node_ptr_t m_rosNode;
     sensor_msgs::PointCloud2::Ptr m_depthPointCloudMsg;
     sensor_msgs::PointCloud2Modifier* m_depthPointCloudModifier = nullptr;
     ros::Publisher m_depthPointCloudPub;

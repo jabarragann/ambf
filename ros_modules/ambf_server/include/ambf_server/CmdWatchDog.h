@@ -44,57 +44,50 @@
 #define CMDWATCHDOG_H
 
 #include <iostream>
-#if ROS1
-#include <ros/rate.h>
-#elif ROS2
-#include <rclcpp/rate.hpp>
-#endif
+#include <ambf_server/ambf_ral.h>
 
 class CmdWatchDog{
 public:
-    CmdWatchDog(const int &a_freq_min, const int &a_freq_max , const double &time_out): m_freq_min(a_freq_min), m_freq_max(a_freq_max), m_time_out(time_out){
-        #if ROS1
-        m_expire_duration.fromSec(m_time_out);
-        m_initialized = false;
-        _m_minRatePtr.reset(new ros::Rate(m_freq_min));
-        _m_maxRatePtr.reset(new ros::Rate(m_freq_max));
-        m_ratePtr = _m_minRatePtr;
-        #endif
+    CmdWatchDog(ambf_ral::node_ptr_t node, const int &a_freq_min, const int &a_freq_max , const double &time_out):
+        m_node(node), m_freq_min(a_freq_min), m_freq_max(a_freq_max), m_time_out(time_out), m_expire_duration(0.0)
+    {
+        m_expire_duration = ambf_ral::duration_from_seconds(m_time_out);
+        m_minRatePtr.reset(new ambf_ral::rate_t(m_freq_min));
+        m_maxRatePtr.reset(new ambf_ral::rate_t(m_freq_max));
+        m_ratePtr = m_minRatePtr;
     }
-    void acknowledge_wd(){
-        #if ROS1
-        if (m_initialized == false){ m_ratePtr = _m_maxRatePtr;}
+    void acknowledge_wd(void) {
+        if (m_initialized == false) {
+            m_ratePtr = m_maxRatePtr;
+        }
         m_initialized = true;
-        m_next_cmd_expected_time= ros::Time::now() + m_expire_duration;
-        #endif
+        m_next_cmd_expected_time = ambf_ral::now(m_node) + m_expire_duration;
     }
-    bool is_wd_expired(){
-        #if ROS1
-        bool expired = (ros::Time::now() > m_next_cmd_expected_time && m_initialized) ? true : false;
-        if(expired) m_ratePtr = _m_minRatePtr;
+    bool is_wd_expired(void) {
+      bool expired = (ambf_ral::now(m_node) > m_next_cmd_expected_time && m_initialized) ? true : false;
+        if (expired) {
+            m_ratePtr = m_minRatePtr;
+        }
         return expired;
-        #endif
     }
-    void consolePrint(std::string class_name){
-        if(m_initialized){
+    void consolePrint(const std::string & class_name) {
+        if (m_initialized) {
             m_initialized = false;
             std::cerr << "WatchDog expired, Resetting \"" << class_name << "\" command" << std::endl;
         }
     }
-    #if ROS1
-    boost::shared_ptr<ros::Rate> m_ratePtr;
-    #endif
+    ambf_ral::rate_ptr_t m_ratePtr;
 
 protected:
     int m_freq_min, m_freq_max;
     double m_time_out;
 
 private:
-    #if ROS1
-    boost::shared_ptr<ros::Rate> _m_minRatePtr, _m_maxRatePtr;
-    ros::Time m_next_cmd_expected_time;
-    ros::Duration m_expire_duration;
-    #endif
-    bool m_initialized;
+    ambf_ral::node_ptr_t m_node = nullptr;
+    ambf_ral::rate_ptr_t m_minRatePtr, m_maxRatePtr;
+    ambf_ral::time_t m_next_cmd_expected_time;
+    ambf_ral::duration_t m_expire_duration;
+    bool m_initialized = false;
 };
+
 #endif

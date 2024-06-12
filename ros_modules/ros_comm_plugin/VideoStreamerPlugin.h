@@ -73,7 +73,7 @@ private:
     // This is only for internal use as it could be reset
     unsigned int m_read_count = 0;
     // Image Transport ROS Node
-    ros::NodeHandle* m_rosNode;
+    ambf_ral::node_ptr_t m_rosNode;
     afCameraPtr m_cameraPtr = nullptr;
     // Open CV Image Matrix
     cv::Mat m_imageMatrix;

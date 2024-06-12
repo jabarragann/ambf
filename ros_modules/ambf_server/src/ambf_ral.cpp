@@ -2,12 +2,12 @@
 
 #if ROS1
 
-ambf_ral::ambf_ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
+ambf_ral::ral::ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
 {
     init(argc, argv, node_name, anonymous_name);
 }
 
-ambf_ral::ambf_ral(const std::string & node_name, bool anonymous_name)
+ambf_ral::ral::ral(const std::string & node_name, bool anonymous_name)
 {
     // create fake argc/argv
     typedef char * char_pointer;
@@ -18,7 +18,7 @@ ambf_ral::ambf_ral(const std::string & node_name, bool anonymous_name)
     init(argc, argv, node_name, anonymous_name);
 }
 
-void ambf_ral::init(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
+void ambf_ral::ral::init(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
 {
     if (anonymous_name) {
         ros::init(argc, argv, node_name, ros::init_options::AnonymousName);
@@ -31,18 +31,18 @@ void ambf_ral::init(int & argc, char * argv[], const std::string & node_name, bo
     m_node = std::make_shared<ros::NodeHandle>();
 }
 
-ambf_ral::~ambf_ral()
+ambf_ral::ral::~ral()
 {
 }
 
 #elif ROS2
 
-ambf_ral::ambf_ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
+ambf_ral::ral::ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
 {
     init(argc, argv, node_name, anonymous_name);
 }
 
-ambf_ral::ambf_ral(const std::string & node_name, bool)
+ambf_ral::ral::ral(const std::string & node_name, bool)
 {
     if (!rclcpp::ok()) {
         // create fake argc/argv
@@ -57,7 +57,7 @@ ambf_ral::ambf_ral(const std::string & node_name, bool)
     m_stripped_arguments.push_back(node_name);
 }
 
-void ambf_ral::init(int & argc, char * argv[], const std::string & node_name, bool)
+void ambf_ral::ral::init(int & argc, char * argv[], const std::string & node_name, bool)
 {
     m_stripped_arguments = rclcpp::init_and_remove_ros_arguments(argc, argv);
     // reconstruct argc/argv from stripped arguments
@@ -71,7 +71,7 @@ void ambf_ral::init(int & argc, char * argv[], const std::string & node_name, bo
     m_node = std::make_shared<rclcpp::Node>(node_name);
 }
 
-ambf_ral::~ambf_ral()
+ambf_ral::ral::~ral()
 {
 }
 

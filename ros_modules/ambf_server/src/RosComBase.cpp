@@ -44,8 +44,8 @@
 
 // #if ROS1
 bool afROSNode::s_initialized;
-ros::NodeHandle* afROSNode::s_nodePtr;
-unsigned int afROSNode::s_registeredInstances = 0;
+ambf_ral::ral * s_ral = nullptr;
+size_t afROSNode::s_registeredInstances = 0;
 
 template<class T_state, class T_cmd>
 ///
@@ -68,7 +68,7 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
     nodePtr = afROSNode::getNodeAndRegister();
     aspinPtr.reset(new ros::AsyncSpinner(1));
     nodePtr->setCallbackQueue(&m_custom_queue);
-    m_watchDogPtr.reset(new CmdWatchDog(a_freq_min, a_freq_max, time_out));
+    m_watchDogPtr.reset(new CmdWatchDog(nodePtr, a_freq_min, a_freq_max, time_out));
 }
 
 template void RosComBase<ambf_msgs::ActuatorState, ambf_msgs::ActuatorCmd>::cleanUp();

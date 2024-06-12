@@ -1,12 +1,18 @@
 #ifndef _ambf_ral_h
 #define _ambf_ral_h
 
-// ros includes
-// #include <ambf_server/RosComBase.h>
+#include <tf/tf.h>
+#include <tf/LinearMath/Transform.h>
+
+// this file is based on cisst-ros/cisst_ros_bridge cisst_ral.h. we
+// should probably try to merge this and distribute in a single
+// package (Anton)
 
 #if ROS1
 
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
+
 #include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/PointCloud.h>
@@ -27,7 +33,77 @@
 #include <ambf_msgs/WorldState.h>
 #include <ambf_msgs/WorldCmd.h>
 
+#define AMBF_RAL_DEBUG(...) ROS_DEBUG(__VA_ARGS__)
+#define AMBF_RAL_INFO(...)  ROS_INFO(__VA_ARGS__)
+#define AMBF_RAL_WARN(...)  ROS_WARN(__VA_ARGS__)
+#define AMBF_RAL_ERROR(...) ROS_ERROR(__VA_ARGS__)
+#define AMBF_RAL_FATAL(...) ROS_FATAL(__VA_ARGS__)
+
 #define AMBF_RAL_MSG(package, message) package::message
+
+namespace ambf_ral {
+    typedef std::shared_ptr<ros::NodeHandle> node_ptr_t;
+    typedef ros::Rate rate_t;
+    typedef std::shared_ptr<rate_t> rate_ptr_t;
+    typedef ros::Time time_t;
+    typedef ros::Duration duration_t;
+
+    inline std::string node_namespace(node_ptr_t node) {
+        return node->getNamespace();
+    }
+
+    inline bool time_is_zero(const ros::Time & time) {
+        return time.isZero();
+    }
+
+    inline double age_in_seconds(const ros::Time & time,
+                                 node_ptr_t) {
+        return (ros::Time::now() - time).toSec();
+    }
+
+    inline ros::Time now(node_ptr_t) {
+        return ros::Time::now();
+    }
+
+    inline ros::Duration duration_from_seconds(const double & duration) {
+        return ros::Duration(duration);
+    }
+
+    inline void spin(node_ptr_t) {
+        ros::spin();
+    }
+
+    inline void shutdown(void) {
+        ros::shutdown();
+    }
+
+    template <typename _ros_t>
+    void create_publisher(std::shared_ptr<ros::Publisher> & publisher,
+                          node_ptr_t node,
+                          const std::string & topic,
+                          const size_t queue_size,
+                          const bool latched) {
+        publisher = std::make_shared<ros::Publisher>(node->advertise<_ros_t>(topic, queue_size, latched));
+        if (!publisher) {
+            std::cerr << "not created" << std::endl;
+        }
+    }
+
+    template <typename _pub_t>
+    inline size_t nb_subscribers(_pub_t publisher) {
+        return publisher->getNumSubscribers();
+    }
+
+    template <typename _pub_t>
+    inline void publisher_shutdown(_pub_t publisher) {
+        publisher->shutdown();
+    }
+
+    template <typename _pub_t>
+    inline void subscriber_shutdown(_pub_t subscriber) {
+        subscriber->shutdown();
+    }
+}
 
 #elif ROS2
 
@@ -53,21 +129,105 @@
 #include <ambf_msgs/msg/world_state.hpp>
 #include <ambf_msgs/msg/world_cmd.hpp>
 
+#define AMBF_RAL_DEBUG(...) RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
+#define AMBF_RAL_INFO(...)  RCLCPP_INFO(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
+#define AMBF_RAL_WARN(...)  RCLCPP_WARN(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
+#define AMBF_RAL_ERROR(...) RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
+#define AMBF_RAL_FATAL(...) RCLCPP_FATAL(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
+
 #define AMBF_RAL_MSG(package, message) package::msg::message
 
-#endif
+namespace ambf_ral {
+    typedef std::shared_ptr<rclcpp::Node> node_ptr_t;
+    typedef rclcpp::Rate rate_t;
+    typedef std::shared_ptr<rate_t> rate_ptr_t;
+    typedef rclcpp::Time time_t;
+    typedef rclcpp::Duration duration_t;
 
- class ambf_ral
+    inline std::string node_namespace(node_ptr_t node) {
+        return node->get_namespace();
+    }
+
+    inline bool time_is_zero(const rclcpp::Time & time) {
+        return ((time.seconds() == 0)
+                && (time.nanoseconds() == 0));
+    }
+
+    inline double age_in_seconds(const rclcpp::Time & time,
+                                 node_ptr_t node) {
+        return (node->get_clock()->now() - time).seconds();
+    }
+
+    inline rclcpp::Time now(node_ptr_t node) {
+        return node->get_clock()->now();
+    }
+
+    inline rclcpp::Duration duration_from_seconds(const double & duration) {
+        return rclcpp::Duration::from_seconds(duration);
+    }
+
+    inline void spin(node_ptr_t node) {
+        rclcpp::spin(node);
+    }
+
+    inline void shutdown(void) {
+        rclcpp::shutdown();
+    }
+
+    template <typename _ros_t>
+    void create_publisher(typename rclcpp::Publisher<_ros_t>::SharedPtr & publisher,
+                          node_ptr_t node,
+                          const std::string & topic,
+                          const size_t queue_size,
+                          const bool latched) {
+        rclcpp::QoS qos(queue_size);
+        if (latched) {
+            qos.transient_local();
+        }
+        publisher =
+            node->create_publisher<_ros_t>(topic, qos);
+    }
+
+    template <typename _pub_t>
+    inline size_t nb_subscribers(_pub_t publisher) {
+        return publisher->get_subscription_count();
+    }
+
+    template <typename _pub_t>
+    inline void publisher_shutdown(_pub_t) {
+        // publisher->shutdown();
+    }
+
+    template <typename _pub_t>
+    inline void subscriber_shutdown(_pub_t) {
+        // subscriber->shutdown();
+    }
+}
+
+#endif // ROS2
+
+
+namespace ambf_ral {
+
+    inline void clean_namespace(std::string & _ros_namespace) {
+#if ROS1
+        _ros_namespace = ros::names::clean(_ros_namespace);
+#endif
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), ' ', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), '-', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), '.', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), '(', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), ')', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), '[', '_');
+        std::replace(_ros_namespace.begin(), _ros_namespace.end(), ']', '_');
+    }
+
+    class ral
     {
     public:
-        #if ROS1
-        typedef std::shared_ptr<ros::NodeHandle> node_ptr_t;
-        #elif ROS2
-        typedef std::shared_ptr<rclcpp::Node> node_ptr_t;
-        #endif
-        ambf_ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name = true);
-        ambf_ral(const std::string & node_name, bool anonymous_name = true);
-        ~ambf_ral();
+        ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name = true);
+        ral(const std::string & node_name, bool anonymous_name = true);
+        ~ral();
 
         inline node_ptr_t node(void) {
             return m_node;
@@ -84,5 +244,6 @@
         node_ptr_t m_node;
         stripped_arguments_t m_stripped_arguments;
     };
+}
 
 #endif // _ambf_ral_h
