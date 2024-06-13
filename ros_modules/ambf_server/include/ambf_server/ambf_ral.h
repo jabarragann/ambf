@@ -1,9 +1,6 @@
 #ifndef _ambf_ral_h
 #define _ambf_ral_h
 
-#include <tf/tf.h>
-#include <tf/LinearMath/Transform.h>
-
 // this file is based on cisst-ros/cisst_ros_bridge cisst_ral.h. we
 // should probably try to merge this and distribute in a single
 // package (Anton)
@@ -12,6 +9,9 @@
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
+
+#include <tf/tf.h>
+#include <tf/LinearMath/Transform.h>
 
 #include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>

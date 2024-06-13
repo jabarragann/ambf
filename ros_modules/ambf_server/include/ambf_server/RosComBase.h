@@ -163,8 +163,6 @@ public:
 protected:
     ambf_ral::node_ptr_t nodePtr;
 
-    boost::shared_ptr<ros::AsyncSpinner> aspinPtr;
-
     boost::shared_ptr<CmdWatchDog> m_watchDogPtr;
 
     std::string m_namespace;
