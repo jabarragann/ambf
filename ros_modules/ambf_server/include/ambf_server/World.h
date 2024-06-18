@@ -103,19 +103,23 @@ public:
     void init();
     void remove();
 
-    sensor_msgs::PointCloudPtr get_point_cloud();
+    AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) get_point_cloud();
 
     double get_radius(){return m_radius;}
     void set_radius(double a_radius){m_radius = abs(a_radius);}
 
 private:
-    void pc_sub_cb(sensor_msgs::PointCloudPtr msg);
-    void radius_sub_cb(std_msgs::Float32Ptr msg);
+    void pc_sub_cb(const AMBF_RAL_MSG(sensor_msgs, PointCloud) & msg);
+    void radius_sub_cb(const AMBF_RAL_MSG(std_msgs, Float32) & msg);
+#if ROS1
     ros::Subscriber m_pcSub;
     ros::Subscriber m_radiusSub;
     ros::Subscriber m_colorSub;
+#elif ROS2
+
+#endif
     std::string m_topicName;
-    sensor_msgs::PointCloudPtr m_StatePtr;
+    AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) m_StatePtr;
 
     double m_radius=10;
 };

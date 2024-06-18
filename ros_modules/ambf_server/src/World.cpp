@@ -71,8 +71,12 @@ PointCloudHandler::PointCloudHandler(std::string a_topicName)
 /// \brief PointCloudHandler::init
 ///
 void PointCloudHandler::init(){
+#if ROS1
     m_pcSub = afROSNode::getNode()->subscribe(m_topicName, 5, &PointCloudHandler::pc_sub_cb, this);
     m_radiusSub = afROSNode::getNode()->subscribe(m_topicName + "/radius", 5, &PointCloudHandler::radius_sub_cb, this);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -80,24 +84,30 @@ void PointCloudHandler::init(){
 /// \brief PointCloundHandler::sub_cb
 /// \param msg
 ///
-void PointCloudHandler::pc_sub_cb(sensor_msgs::PointCloudPtr msg){
-    m_StatePtr = msg;
-}
-
-void PointCloudHandler::radius_sub_cb(std_msgs::Float32Ptr msg)
+void PointCloudHandler::pc_sub_cb(const AMBF_RAL_MSG(sensor_msgs, PointCloud) & msg)
 {
-    set_radius((double)msg->data);
+  std::cerr << __FILE__ << __LINE__ << std::endl;
+  // m_StatePtr = msg;
+}
+
+void PointCloudHandler::radius_sub_cb(const AMBF_RAL_MSG(std_msgs, Float32) & msg)
+{
+    set_radius((double)msg.data);
 }
 
 
-sensor_msgs::PointCloudPtr PointCloudHandler::get_point_cloud(){
+AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) PointCloudHandler::get_point_cloud(){
     return m_StatePtr;
 }
 
 void PointCloudHandler::remove(){
 //    m_StatePtr->points.clear();
 //    m_StatePtr->channels.clear();
+#if ROS1
     m_pcSub.shutdown();
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -106,7 +116,11 @@ void PointCloudHandler::remove(){
 /// \brief World::set_params_on_server
 ///
 void World::set_params_on_server(){
-    nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_point_cloud_topics);
+#if ROS1
+    m_nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_point_cloud_topics);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 ///
@@ -114,16 +128,23 @@ void World::set_params_on_server(){
 ///
 void World::update_params_from_server(){
     std::vector<std::string> topic_names;
-
-    nodePtr->getParamCached(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), topic_names);
+#if ROS1
+    m_nodePtr->getParamCached(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), topic_names);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 
     std::vector<bool> keep_active_idx;
 
     if (m_new_topic_names <= m_point_cloud_topics){
         m_new_topic_names.clear();
     }
-    else{
-        nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_new_topic_names);
+    else {
+#if ROS1
+        m_nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_new_topic_names);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
     }
     m_defunct_topic_names.clear();
 

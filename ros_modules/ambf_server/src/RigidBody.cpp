@@ -53,10 +53,14 @@ RigidBody::RigidBody(std::string a_name, std::string a_namespace, int a_freq_min
 /// \param pz
 ///
 void RigidBody::cur_position(double px, double py, double pz){
+#if ROS1
     m_trans.setOrigin(tf::Vector3(px, py, pz));
     m_State.pose.position.x = px;
     m_State.pose.position.y = py;
     m_State.pose.position.z = pz;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -67,10 +71,14 @@ void RigidBody::cur_position(double px, double py, double pz){
 /// \param yaw
 ///
 void RigidBody::cur_orientation(double roll, double pitch, double yaw){
+#if ROS1
     tf::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -82,9 +90,13 @@ void RigidBody::cur_orientation(double roll, double pitch, double yaw){
 /// \param qw
 ///
 void RigidBody::cur_orientation(double qx, double qy, double qz, double qw){
+#if ROS1
     tf::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -95,8 +107,12 @@ void RigidBody::cur_orientation(double qx, double qy, double qz, double qw){
 /// \param fz
 ///
 void RigidBody::cur_force(double fx, double fy, double fz){
+#if ROS1
     tf::Vector3 f(fx, fy, fz);
     tf::vector3TFToMsg(f, m_State.wrench.force);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -107,8 +123,12 @@ void RigidBody::cur_force(double fx, double fy, double fz){
 /// \param nz
 ///
 void RigidBody::cur_torque(double nx, double ny, double nz){
+#if ROS1
     tf::Vector3 n(nx, ny, nz);
     tf::vector3TFToMsg(n, m_State.wrench.torque);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -119,8 +139,12 @@ void RigidBody::cur_torque(double nx, double ny, double nz){
 /// \param vz
 ///
 void RigidBody::cur_linear_velocity(double vx, double vy, double vz){
+#if ROS1
     tf::Vector3 v(vx, vy, vz);
     tf::vector3TFToMsg(v, m_State.twist.linear);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -131,8 +155,12 @@ void RigidBody::cur_linear_velocity(double vx, double vy, double vz){
 /// \param az
 ///
 void RigidBody::cur_angular_velocity(double ax, double ay, double az){
+#if ROS1
     tf::Vector3 a(ax, ay, az);
     tf::vector3TFToMsg(a, m_State.twist.angular);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 
@@ -140,8 +168,8 @@ void RigidBody::cur_angular_velocity(double ax, double ay, double az){
 /// \brief RigidBody::get_command
 /// \return
 ///
-ambf_msgs::RigidBodyCmd RigidBody::get_command(){
-    ambf_msgs::RigidBodyCmd temp_cmd = m_Cmd;
+AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) RigidBody::get_command(){
+    AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) temp_cmd = m_Cmd;
     int joint_commands_size = m_Cmd.joint_cmds.size();
     temp_cmd.joint_cmds_types.resize(joint_commands_size);
     for(size_t idx = 0; idx < joint_commands_size ; idx++){

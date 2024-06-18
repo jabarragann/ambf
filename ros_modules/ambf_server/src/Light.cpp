@@ -64,9 +64,13 @@ LightParams::LightParams(){
 }
 
 void Light::set_params_on_server(){
-    nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), m_cuttoff_angle);
-    nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), m_State.parent_name.data);
-    nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), light_type_enum_to_str(m_light_type));
+#if ROS1
+    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), m_cuttoff_angle);
+    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), m_State.parent_name.data);
+    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), light_type_enum_to_str(m_light_type));
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Light::update_params_from_server(){
@@ -74,10 +78,13 @@ void Light::update_params_from_server(){
     std::string pn;
     std::string lt;
     LightType lt_enum;
-
-    nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), ca);
-    nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), pn);
-    nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), lt);
+#if ROS1
+    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), ca);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), pn);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), lt);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 
     if (lt.compare(light_type_enum_to_str(LightType::SPOT)) == 0){
         lt_enum = LightType::SPOT;
@@ -117,23 +124,35 @@ Light::Light(std::string a_name, std::string a_namespace, int a_freq_min, int a_
 }
 
 void Light::cur_position(double px, double py, double pz){
+#if ROS1
     m_trans.setOrigin(tf::Vector3(px, py, pz));
     m_State.pose.position.x = px;
     m_State.pose.position.y = py;
     m_State.pose.position.z = pz;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Light::cur_orientation(double roll, double pitch, double yaw){
+#if ROS1
     tf::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Light::cur_orientation(double qx, double qy, double qz, double qw){
+#if ROS1
     tf::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 

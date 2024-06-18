@@ -62,17 +62,22 @@ protected:
     int m_num_skip_steps;
     int m_skip_steps_ctr;
     virtual void reset_cmd();
-    void sub_cb(ambf_msgs::WorldCmdConstPtr msg);
+    void sub_cb(const AMBF_RAL_MSG(ambf_msgs, WorldCmd) & msg);
 
 private:
     bool m_resetFlag;
     bool m_resetBodiesFlag;
 
-    ros::Subscriber m_resetBodiesSub;
-    ros::Subscriber m_resetSub;
-
-    void reset_cb(std_msgs::EmptyConstPtr);
-    void reset_bodies_cb(std_msgs::EmptyConstPtr);
+#if ROS1
+    std::shared_ptr<ros::Subscriber> m_resetBodiesSubPtr;
+    std::shared_ptr<ros::Subscriber> m_resetSubPtr;
+#elif ROS2
+    typedef typename rclcpp::Subscription<std_msgs::msg::Empty> subscriber_empty_t;
+    typename subscriber_empty_t::SharedPtr m_resetBodiesSubPtr, m_resetSubPtr;
+#endif
+  
+    void reset_cb(const AMBF_RAL_MSG(std_msgs, Empty) & msg);
+    void reset_bodies_cb(const AMBF_RAL_MSG(std_msgs, Empty) & msg);
 };
 
 

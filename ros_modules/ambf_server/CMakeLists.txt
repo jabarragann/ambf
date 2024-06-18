@@ -56,8 +56,9 @@ if (catkin_FOUND)
     INCLUDE_DIRS include
     LIBRARIES ambf_server
     CATKIN_DEPENDS ${ROS1_depends}
-#  DEPENDS system_lib
-)
+    )
+  include_directories( include ${catkin_INCLUDE_DIRS})
+
 else (catkin_FOUND)
 
   # look for ROS2
@@ -72,25 +73,16 @@ else (catkin_FOUND)
     foreach (_dep ${ROS2_depends})
         find_package (${_dep} REQUIRED)
     endforeach()
-    find_package(rclcpp REQUIRED)
+    include_directories (
+      include
+      ${rclcpp_INCLUDE_DIRS}
+      )
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
 
 ###########
 ## Build ##
 ###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-if (ROS_VERSION EQUAL 1)
-  include_directories( include ${catkin_INCLUDE_DIRS})
-else(ROS_VERSION 2)
-  include_directories(
-    include
-    ${rclcpp_INCLUDE_DIRS}
-  )
-endif()
-
 
 set (HDR_FILES
     include/${PROJECT_NAME}/ambf_ral.h
@@ -138,19 +130,36 @@ set (SRC_FILES
 add_library(ambf_server ${HDR_FILES} ${SRC_FILES})
 
 if (ROS_VERSION EQUAL 1)
-    add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
-    ## Specify libraries to link a library or executable target against
-    target_link_libraries(ambf_server ${catkin_LIBRARIES})
+  add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
+  ## Specify libraries to link a library or executable target against
+  target_link_libraries(ambf_server ${catkin_LIBRARIES})
+
 else(ROS_VERSION EQUAL 2)
-    ament_target_dependencies(
-        ambf_server
-        ${ROS2_depends}
+  ament_target_dependencies(
+    ambf_server
+    ${ROS2_depends}
     )
-    target_link_libraries(ambf_server
-      ${rclcpp_LIBRARIES}
+  target_link_libraries(ambf_server
+    ${rclcpp_LIBRARIES}
     )
-    target_link_libraries(ambf_server
-      ${ROS2_depends}
+  target_link_libraries(ambf_server
+    ${ROS2_depends}
     )
-    ament_package ()
+
+  install (DIRECTORY include/${PROJECT_NAME}
+    DESTINATION include
+    )
+
+  install (
+    TARGETS ambf_server
+    EXPORT ambf_server
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+    )
+
+  ament_export_targets (ambf_server HAS_LIBRARY_TARGET)
+
+  ament_package ()
 endif()

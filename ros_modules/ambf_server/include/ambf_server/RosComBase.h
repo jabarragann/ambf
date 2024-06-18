@@ -161,7 +161,7 @@ public:
     int m_freq_max;
 
 protected:
-    ambf_ral::node_ptr_t nodePtr;
+    ambf_ral::node_ptr_t m_nodePtr;
 
     boost::shared_ptr<CmdWatchDog> m_watchDogPtr;
 
@@ -169,11 +169,16 @@ protected:
 
     std::string m_name;
 
-    ros::Publisher m_pub;
-
-    ros::Subscriber m_sub;
-
+#if ROS1
+    std::shared_ptr<ros::Publisher> m_pubPtr;
+    std::shared_ptr<ros::Subscriber> m_subPtr;
     tf::Transform m_trans;
+#elif ROS2
+    typedef typename rclcpp::Publisher<T_state> publisher_t;
+    typename publisher_t::SharedPtr m_pubPtr;
+    typedef rclcpp::Subscription<T_cmd> subscriber_t;
+    typename subscriber_t::SharedPtr m_subPtr;
+#endif
 
     T_state m_State;
 
@@ -183,7 +188,11 @@ protected:
 
     boost::thread m_thread;
 
+#if ROS1
     ros::CallbackQueue m_custom_queue;
+#elif ROS2
+
+#endif
 
     virtual void reset_cmd() = 0;
 
@@ -205,14 +214,22 @@ void RosComBase<T_state, T_cmd>::run_publishers(){
     while(afROSNode::isNodeActive()){
         if (m_enableComm){
             // Call callbacks
+#if ROS1
             m_custom_queue.callAvailable();
+#elif ROS2
+            rclcpp::spin_some(m_nodePtr);
+#endif
             if(m_watchDogPtr->is_wd_expired()){
                 m_watchDogPtr->consolePrint(m_name);
                 reset_cmd();
             }
             // Update and publish state
             copyState();
-            m_pub.publish(m_StateCopy);
+#if ROS1
+            m_pubPtr->publish(m_StateCopy);
+#elif ROS2
+            std::cerr << " fix ROS2 publish" << std::endl;
+#endif
         }
         m_watchDogPtr->m_ratePtr->sleep();
     }

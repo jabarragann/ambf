@@ -51,8 +51,8 @@ template<class T_state, class T_cmd>
 /// \brief RosComBase::cleanUp
 ///
 void RosComBase<T_state, T_cmd>::cleanUp(){
-    m_pub.shutdown();
-    m_sub.shutdown();
+    ambf_ral::publisher_shutdown(m_pubPtr);
+    ambf_ral::subscriber_shutdown(m_subPtr);
 }
 
 template<class T_state, class T_cmd>
@@ -64,25 +64,29 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
 
     m_freq_min = a_freq_min;
     m_freq_max = a_freq_max;
-    nodePtr = afROSNode::getNodeAndRegister();
-    nodePtr->setCallbackQueue(&m_custom_queue);
-    m_watchDogPtr.reset(new CmdWatchDog(nodePtr, a_freq_min, a_freq_max, time_out));
+#if ROS1
+    m_nodePtr = afROSNode::getNodeAndRegister();
+    m_nodePtr->setCallbackQueue(&m_custom_queue);
+#elif ROS2
+    std::cerr << " need to create ROS 2 node per plugin " << std::endl;
+#endif
+    m_watchDogPtr.reset(new CmdWatchDog(m_nodePtr, a_freq_min, a_freq_max, time_out));
 }
 
-template void RosComBase<ambf_msgs::ActuatorState, ambf_msgs::ActuatorCmd>::cleanUp();
-template void RosComBase<ambf_msgs::CameraState, ambf_msgs::CameraCmd>::cleanUp();
-template void RosComBase<ambf_msgs::LightState, ambf_msgs::LightCmd>::cleanUp();
-template void RosComBase<ambf_msgs::ObjectState, ambf_msgs::ObjectCmd>::cleanUp();
-template void RosComBase<ambf_msgs::RigidBodyState, ambf_msgs::RigidBodyCmd>::cleanUp();
-template void RosComBase<ambf_msgs::SensorState, ambf_msgs::SensorCmd>::cleanUp();
-template void RosComBase<ambf_msgs::VehicleState, ambf_msgs::VehicleCmd>::cleanUp();
-template void RosComBase<ambf_msgs::WorldState, ambf_msgs::WorldCmd>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, ActuatorState), AMBF_RAL_MSG(ambf_msgs, ActuatorCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, CameraState),  AMBF_RAL_MSG(ambf_msgs, CameraCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, LightState),  AMBF_RAL_MSG(ambf_msgs, LightCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, ObjectState),  AMBF_RAL_MSG(ambf_msgs, ObjectCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, RigidBodyState),  AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, SensorState),  AMBF_RAL_MSG(ambf_msgs, SensorCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, VehicleState),  AMBF_RAL_MSG(ambf_msgs, VehicleCmd)>::cleanUp();
+template void RosComBase<AMBF_RAL_MSG(ambf_msgs, WorldState),  AMBF_RAL_MSG(ambf_msgs, WorldCmd)>::cleanUp();
 
-template RosComBase<ambf_msgs::ActuatorState, ambf_msgs::ActuatorCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::CameraState, ambf_msgs::CameraCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::LightState, ambf_msgs::LightCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::ObjectState, ambf_msgs::ObjectCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::RigidBodyState, ambf_msgs::RigidBodyCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::SensorState, ambf_msgs::SensorCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::VehicleState, ambf_msgs::VehicleCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-template RosComBase<ambf_msgs::WorldState, ambf_msgs::WorldCmd>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, ActuatorState),  AMBF_RAL_MSG(ambf_msgs, ActuatorCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, CameraState),  AMBF_RAL_MSG(ambf_msgs, CameraCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, LightState),  AMBF_RAL_MSG(ambf_msgs, LightCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, ObjectState),  AMBF_RAL_MSG(ambf_msgs, ObjectCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, RigidBodyState),  AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, SensorState),  AMBF_RAL_MSG(ambf_msgs, SensorCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, VehicleState),  AMBF_RAL_MSG(ambf_msgs, VehicleCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
+template RosComBase<AMBF_RAL_MSG(ambf_msgs, WorldState),  AMBF_RAL_MSG(ambf_msgs, WorldCmd)>::RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);

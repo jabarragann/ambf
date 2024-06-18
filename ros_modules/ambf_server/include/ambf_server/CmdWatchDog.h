@@ -49,7 +49,12 @@
 class CmdWatchDog{
 public:
     CmdWatchDog(ambf_ral::node_ptr_t node, const int &a_freq_min, const int &a_freq_max , const double &time_out):
-        m_node(node), m_freq_min(a_freq_min), m_freq_max(a_freq_max), m_time_out(time_out), m_expire_duration(0.0)
+        m_node(node), m_freq_min(a_freq_min), m_freq_max(a_freq_max), m_time_out(time_out),
+#if ROS1
+        m_expire_duration(0.0)
+#elif ROS2
+        m_expire_duration(rclcpp::Duration::from_nanoseconds(0))
+#endif
     {
         m_expire_duration = ambf_ral::duration_from_seconds(m_time_out);
         m_minRatePtr.reset(new ambf_ral::rate_t(m_freq_min));

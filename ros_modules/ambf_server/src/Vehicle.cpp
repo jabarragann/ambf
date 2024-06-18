@@ -47,23 +47,35 @@ Vehicle::Vehicle(std::string a_name, std::string a_namespace, int a_freq_min, in
 }
 
 void Vehicle::cur_position(double px, double py, double pz){
+#if ROS1
     m_trans.setOrigin(tf::Vector3(px, py, pz));
     m_State.pose.position.x = px;
     m_State.pose.position.y = py;
     m_State.pose.position.z = pz;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Vehicle::cur_orientation(double roll, double pitch, double yaw){
+#if ROS1
     tf::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Vehicle::cur_orientation(double qx, double qy, double qz, double qw){
+#if ROS1
     tf::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 extern "C"{

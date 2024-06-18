@@ -47,7 +47,7 @@
 
 
 // #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
-#include "ambf_server/World.h"
+#include <ambf_server/World.h>
 // #endif
 
 using namespace ambf;

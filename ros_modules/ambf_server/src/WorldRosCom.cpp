@@ -40,7 +40,7 @@
 */
 //==============================================================================
 
-#include "ambf_server//WorldRosCom.h"
+#include "ambf_server/WorldRosCom.h"
 
 ///
 /// \brief WorldRosCom::WorldRosCom
@@ -65,10 +65,29 @@ void WorldRosCom::init(){
     m_resetFlag = false;
     m_resetBodiesFlag = false;
 
-    m_pub = nodePtr->advertise<ambf_msgs::WorldState>("/" + m_namespace + "/" + m_name + "/State", 10);
-    m_sub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command", 10, &WorldRosCom::sub_cb, this);
-    m_resetSub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command/Reset", 1, &WorldRosCom::reset_cb, this);
-    m_resetBodiesSub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command/Reset/Bodies", 1, &WorldRosCom::reset_bodies_cb, this);
+    ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, WorldState)>
+      (m_pubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/State",
+       10, false);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, WorldCmd), WorldRosCom>
+      (m_subPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command",
+       10,
+       &WorldRosCom::sub_cb, this);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(std_msgs, Empty), WorldRosCom>
+      (m_resetSubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command/Reset",
+       1,
+       &WorldRosCom::reset_cb, this);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(std_msgs, Empty), WorldRosCom>
+      (m_resetBodiesSubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command/Reset/Bodies",
+       1,
+       &WorldRosCom::reset_bodies_cb, this);
 
     m_thread = boost::thread(boost::bind(&WorldRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
@@ -88,9 +107,9 @@ void WorldRosCom::reset_cmd(){
 /// \brief WorldRosCom::sub_cb
 /// \param msg
 ///
-void WorldRosCom::sub_cb(ambf_msgs::WorldCmdConstPtr msg){
+void WorldRosCom::sub_cb(const AMBF_RAL_MSG(ambf_msgs, WorldCmd) & msg){
     m_CmdPrev = m_Cmd;
-    m_Cmd = *msg;
+    m_Cmd = msg;
     m_num_skip_steps = m_Cmd.n_skip_steps;
     m_enableSimThrottle = (bool)m_Cmd.enable_step_throttling;
     if (m_enableSimThrottle){
@@ -108,13 +127,13 @@ void WorldRosCom::sub_cb(ambf_msgs::WorldCmdConstPtr msg){
 ///
 /// \brief WorldRosCom::reset_cb
 ///
-void WorldRosCom::reset_cb(std_msgs::EmptyConstPtr){
+void WorldRosCom::reset_cb(const AMBF_RAL_MSG(std_msgs, Empty) & ){
     m_resetFlag = true;
 }
 
 ///
 /// \brief WorldRosCom::reset_bodies_cb
 ///
-void WorldRosCom::reset_bodies_cb(std_msgs::EmptyConstPtr){
+void WorldRosCom::reset_bodies_cb(const AMBF_RAL_MSG(std_msgs, Empty) & ){
     m_resetBodiesFlag = true;
 }

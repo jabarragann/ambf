@@ -35,6 +35,7 @@
   <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
   <depend condition="$ROS_VERSION == 2">rclcpp</depend>
   <depend condition="$ROS_VERSION == 2">ambf_msgs</depend>
+  <depend condition="$ROS_VERSION == 2">ambf_server</depend>
   <depend condition="$ROS_VERSION == 2">tf2</depend>
 
   <export>

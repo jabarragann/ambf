@@ -50,8 +50,17 @@ void RigidBodyRosCom::init(){
     m_State.name.data = m_name;
     m_State.sim_step = 0;
 
-    m_pub = nodePtr->advertise<ambf_msgs::RigidBodyState>("/" + m_namespace + "/" + m_name + "/State", 10);
-    m_sub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command", 10, &RigidBodyRosCom::sub_cb, this);
+    ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, RigidBodyState)>
+      (m_pubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/State",
+       10, false);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd), RigidBodyRosCom>
+      (m_subPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command",
+       10,
+       &RigidBodyRosCom::sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&RigidBodyRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
@@ -59,7 +68,7 @@ void RigidBodyRosCom::init(){
 
 void RigidBodyRosCom::reset_cmd(){
     // For cartesian control, the TYPE_FORCE indicates wrench.
-    m_Cmd.cartesian_cmd_type = ambf_msgs::RigidBodyCmd::TYPE_FORCE;
+    m_Cmd.cartesian_cmd_type = AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd)::TYPE_FORCE;
     m_Cmd.wrench.force.x = 0;
     m_Cmd.wrench.force.y = 0;
     m_Cmd.wrench.force.z = 0;
@@ -71,11 +80,11 @@ void RigidBodyRosCom::reset_cmd(){
     }
     for(size_t idx = 0 ; idx < m_Cmd.joint_cmds_types.size() ; idx++){
         // For joint control, the TYPE_FORCE indicates joint effort, which could be force for prismatic joint, or torque for revolute joint.
-        m_Cmd.joint_cmds_types[idx] = ambf_msgs::RigidBodyCmd::TYPE_FORCE;
+        m_Cmd.joint_cmds_types[idx] = AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd)::TYPE_FORCE;
     }
 }
 
-void RigidBodyRosCom::sub_cb(ambf_msgs::RigidBodyCmdConstPtr msg){
-    m_Cmd = *msg;
+void RigidBodyRosCom::sub_cb(const AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) & msg){
+    m_Cmd = msg;
     m_watchDogPtr->acknowledge_wd();
 }

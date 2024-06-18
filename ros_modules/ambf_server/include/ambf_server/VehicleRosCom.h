@@ -55,7 +55,7 @@ public:
 
 protected:
     virtual void reset_cmd();
-    void sub_cb(ambf_msgs::VehicleCmdConstPtr msg);
+    void sub_cb(const AMBF_RAL_MSG(ambf_msgs, VehicleCmd) & msg);
 };
 
 

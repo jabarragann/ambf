@@ -120,15 +120,19 @@ CameraParams::CameraParams(){
 }
 
 void Camera::set_params_on_server(){
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::near_plane), m_near_plane);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::far_plane), m_far_plane);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::field_view_angle), m_field_view_angle);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width), m_orthographic_view_width);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation), m_stereo_eye_separation);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length), m_stereo_focal_length);
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::projection), projection_type_enum_to_str(m_projection_type));
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::mode), view_mode_enum_to_str(m_view_mode));
-    nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::parent_name), m_State.parent_name.data);
+#if ROS1
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::near_plane), m_near_plane);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::far_plane), m_far_plane);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::field_view_angle), m_field_view_angle);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width), m_orthographic_view_width);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation), m_stereo_eye_separation);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length), m_stereo_focal_length);
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::projection), projection_type_enum_to_str(m_projection_type));
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::mode), view_mode_enum_to_str(m_view_mode));
+    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::parent_name), m_State.parent_name.data);
+#elif ROS2
+    std::cerr <<  __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Camera::update_params_from_server(){
@@ -137,16 +141,19 @@ void Camera::update_params_from_server(){
     std::string pt, vm;
     ProjectionType pt_enum;
     ViewMode vm_enum;
-
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::near_plane), np);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::far_plane), fp);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::field_view_angle), fva);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width), ovw);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation), ses);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length), sfl);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::projection), pt);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::mode), vm);
-    nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::parent_name), pn);
+#if ROS1
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::near_plane), np);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::far_plane), fp);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::field_view_angle), fva);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width), ovw);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation), ses);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length), sfl);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::projection), pt);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::mode), vm);
+    m_nodePtr->getParamCached(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::parent_name), pn);
+#elif ROS2
+    std::cerr <<  __FILE__ << __LINE__ << std::endl;
+#endif
 
     if (pt.compare(projection_type_enum_to_str(ProjectionType::PERSPECTIVE)) == 0){
         pt_enum = ProjectionType::PERSPECTIVE;
@@ -209,23 +216,35 @@ Camera::Camera(std::string a_name, std::string a_namespace, int a_freq_min, int 
 }
 
 void Camera::cur_position(double px, double py, double pz){
+#if ROS1 
     m_trans.setOrigin(tf::Vector3(px, py, pz));
     m_State.pose.position.x = px;
     m_State.pose.position.y = py;
     m_State.pose.position.z = pz;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Camera::cur_orientation(double roll, double pitch, double yaw){
+#if ROS1
     tf::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void Camera::cur_orientation(double qx, double qy, double qz, double qw){
+#if ROS1
     tf::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 

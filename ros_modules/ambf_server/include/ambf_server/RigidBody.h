@@ -51,7 +51,7 @@ namespace ambf_comm{
 class RigidBody: public RigidBodyRosCom{
 public:
     RigidBody(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-    virtual ambf_msgs::RigidBodyCmd get_command();
+    virtual AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) get_command();
     void cur_position(double px, double py, double pz);
     void cur_orientation(double roll, double pitch, double yaw);
     void cur_orientation(double qx, double qy, double qz, double qw);

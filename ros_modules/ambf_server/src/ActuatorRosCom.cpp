@@ -50,8 +50,17 @@ void ActuatorRosCom::init(){
     m_State.name.data = m_name;
     m_State.sim_step = 0;
 
-    m_pub = nodePtr->advertise<ambf_msgs::ActuatorState>("/" + m_namespace + "/" + m_name + "/State", 10);
-    m_sub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command", 10, &ActuatorRosCom::sub_cb, this);
+    ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, ActuatorState)>
+      (m_pubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/State",
+       10, false);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, ActuatorCmd), ActuatorRosCom>
+      (m_subPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command",
+       10,
+       &ActuatorRosCom::sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&ActuatorRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
@@ -62,7 +71,7 @@ void ActuatorRosCom::reset_cmd(){
     m_Cmd.body_name.data = "";
 }
 
-void ActuatorRosCom::sub_cb(ambf_msgs::ActuatorCmdConstPtr msg){
-    m_Cmd = *msg;
+void ActuatorRosCom::sub_cb(const AMBF_RAL_MSG(ambf_msgs, ActuatorCmd) & msg){
+    m_Cmd = msg;
     m_watchDogPtr->acknowledge_wd();
 }

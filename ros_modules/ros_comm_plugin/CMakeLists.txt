@@ -50,11 +50,11 @@ if (catkin_FOUND)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
   message(STATUS "ROS VERSION = 1")
-
-  catkin_package(
-  LIBRARIES depth_streamer_plugin object_comm_plugin video_streamer_plugin world_comm_plugin
-  CATKIN_DEPENDS ambf_server # Removed AMBF from here
-  )
+  include_directories(include ${catkin_INCLUDE_DIRS})
+  catkin_package (
+    LIBRARIES depth_streamer_plugin object_comm_plugin video_streamer_plugin world_comm_plugin
+    CATKIN_DEPENDS ambf_server # Removed AMBF from here
+    )
 else (catkin_FOUND)
 
   # look for ROS2
@@ -63,11 +63,18 @@ else (catkin_FOUND)
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
-    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs)
+    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs ambf_server)
+
     foreach (_dep ${ROS2_depends})
-        find_package (${_dep} REQUIRED)
+      find_package (${_dep} REQUIRED)
+      include_directories (${${_dep}_INCLUDE_DIRS})
+      message ("---------- ${_dep} -- ${${_dep}_INCLUDE_DIRS} --- ")
     endforeach()
-    find_package(rclcpp REQUIRED)
+
+    include_directories(
+      include
+      ${rclcpp_INCLUDE_DIRS}
+      )
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
 
@@ -75,51 +82,25 @@ endif (catkin_FOUND)
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-if (ROS_VERSION EQUAL 1)
-  include_directories(include ${catkin_INCLUDE_DIRS})
-else(ROS_VERSION 2)
-  include_directories(
-    include
-    ${rclcpp_INCLUDE_DIRS}
-  )
-endif()
-
 find_package (AMBF REQUIRED)
-find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package (Boost REQUIRED COMPONENTS filesystem)
 
-add_definitions(${AMBF_DEFINITIONS})
+add_definitions (${AMBF_DEFINITIONS})
 
 include_directories (${AMBF_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-
-set (HDR_FILES
-  DepthStreamerPlugin.h
-  ObjectCommPlugin.h
-  VideoStreamerPlugin.h
-  WorldCommPlugin.h)
-
-set (SRC_FILES
-  DepthStreamerPlugin.cpp
-  ObjectCommPlugin.cpp
-  VideoStreamerPlugin.cpp
-  WorldCommPlugin.cpp)
+include_directories (${Boost_INCLUDE_DIRS})
 
 ## Declare a C++ library
 ## this is weird
 ##link_directories(/home/lauraconnolly/ros2-changes/restructure/catkin_ws/src/ambf/core/external/DHD/lib/lin-x86_64)
-link_directories(../../core/external/DHD/lib/lin-x86_64)
+link_directories (../../core/external/DHD/lib/lin-x86_64)
 
+add_library (depth_streamer_plugin SHARED DepthStreamerPlugin.cpp)
+add_library (object_comm_plugin SHARED ObjectCommPlugin.cpp)
+add_library (video_streamer_plugin SHARED VideoStreamerPlugin.cpp)
+add_library (world_comm_plugin SHARED WorldCommPlugin.cpp)
 
-## add_library(ros_comm_plugin ${HDR_FILES} ${SRC_FILES})
-add_library(depth_streamer_plugin SHARED DepthStreamerPlugin.cpp)
-add_library(object_comm_plugin SHARED ObjectCommPlugin.cpp)
-add_library(video_streamer_plugin SHARED VideoStreamerPlugin.cpp)
-add_library(world_comm_plugin SHARED WorldCommPlugin.cpp)
-
-
-
+set (ROS_COMM_PLUGINS depth_streamer_plugin object_comm_plugin video_streamer_plugin world_comm_plugin)
 
 find_package (OpenCV QUIET)
 if (OpenCV_FOUND)
@@ -137,34 +118,18 @@ else ()
 endif ()
 
 if (ROS_VERSION EQUAL 1)
-  ## add_dependencies(ros_comm_plugin ${catkin_EXPORTED_TARGETS})
-  ## Specify libraries to link a library or executable target against
-  ## target_link_libraries(ros_comm_plugin ${catkin_LIBRARIES})
-  add_dependencies(depth_streamer_plugin ${catkin_EXPORTED_TARGETS})
-  add_dependencies(object_comm_plugin ${catkin_EXPORTED_TARGETS})
-  add_dependencies(video_streamer_plugin ${catkin_EXPORTED_TARGETS})
-  add_dependencies(world_comm_plugin ${catkin_EXPORTED_TARGETS})
 
-  target_link_libraries(depth_streamer_plugin ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
-  target_link_libraries(object_comm_plugin ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
-  target_link_libraries(video_streamer_plugin ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
-  target_link_libraries(world_comm_plugin ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
+  foreach (_plugin ${ROS_COMM_PLUGINS})
+    add_dependencies (${_plugin} ${catkin_EXPORTED_TARGETS})
+    target_link_libraries (${_plugin} ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
+  endforeach ()
 
-else(ROS_VERSION EQUAL 2)
-  ## ament_target_dependencies(ros_comm_plugin ${ROS2_depends})
-  ## target_link_libraries(ros_comm_plugin ${rclcpp_LIBRARIES})
-  ament_target_dependencies(depth_streamer_plugin ${ROS2_depends})
-  ament_target_dependencies(object_comm_plugin ${ROS2_depends})
-  ament_target_dependencies(video_streamer_plugin ${ROS2_depends})
-  ament_target_dependencies(world_comm_plugin ${ROS2_depends})
+else ()
 
-  target_link_libraries(depth_streamer_plugin ${rclcpp_LIBRARIES})
-  target_link_libraries(object_comm_plugin ${rclcpp_LIBRARIES})
-  target_link_libraries(video_streamer_plugin ${rclcpp_LIBRARIES})
-  target_link_libraries(world_comm_plugin ${rclcpp_LIBRARIES})
-
-  # target_link_libraries(ambf_server
-  #   ${ambf_msgs_LIBRARIES}
-  # )
+  foreach (_plugin ${ROS_COMM_PLUGINS})
+    ament_target_dependencies (${_plugin} ${ROS2_depends})
+    target_link_libraries (${_plugin} ${rclcpp_LIBRARIES})
+  endforeach ()
   ament_package ()
+
 endif()

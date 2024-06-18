@@ -40,6 +40,8 @@
 #define AMBF_RAL_FATAL(...) ROS_FATAL(__VA_ARGS__)
 
 #define AMBF_RAL_MSG(package, message) package::message
+#define AMBF_RAL_MSG_PTR(package, message) package::message##Ptr
+// #define AMBF_RAL_MSG_CONST_PTR(package, message) package::message##ConstPtr
 
 namespace ambf_ral {
     typedef std::shared_ptr<ros::NodeHandle> node_ptr_t;
@@ -85,7 +87,21 @@ namespace ambf_ral {
                           const bool latched) {
         publisher = std::make_shared<ros::Publisher>(node->advertise<_ros_t>(topic, queue_size, latched));
         if (!publisher) {
-            std::cerr << "not created" << std::endl;
+            std::cerr << "Failed to create publisher for " << topic << std::endl;
+        }
+    }
+
+    template <typename _ros_t, typename _object_cb_t>
+    void create_subscriber(std::shared_ptr<ros::Subscriber> & subscriber,
+                           node_ptr_t node,
+                           const std::string & topic,
+                           const size_t queue_size,
+                           void (_object_cb_t::*cb)(const _ros_t &),
+                           _object_cb_t * instance
+                           ) {
+        subscriber = std::make_shared<ros::Subscriber>(node->subscribe(topic, queue_size, cb, instance));
+        if (!subscriber) {
+            std::cerr << "Failed to create subscriber for " << topic << std::endl;
         }
     }
 
@@ -136,6 +152,8 @@ namespace ambf_ral {
 #define AMBF_RAL_FATAL(...) RCLCPP_FATAL(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
 
 #define AMBF_RAL_MSG(package, message) package::msg::message
+#define AMBF_RAL_MSG_PTR(package, message) package::msg::message::Ptr
+// #define AMBF_RAL_MSG_CONST_PTR(package, message) package::msg::message::ConstPtr
 
 namespace ambf_ral {
     typedef std::shared_ptr<rclcpp::Node> node_ptr_t;
@@ -184,8 +202,28 @@ namespace ambf_ral {
         if (latched) {
             qos.transient_local();
         }
-        publisher =
-            node->create_publisher<_ros_t>(topic, qos);
+        publisher = node->create_publisher<_ros_t>(topic, qos);
+        if (!publisher) {
+          std::cerr << "Failed to create publisher for " << topic << std::endl;
+        }
+    }
+
+    template <typename _ros_t, typename _object_cb_t>
+    void create_subscriber(typename rclcpp::Subscription<_ros_t>::SharedPtr & subscriber,
+                           node_ptr_t node,
+                           const std::string & topic,
+                           const size_t queue_size,
+                           void (_object_cb_t::*cb)(const _ros_t &),
+                           _object_cb_t * instance
+                           ) {
+        subscriber = node->create_subscription<_ros_t>(topic,
+                                                       queue_size,
+                                                       std::bind(cb,
+                                                                 instance,
+                                                                 std::placeholders::_1));
+        if (!subscriber) {
+            std::cerr << "Failed to create subscriber for " << topic << std::endl;
+        }
     }
 
     template <typename _pub_t>

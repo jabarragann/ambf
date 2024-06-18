@@ -40,6 +40,7 @@
 */
 //==============================================================================
 
+
 #include "ambf_server/CameraRosCom.h"
 
 CameraRosCom::CameraRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): RosComBase(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
@@ -50,8 +51,17 @@ void CameraRosCom::init(){
     m_State.name.data = m_name;
     m_State.sim_step = 0;
 
-    m_pub = nodePtr->advertise<ambf_msgs::CameraState>("/" + m_namespace + "/" + m_name + "/State", 10);
-    m_sub = nodePtr->subscribe("/" + m_namespace + "/" + m_name + "/Command", 10, &CameraRosCom::sub_cb, this);
+    ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, CameraState)>
+      (m_pubPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/State",
+       10, false);
+    ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, CameraCmd), CameraRosCom>
+      (m_subPtr,
+       m_nodePtr,
+       "/" + m_namespace + "/" + m_name + "/Command",
+       10,
+       &CameraRosCom::sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&CameraRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
@@ -61,7 +71,7 @@ void CameraRosCom::reset_cmd(){
     m_Cmd.enable_position_controller = false;
 }
 
-void CameraRosCom::sub_cb(ambf_msgs::CameraCmdConstPtr msg){
-    m_Cmd = *msg;
+void CameraRosCom::sub_cb(const AMBF_RAL_MSG(ambf_msgs, CameraCmd) & msg){
+    m_Cmd = msg;
     m_watchDogPtr->acknowledge_wd();
 }
