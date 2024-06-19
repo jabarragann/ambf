@@ -42,9 +42,10 @@
 
 #ifndef ROSCOMBASE_H
 #define ROSCOMBASE_H
-#include <boost/thread.hpp>
+#include <thread>
 #include <ambf_server/ambf_ral.h>
 #include <ambf_server/CmdWatchDog.h>
+#include <unistd.h>
 #include <mutex>
 #include <cstdint>
 
@@ -168,7 +169,7 @@ public:
 protected:
     ambf_ral::node_ptr_t m_nodePtr;
 
-    boost::shared_ptr<CmdWatchDog> m_watchDogPtr;
+    std::shared_ptr<CmdWatchDog> m_watchDogPtr;
 
     std::string m_namespace;
 
@@ -191,7 +192,7 @@ protected:
 
     T_cmd m_CmdPrev;
 
-    boost::thread m_thread;
+    std::thread m_thread;
 
 #if ROS1
     ros::CallbackQueue m_custom_queue;

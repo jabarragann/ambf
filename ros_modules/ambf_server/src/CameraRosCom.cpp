@@ -63,7 +63,7 @@ void CameraRosCom::init(){
        10,
        &CameraRosCom::sub_cb, this);
 
-    m_thread = boost::thread(boost::bind(&CameraRosCom::run_publishers, this));
+    m_thread = std::thread(std::bind(&CameraRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
 }
 

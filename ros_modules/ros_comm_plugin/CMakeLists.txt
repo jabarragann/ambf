@@ -128,9 +128,10 @@ else ()
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
     )
-  
+
   foreach (_plugin ${ROS_COMM_PLUGINS})
     ament_target_dependencies (${_plugin} ${ROS2_depends})
+    target_link_libraries (${_plugin} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
   endforeach ()
   ament_package ()
 

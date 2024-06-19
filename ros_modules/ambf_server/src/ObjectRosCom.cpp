@@ -62,7 +62,7 @@ void ObjectRosCom::init(){
        10,
        &ObjectRosCom::sub_cb, this);
 
-    m_thread = boost::thread(boost::bind(&ObjectRosCom::run_publishers, this));
+    m_thread = std::thread(std::bind(&ObjectRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
 }
 

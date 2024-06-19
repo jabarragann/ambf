@@ -68,7 +68,17 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
     m_nodePtr = afROSNode::getNodeAndRegister();
     m_nodePtr->setCallbackQueue(&m_custom_queue);
 #elif ROS2
-    std::cerr << " need to create ROS 2 node per plugin " << std::endl;
+    if (!rclcpp::ok()) {
+      // create fake argc/argv
+      std::string context_name = "ambf";
+      typedef char * char_pointer;
+      char_pointer * argv = new char_pointer[1];
+      argv[0]= new char[context_name.size() + 1];
+      strcpy(argv[0], context_name.c_str());
+      int argc = 1;
+      rclcpp::init(argc, argv);
+    }
+    m_nodePtr = std::make_shared<rclcpp::Node>("ambf_" + a_name);
 #endif
     m_watchDogPtr.reset(new CmdWatchDog(m_nodePtr, a_freq_min, a_freq_max, time_out));
 }

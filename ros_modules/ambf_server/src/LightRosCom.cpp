@@ -62,7 +62,7 @@ void LightRosCom::init(){
        10,
        &LightRosCom::sub_cb, this);
 
-    m_thread = boost::thread(boost::bind(&LightRosCom::run_publishers, this));
+    m_thread = std::thread(std::bind(&LightRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
 }
 

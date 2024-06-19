@@ -130,16 +130,17 @@ if (ROS_VERSION EQUAL 1)
   ## Specify libraries to link a library or executable target against
   target_link_libraries(ambf_server ${catkin_LIBRARIES})
 
-else(ROS_VERSION EQUAL 2)
-  ament_target_dependencies(
+else ()
+  ament_target_dependencies (
     ambf_server
-    ${ROS2_depends}
-    )
-  target_link_libraries(ambf_server
-    ${rclcpp_LIBRARIES}
-    )
-
-  install (DIRECTORY include/${PROJECT_NAME}
+    ${ROS2_depends})
+  
+  target_link_libraries (
+    ambf_server
+    ${rclcpp_LIBRARIES} boost_system)
+  
+  install (
+    DIRECTORY include/${PROJECT_NAME}
     DESTINATION include
     )
 
@@ -154,6 +155,6 @@ else(ROS_VERSION EQUAL 2)
 
   ament_export_targets (ambf_server HAS_LIBRARY_TARGET)
   ament_export_dependencies (${ROS2_depends})
-
   ament_package ()
+  
 endif()

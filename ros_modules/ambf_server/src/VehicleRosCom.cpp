@@ -62,7 +62,7 @@ void VehicleRosCom::init(){
        10,
        &VehicleRosCom::sub_cb, this);
 
-    m_thread = boost::thread(boost::bind(&VehicleRosCom::run_publishers, this));
+    m_thread = std::thread(std::bind(&VehicleRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;
 }
 

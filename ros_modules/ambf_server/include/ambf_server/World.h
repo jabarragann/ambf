@@ -50,7 +50,7 @@
 namespace ambf_comm{
 
 class PointCloudHandler;
-typedef boost::shared_ptr<PointCloudHandler> PointCloudHandlerPtr;
+typedef std::shared_ptr<PointCloudHandler> PointCloudHandlerPtr;
 typedef std::map<std::string, PointCloudHandlerPtr> PointCloudHandlerMap;
 typedef std::vector<PointCloudHandlerPtr> PointCloudHandlerVec;
 
