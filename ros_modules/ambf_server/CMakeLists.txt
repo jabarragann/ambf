@@ -137,7 +137,7 @@ else ()
   
   target_link_libraries (
     ambf_server
-    ${rclcpp_LIBRARIES} boost_system)
+    ${rclcpp_LIBRARIES})
   
   install (
     DIRECTORY include/${PROJECT_NAME}

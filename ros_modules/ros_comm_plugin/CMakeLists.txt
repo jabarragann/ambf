@@ -64,7 +64,6 @@ else (catkin_FOUND)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
     set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs ambf_server)
-
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
     endforeach()
@@ -79,12 +78,10 @@ endif (catkin_FOUND)
 ###########
 
 find_package (AMBF REQUIRED)
-find_package (Boost REQUIRED COMPONENTS filesystem)
 
 add_definitions (${AMBF_DEFINITIONS})
 
 include_directories (${AMBF_INCLUDE_DIRS})
-include_directories (${Boost_INCLUDE_DIRS})
 
 ## Declare a C++ library
 ## this is weird
@@ -117,7 +114,7 @@ if (ROS_VERSION EQUAL 1)
 
   foreach (_plugin ${ROS_COMM_PLUGINS})
     add_dependencies (${_plugin} ${catkin_EXPORTED_TARGETS})
-    target_link_libraries (${_plugin} ${catkin_LIBRARIES} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
+    target_link_libraries (${_plugin} ${catkin_LIBRARIES} ${AMBF_LIBRARIES} drd)
   endforeach ()
 
 else ()
@@ -130,8 +127,7 @@ else ()
     )
 
   foreach (_plugin ${ROS_COMM_PLUGINS})
-    ament_target_dependencies (${_plugin} ${ROS2_depends})
-    target_link_libraries (${_plugin} ${AMBF_LIBRARIES} ${Boost_LIBRARIES} drd)
+    ament_target_dependencies (${_plugin} ambf_server)
   endforeach ()
   ament_package ()
 

@@ -36,15 +36,12 @@
 #  $Author: Adnan Munawar $
 #  $Date:  $
 #  $Rev: $
+
 cmake_minimum_required(VERSION 2.8.3)
 if(POLICY CMP0057)
   cmake_policy(SET CMP0057 NEW)
 endif()
 project(ambf_msgs)
-
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
-
 
 find_package(catkin QUIET COMPONENTS
   message_generation
@@ -126,13 +123,11 @@ else(ROS_VERSION EQUAL 2)
 
   # this doesn't work (causing issues in other parts of the code)
   # set(msg_dir "${CMAKE_CURRENT_SOURCE_DIR}/msg")
-  rosidl_generate_interfaces(ambf_msgs ${msg_files})
+  rosidl_generate_interfaces (
+    ambf_msgs
+    ${msg_files}
+    DEPENDENCIES builtin_interfaces std_msgs geometry_msgs)
 
-  ament_export_dependencies(rosidl_default_runtime)
-
-  # install(DIRECTORY
-  # DESTINATION share/${ambf_msgs}/
-  # )
   ament_package()
 endif()
 
