@@ -5,11 +5,12 @@ AF_REGISTER_OBJECT_PLUGIN(afCameraDepthStreamerPlugin);
 // #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 int afCameraDepthStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
 {
+#if ROS1
     m_objectPtr = a_afObjectPtr;
     m_cameraPtr = (afCameraPtr)a_afObjectPtr;
     afCameraAttributes* camAttribs = (afCameraAttributes*) a_objectAttribs;
 
-    m_depthPointCloudMsg.reset(new sensor_msgs::PointCloud2());
+    m_depthPointCloudMsg.reset(new AMBF_RAL_MSG(sensor_msgs, PointCloud2)());
     m_depthPointCloudModifier = new sensor_msgs::PointCloud2Modifier(*m_depthPointCloudMsg);
     m_depthPointCloudModifier->setPointCloud2FieldsByString(2, "xyz", "rgb");
     m_depthPointCloudModifier->resize(camAttribs->m_publishImageResolution.m_width*camAttribs->m_publishImageResolution.m_height);
@@ -17,12 +18,15 @@ int afCameraDepthStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
     m_depthPointCloudPub = m_rosNode->advertise<sensor_msgs::PointCloud2>(m_cameraPtr->getQualifiedName() + "/DepthData", 1);
 
     m_publishInterval = camAttribs->m_publishDepthInterval;
-
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
     return 1;
 }
 
 void afCameraDepthStreamerPlugin::graphicsUpdate()
 {
+#if ROS1
     if (m_write_count % m_publishInterval == 0){
         sensor_msgs::PointCloud2Iterator<float> pcMsg_x(*m_depthPointCloudMsg, "x");
         sensor_msgs::PointCloud2Iterator<float> pcMsg_y(*m_depthPointCloudMsg, "y");
@@ -55,6 +59,9 @@ void afCameraDepthStreamerPlugin::graphicsUpdate()
         m_depthPointCloudPub.publish(m_depthPointCloudMsg);
     }
     m_write_count++;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 
 void afCameraDepthStreamerPlugin::physicsUpdate(double)
@@ -64,11 +71,14 @@ void afCameraDepthStreamerPlugin::physicsUpdate(double)
 
 bool afCameraDepthStreamerPlugin::close()
 {
+#if ROS1
     if (m_depthPointCloudModifier != nullptr){
         delete m_depthPointCloudModifier;
-        m_depthPointCloudModifier = 0;
+        m_depthPointCloudModifier = nullptr;
     }
     return true;
+#elif ROS2
+    std::cerr << __FILE__ << __LINE__ << std::endl;
+#endif
 }
 // #endif
-

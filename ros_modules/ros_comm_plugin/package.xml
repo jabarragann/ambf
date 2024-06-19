@@ -17,7 +17,6 @@
 
   <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
 
-  <!-- <build_depend condition="$ROS_VERSION == 1">cisst_ros_crtk</build_depend> -->
   <build_depend condition="$ROS_VERSION == 1">AMBF</build_depend>
   <exec_depend condition="$ROS_VERSION == 1">AMBF</exec_depend>
   <build_depend condition="$ROS_VERSION == 1">Boost</build_depend>

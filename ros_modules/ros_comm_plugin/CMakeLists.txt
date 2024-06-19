@@ -67,14 +67,10 @@ else (catkin_FOUND)
 
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
-      include_directories (${${_dep}_INCLUDE_DIRS})
-      message ("---------- ${_dep} -- ${${_dep}_INCLUDE_DIRS} --- ")
     endforeach()
 
-    include_directories(
-      include
-      ${rclcpp_INCLUDE_DIRS}
-      )
+    include_directories(include)
+
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
 
@@ -128,7 +124,6 @@ else ()
 
   foreach (_plugin ${ROS_COMM_PLUGINS})
     ament_target_dependencies (${_plugin} ${ROS2_depends})
-    target_link_libraries (${_plugin} ${rclcpp_LIBRARIES})
   endforeach ()
   ament_package ()
 

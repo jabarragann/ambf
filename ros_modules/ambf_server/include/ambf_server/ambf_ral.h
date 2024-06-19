@@ -41,7 +41,8 @@
 
 #define AMBF_RAL_MSG(package, message) package::message
 #define AMBF_RAL_MSG_PTR(package, message) package::message##Ptr
-// #define AMBF_RAL_MSG_CONST_PTR(package, message) package::message##ConstPtr
+#define AMBF_RAL_MSG_MODIFIER(package, message) package::message##Modifier
+#define AMBF_RAL_MSG_ITERATOR(package, message) package::message##Iterator
 
 namespace ambf_ral {
     typedef std::shared_ptr<ros::NodeHandle> node_ptr_t;
@@ -153,7 +154,8 @@ namespace ambf_ral {
 
 #define AMBF_RAL_MSG(package, message) package::msg::message
 #define AMBF_RAL_MSG_PTR(package, message) package::msg::message::Ptr
-// #define AMBF_RAL_MSG_CONST_PTR(package, message) package::msg::message::ConstPtr
+#define AMBF_RAL_MSG_MODIFIER(package, message) package::msg::message::Modifier
+#define AMBF_RAL_MSG_ITERATOR(package, message) package::msg::message::Iterator
 
 namespace ambf_ral {
     typedef std::shared_ptr<rclcpp::Node> node_ptr_t;

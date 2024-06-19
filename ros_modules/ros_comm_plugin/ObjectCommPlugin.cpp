@@ -305,7 +305,7 @@ void afObjectCommunicationPlugin::actuatorFetchCommand(afActuatorPtr actPtr, dou
     switch (actPtr->m_actuatorType) {
     case afActuatorType::CONSTRAINT:
     {
-        ambf_msgs::ActuatorCmd cmd = m_actuatorCommPtr->get_command();
+        AMBF_RAL_MSG(ambf_msgs, ActuatorCmd) cmd = m_actuatorCommPtr->get_command();
         afConstraintActuatorPtr castPtr = (afConstraintActuatorPtr)actPtr;
         if (cmd.actuate){
             if (castPtr->isActuated()){
@@ -367,7 +367,7 @@ void afObjectCommunicationPlugin::actuatorUpdateState(afActuatorPtr actPtr, doub
 void afObjectCommunicationPlugin::cameraFetchCommand(afCameraPtr camPtr, double dt)
 {
     if (m_cameraCommPtr.get() != nullptr){
-        ambf_msgs::CameraCmd m_afCommand = m_cameraCommPtr->get_command();
+        AMBF_RAL_MSG(ambf_msgs, CameraCmd) m_afCommand = m_cameraCommPtr->get_command();
 
         if (m_afCommand.enable_position_controller){
             cVector3d pos(m_afCommand.pose.position.x,
@@ -505,7 +505,7 @@ void afObjectCommunicationPlugin::jointUpdateState(afJointPtr jointPtr, double d
 
 void afObjectCommunicationPlugin::lightFetchCommand(afLightPtr lightPtr, double dt)
 {
-    ambf_msgs::LightCmd m_afCommand = m_lightCommPtr->get_command();
+    AMBF_RAL_MSG(ambf_msgs, LightCmd) m_afCommand = m_lightCommPtr->get_command();
 
     if (m_afCommand.enable_position_controller){
         cVector3d pos(m_afCommand.pose.position.x,
@@ -574,11 +574,12 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
 {
     btRigidBody* btRBPtr = afRBPtr->m_bulletRigidBody;
     btVector3 force, torque;
-    ambf_msgs::RigidBodyCmd afCommand = m_rigidBodyCommPtr->get_command();
+    typedef AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) cmd_rb_t;
+    cmd_rb_t afCommand = m_rigidBodyCommPtr->get_command();
 
     // IF THE COMMAND IS OF TYPE FORCE
     switch (afCommand.cartesian_cmd_type) {
-    case ambf_msgs::RigidBodyCmd::TYPE_FORCE:{
+    case cmd_rb_t::TYPE_FORCE: {
         afRBPtr->m_activeControllerType = afControlType::FORCE;
         if (afRBPtr->m_bulletRigidBody){
             force.setValue(afCommand.wrench.force.x,
@@ -594,7 +595,7 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
         }
     }
         break;
-    case ambf_msgs::RigidBodyCmd::TYPE_POSITION:{
+    case cmd_rb_t::TYPE_POSITION:{
         afRBPtr->m_activeControllerType = afControlType::POSITION;
         // cerr << "**** CARTESIAN CMD\n";
         // If the body is kinematic, we just want to control the position
@@ -670,7 +671,7 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
         }
     }
         break;
-    case ambf_msgs::RigidBodyCmd::TYPE_VELOCITY:{
+    case cmd_rb_t::TYPE_VELOCITY:{
         btVector3 lin_vel, ang_vel;
         afRBPtr->m_activeControllerType = afControlType::VELOCITY;
         if (btRBPtr){
@@ -720,13 +721,13 @@ void afObjectCommunicationPlugin::rigidBodyFetchCommand(afRigidBodyPtr afRBPtr, 
             afJointPtr joint = afRBPtr->m_CJ_PairsActive[jntIdx].m_childJoint;
             double jnt_cmd = afCommand.joint_cmds[jntIdx];
             switch (afCommand.joint_cmds_types[jntIdx]) {
-            case ambf_msgs::RigidBodyCmd::TYPE_FORCE:
+            case cmd_rb_t::TYPE_FORCE:
                 joint->commandEffort(jnt_cmd);
                 break;
-            case ambf_msgs::RigidBodyCmd::TYPE_POSITION:
+            case cmd_rb_t::TYPE_POSITION:
                 joint->commandPosition(jnt_cmd);
                 break;
-            case ambf_msgs::RigidBodyCmd::TYPE_VELOCITY:
+            case cmd_rb_t::TYPE_VELOCITY:
                 joint->commandVelocity(jnt_cmd);
                 break;
             default:
@@ -774,7 +775,7 @@ void afObjectCommunicationPlugin::rigidBodyUpdateState(afRigidBodyPtr afRBPtr, d
         m_rigidBodyCommPtr->set_principal_inertia(inertia.x(), inertia.y(), inertia.z());
     }
 
-    ambf_msgs::RigidBodyCmd afCommand = m_rigidBodyCommPtr->get_command();
+    AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) afCommand = m_rigidBodyCommPtr->get_command();
     // We can set this body to publish it's children joint names in either its AMBF Description file or
     // via it's afCommand using ROS Message
     if (afRBPtr->m_publish_joint_names == true || afCommand.publish_joint_names == true){
@@ -892,7 +893,7 @@ void afObjectCommunicationPlugin::sensorUpdateState(afSensorPtr senPtr, double d
 
 void afObjectCommunicationPlugin::vehicleFetchCommand(afVehiclePtr vehPtr, double)
 {
-    ambf_msgs::VehicleCmd af_cmd = m_vehicleCommPtr->get_command();
+    AMBF_RAL_MSG(ambf_msgs, VehicleCmd) af_cmd = m_vehicleCommPtr->get_command();
 
     int maxWheelCount;
     int actualWheelCount = vehPtr->getWheelCount();
@@ -968,7 +969,7 @@ void afObjectCommunicationPlugin::vehicleUpdateState(afVehiclePtr vehPtr, double
 
 void afObjectCommunicationPlugin::pointCloudFetchCommand(afPointCloudPtr pointCloudPtr, double)
 {
-    sensor_msgs::PointCloudPtr pcPtr = m_pointCloudCommPtr->get_point_cloud();
+    AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) pcPtr = m_pointCloudCommPtr->get_point_cloud();
     if(pcPtr){
         double radius = m_pointCloudCommPtr->get_radius();
         pointCloudPtr->m_mpPtr->setPointSize(radius);

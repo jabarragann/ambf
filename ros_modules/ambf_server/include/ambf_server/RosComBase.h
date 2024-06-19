@@ -46,6 +46,7 @@
 #include <ambf_server/ambf_ral.h>
 #include <ambf_server/CmdWatchDog.h>
 #include <mutex>
+#include <cstdint>
 
 class afROSNode{
 public:
@@ -137,7 +138,11 @@ public:
     }
 
     inline void set_time_stamp(double a_sec){
+#if ROS1
         m_State.header.stamp.fromSec(a_sec);
+#elif ROS2
+        m_State.header.stamp = rclcpp::Time(static_cast<uint64_t>(a_sec * 1e9));
+#endif
     }
 
     inline void set_wall_time(double a_sec){
