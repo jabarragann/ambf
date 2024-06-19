@@ -122,6 +122,13 @@ if (ROS_VERSION EQUAL 1)
 
 else ()
 
+  install (
+    TARGETS ${ROS_COMM_PLUGINS}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    )
+  
   foreach (_plugin ${ROS_COMM_PLUGINS})
     ament_target_dependencies (${_plugin} ${ROS2_depends})
   endforeach ()

@@ -369,3 +369,10 @@ set (CONF_DEFINITIONS  ${AMBF_DEFINITIONS} ${CHAI3D_DEFINITIONS} ${BULLET_DEFINI
 # create package configuration and version files
 configure_file (AMBFConfig.cmake.in "${PROJECT_BINARY_DIR}/share/AMBF/cmake/AMBFConfig.cmake" @ONLY)
 configure_file (AMBFConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/share/AMBF/cmake/AMBFConfigVersion.cmake" @ONLY)
+
+install (
+  TARGETS ambf_framework
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  )
