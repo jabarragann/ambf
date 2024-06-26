@@ -75,8 +75,6 @@ int afObjectCommunicationPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
         return 0;
     }
 
-    cerr  << "****INFO! TEST STATEMENT\n";
-
     string objName = m_objectPtr->getName() + m_objectPtr->getGlobalRemapIdx();
     string objNamespace = m_objectPtr->getNamespace();
     string objQualifiedIdentifier = m_objectPtr->getQualifiedIdentifier() + m_objectPtr->getGlobalRemapIdx();

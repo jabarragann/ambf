@@ -60,7 +60,11 @@ public:
         m_minRatePtr.reset(new ambf_ral::rate_t(m_freq_min));
         m_maxRatePtr.reset(new ambf_ral::rate_t(m_freq_max));
         m_ratePtr = m_minRatePtr;
+#if ROS2
+        m_next_cmd_expected_time = ambf_ral::now(m_node);
+#endif
     }
+
     void acknowledge_wd(void) {
         if (m_initialized == false) {
             m_ratePtr = m_maxRatePtr;
@@ -68,19 +72,22 @@ public:
         m_initialized = true;
         m_next_cmd_expected_time = ambf_ral::now(m_node) + m_expire_duration;
     }
+
     bool is_wd_expired(void) {
-      bool expired = (ambf_ral::now(m_node) > m_next_cmd_expected_time && m_initialized) ? true : false;
+        bool expired = ((ambf_ral::now(m_node) > m_next_cmd_expected_time) && m_initialized) ? true : false;
         if (expired) {
             m_ratePtr = m_minRatePtr;
         }
         return expired;
     }
+
     void consolePrint(const std::string & class_name) {
         if (m_initialized) {
             m_initialized = false;
             std::cerr << "WatchDog expired, Resetting \"" << class_name << "\" command" << std::endl;
         }
     }
+
     ambf_ral::rate_ptr_t m_ratePtr;
 
 protected:

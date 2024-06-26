@@ -82,7 +82,11 @@ public:
     }
 
     static bool isNodeActive(void ) {
+#if ROS1
         return s_initialized;
+#elif ROS2
+        return true;
+#endif
     }
 
     static void unRegister(void) {
@@ -216,9 +220,9 @@ private:
 };
 
 template<class T_state, class T_cmd>
-void RosComBase<T_state, T_cmd>::run_publishers(){
-    while(afROSNode::isNodeActive()){
-        if (m_enableComm){
+void RosComBase<T_state, T_cmd>::run_publishers() {
+    while (afROSNode::isNodeActive()) {
+        if (m_enableComm) {
             // Call callbacks
 #if ROS1
             m_custom_queue.callAvailable();
@@ -231,11 +235,7 @@ void RosComBase<T_state, T_cmd>::run_publishers(){
             }
             // Update and publish state
             copyState();
-#if ROS1
             m_pubPtr->publish(m_StateCopy);
-#elif ROS2
-            std::cerr << " fix ROS2 publish" << std::endl;
-#endif
         }
         m_watchDogPtr->m_ratePtr->sleep();
     }

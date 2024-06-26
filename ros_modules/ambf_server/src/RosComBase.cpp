@@ -43,8 +43,8 @@
 #include <ambf_server/RosComBase.h>
 
 bool afROSNode::s_initialized;
-ambf_ral::ral * afROSNode::s_ral = nullptr;
 size_t afROSNode::s_registeredInstances = 0;
+ambf_ral::ral * afROSNode::s_ral = nullptr;
 
 template<class T_state, class T_cmd>
 ///
