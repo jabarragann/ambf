@@ -52,8 +52,13 @@
 using namespace std;
 typedef unsigned int uint;
 
-#define PI 3.141592653589793238
-#define PI_2 1.5707963267948966
+#ifndef M_PI
+#define M_PI 3.141592653589793238
+#endif
+
+#ifndef M_PI_2
+#define M_PI_2 1.5707963267948966
+#endif
 
 namespace ambf {
 

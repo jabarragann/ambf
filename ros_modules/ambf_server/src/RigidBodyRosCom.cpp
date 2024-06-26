@@ -69,14 +69,14 @@ void RigidBodyRosCom::init(){
 void RigidBodyRosCom::reset_cmd(){
     // For cartesian control, the TYPE_FORCE indicates wrench.
     m_Cmd.cartesian_cmd_type = AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd)::TYPE_FORCE;
-    m_Cmd.wrench.force.x = 0;
-    m_Cmd.wrench.force.y = 0;
-    m_Cmd.wrench.force.z = 0;
-    m_Cmd.wrench.torque.x = 0;
-    m_Cmd.wrench.torque.y = 0;
-    m_Cmd.wrench.torque.z = 0;
+    m_Cmd.wrench.force.x = 0.0;
+    m_Cmd.wrench.force.y = 0.0;
+    m_Cmd.wrench.force.z = 0.0;
+    m_Cmd.wrench.torque.x = 0.0;
+    m_Cmd.wrench.torque.y = 0.0;
+    m_Cmd.wrench.torque.z = 0.0;
     for(size_t idx = 0 ; idx < m_Cmd.joint_cmds.size() ; idx++){
-        m_Cmd.joint_cmds[idx] = 0;
+        m_Cmd.joint_cmds[idx] = 0.0;
     }
     for(size_t idx = 0 ; idx < m_Cmd.joint_cmds_types.size() ; idx++){
         // For joint control, the TYPE_FORCE indicates joint effort, which could be force for prismatic joint, or torque for revolute joint.

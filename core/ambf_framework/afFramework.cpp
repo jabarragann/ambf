@@ -3655,9 +3655,9 @@ void afJoint::commandPosition(double &position_cmd){
 
 double ambf::afJoint::afJoint::getShortestAngle(double current, double target){
     if (current < 0.0){
-        current = 2 * PI + current;
+        current = 2.0 * M_PI + current;
     }
-    double delta_angle = fmod( (target - current + 3 * PI), 2*PI) - PI;
+    double delta_angle = fmod( (target - current + 3.0 * M_PI), 2.0 * M_PI) - M_PI;
     return delta_angle;
 }
 

@@ -40,7 +40,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(ambf_server)
 
-set (ROS1_depends geometry_msgs ambf_msgs tf message_generation)
+set (ROS1_depends geometry_msgs ambf_msgs tf2 message_generation)
 find_package (catkin QUIET
   COMPONENTS ${ROS1_depends})
 

@@ -64,12 +64,12 @@ int main(){
 
 
 
-    afMatrix3d rot(PI, 0, PI_2);
+    afMatrix3d rot(M_PI, 0, M_PI_2);
     afVector3d pos(10, 0, -20);
     afTransform T1(rot, pos);
 
 
-    afMatrix3d rot2(0, 0, PI_2);
+    afMatrix3d rot2(0, 0, M_PI_2);
     afVector3d pos2(0, 0, 5);
     afTransform T2(rot2, pos2);
 

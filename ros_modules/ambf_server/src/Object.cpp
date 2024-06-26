@@ -47,53 +47,35 @@ Object::Object(std::string a_name, std::string a_namespace, int a_freq_min, int 
 }
 
 void Object::cur_position(double px, double py, double pz){
-#if ROS1
-    m_trans.setOrigin(tf::Vector3(px, py, pz));
+    m_trans.setOrigin(tf2::Vector3(px, py, pz));
     m_State.pose.position.x = px;
     m_State.pose.position.y = py;
     m_State.pose.position.z = pz;
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
 }
 
 void Object::cur_orientation(double roll, double pitch, double yaw){
-#if ROS1
-    tf::Quaternion rot_quat;
+    tf2::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
-    tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    m_State.pose.orientation = toMsg(rot_quat);
 }
 
 void Object::cur_orientation(double qx, double qy, double qz, double qw){
-#if ROS1
-    tf::Quaternion rot_quat(qx, qy, qz, qw);
+    tf2::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
-    tf::quaternionTFToMsg(rot_quat, m_State.pose.orientation);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    m_State.pose.orientation = toMsg(rot_quat);
 }
 
 void Object::cur_force(double fx, double fy, double fz){
-#if ROS1
-    tf::Vector3 f(fx, fy, fz);
-    tf::vector3TFToMsg(f, m_State.wrench.force);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    m_State.wrench.force.x = fx;
+    m_State.wrench.force.y = fy;
+    m_State.wrench.force.z = fz;
 }
 
 void Object::cur_torque(double nx, double ny, double nz){
-#if ROS1
-    tf::Vector3 n(nx, ny, nz);
-    tf::vector3TFToMsg(n, m_State.wrench.torque);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    m_State.wrench.torque.x = nx;
+    m_State.wrench.torque.y = ny;
+    m_State.wrench.torque.z = nz;
 }
 
 AMBF_RAL_MSG(ambf_msgs, ObjectCmd) Object::get_command(){

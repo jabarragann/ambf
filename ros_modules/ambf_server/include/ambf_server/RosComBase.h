@@ -178,11 +178,12 @@ protected:
     std::string m_namespace;
 
     std::string m_name;
+  
+    tf2::Transform m_trans;
 
 #if ROS1
     std::shared_ptr<ros::Publisher> m_pubPtr;
     std::shared_ptr<ros::Subscriber> m_subPtr;
-    tf::Transform m_trans;
 #elif ROS2
     typedef typename rclcpp::Publisher<T_state> publisher_t;
     typename publisher_t::SharedPtr m_pubPtr;
