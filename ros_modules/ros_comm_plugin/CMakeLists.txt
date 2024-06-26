@@ -47,6 +47,7 @@ find_package (catkin QUIET
 
 # ROS 1
 if (catkin_FOUND)
+  find_package (Boost COMPONENTS filesystem REQUIRED)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
   message(STATUS "ROS VERSION = 1")
