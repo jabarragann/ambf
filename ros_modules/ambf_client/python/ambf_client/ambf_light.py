@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,51 +41,17 @@
 # */
 # //==============================================================================
 
-from ambf_msgs.msg import ActuatorState
-from ambf_msgs.msg import ActuatorCmd
-from ambf_base_object import BaseObject
-import rospy
-from geometry_msgs.msg import Pose, Wrench
+from ambf_msgs.msg import LightState
+from ambf_msgs.msg import LightCmd
+from .ambf_base_object import BaseObject
 
 
-class Actuator(BaseObject):
+class Light(BaseObject):
     def __init__(self, a_name, time_out=0.1):
         """
         Constructor
         :param a_name:
         """
-        super(Actuator, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
-        self.object_type = "ACTUATOR"
+        super(Light, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
+        self.object_type = "LIGHT"
         self.body_type = "KINEMATIC"
-
-    def _clear_command(self):
-        """
-        Clear wrench if watchdog is expired
-        :return:
-        """
-
-    def actuate(self, obj_name, pose=None):
-        """
-        :param obj_name:
-        :param pose:
-        :return:
-        """
-        self._cmd.body_name.data = obj_name
-        self._cmd.actuate = True
-
-    def actuate_from_sensor_data(self, sensor_identifer):
-        """
-        :param sensor_name:
-        :return:
-        """
-        self._cmd.use_sensor_data = True
-        self._cmd.sensor_identifier.data = sensor_identifer
-        self._cmd.actuate = True
-
-    def deactuate(self):
-        """
-        :return:
-        """
-        self._cmd.actuate = False
-        self._cmd.use_sensor_data = False
-        self._cmd.sensor_identifier.data = ''

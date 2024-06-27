@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -44,7 +43,7 @@
 
 from ambf_msgs.msg import VehicleState
 from ambf_msgs.msg import VehicleCmd
-from ambf_base_object import BaseObject
+from .ambf_base_object import BaseObject
 
 
 class Vehicle(BaseObject):

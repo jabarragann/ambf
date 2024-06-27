@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -44,7 +43,7 @@
 
 from ambf_msgs.msg import SensorState
 from ambf_msgs.msg import SensorCmd
-from ambf_base_object import BaseObject
+from .ambf_base_object import BaseObject
 
 
 class Sensor(BaseObject):

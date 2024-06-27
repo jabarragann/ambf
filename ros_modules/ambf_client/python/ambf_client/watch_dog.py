@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,17 +41,40 @@
 # */
 # //==============================================================================
 
-from ambf_msgs.msg import CameraState
-from ambf_msgs.msg import CameraCmd
-from ambf_base_object import BaseObject
+
+# ROS version
+import os
+__ros_version_string = os.environ['ROS_VERSION']
+if __ros_version_string == '1':
+    ROS = 1
+    import rospy
+elif __ros_version_string == '2':
+    ROS = 2
+    import rclpy
+else:
+    print('environment variable ROS_VERSION must be either 1 or 2, did you source your setup.bash?')
 
 
-class Camera(BaseObject):
-    def __init__(self, a_name, time_out=0.1):
-        """
-        Constructor
-        :param a_name:
-        """
-        super(Camera, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
-        self.object_type = "CAMERA"
-        self.body_type = "KINEMATIC"
+class WatchDog(object):
+    def __init__(self, time_out=0.1):
+        self._expire_duration = rospy.Duration.from_sec(time_out)
+        self._next_cmd_expected_time = rospy.Time.now()
+        self._initialized = False
+
+    def acknowledge_wd(self):
+        self._initialized = True
+        self._next_cmd_expected_time = rospy.Time.now() + self._expire_duration
+
+    def is_wd_expired(self):
+        if rospy.Time.now() > self._next_cmd_expected_time and self._initialized:
+            return True
+        else:
+            return False
+
+    def console_print(self, class_name):
+        if self._initialized:
+            print('Watch Dog Expired, Resetting {} command'.format(class_name))
+            self._initialized = False
+
+    def set_timeout(self, time_out):
+        self._expire_duration = rospy.Duration.from_sec(time_out)

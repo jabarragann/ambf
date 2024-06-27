@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,18 +41,13 @@
 # */
 # //==============================================================================
 
-from ambf_msgs.msg import LightState
-from ambf_msgs.msg import LightCmd
-from ambf_base_object import BaseObject
-import rospy
-
-
-class Light(BaseObject):
-    def __init__(self, a_name, time_out=0.1):
-        """
-        Constructor
-        :param a_name:
-        """
-        super(Light, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
-        self.object_type = "LIGHT"
-        self.body_type = "KINEMATIC"
+from .ambf_client import Client
+from .ambf_world import World
+from .ambf_object import Object
+from .ambf_rigid_body import RigidBody
+from .ambf_actuator import Actuator
+from .ambf_camera import Camera
+from .ambf_sensor import Sensor
+from .ambf_light import Light
+from .ambf_env import AmbfEnv
+from .watch_dog import WatchDog

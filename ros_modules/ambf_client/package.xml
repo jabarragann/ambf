@@ -24,6 +24,7 @@
   <depend condition="$ROS_VERSION == 2">ambf_msgs</depend>
   <depend condition="$ROS_VERSION == 2">tf2</depend>
   <depend condition="$ROS_VERSION == 2">message_generation</depend>
+  <depend condition="$ROS_VERSION == 2">tf_function</depend>
   <!-- <depend condition="$ROS_VERSION == 2">cisst_ros2_crtk</depend> -->
 
   <export>

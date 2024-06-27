@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,13 +41,24 @@
 # */
 # //==============================================================================
 
-from transformations import quaternion_from_euler, euler_from_quaternion
+# ROS version
+import os
+__ros_version_string = os.environ['ROS_VERSION']
+if __ros_version_string == '1':
+    ROS = 1
+    import rospy
+elif __ros_version_string == '2':
+    ROS = 2
+    import rclpy
+else:
+    print('environment variable ROS_VERSION must be either 1 or 2, did you source your setup.bash?')
+
+from tf_function import quaternion_from_euler, euler_from_quaternion
 from ambf_msgs.msg import ObjectState
 from ambf_msgs.msg import ObjectCmd
-from watch_dog import WatchDog
-import rospy
 from geometry_msgs.msg import Pose, Wrench
 
+from .watch_dog import WatchDog
 
 class BaseObject(WatchDog):
     def __init__(self, a_name, time_out):

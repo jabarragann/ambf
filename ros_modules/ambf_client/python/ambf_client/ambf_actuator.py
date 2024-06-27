@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,29 +41,51 @@
 # */
 # //==============================================================================
 
-import rospy
+from ambf_msgs.msg import ActuatorState
+from ambf_msgs.msg import ActuatorCmd
+from geometry_msgs.msg import Pose, Wrench
+
+from .ambf_base_object import BaseObject
 
 
-class WatchDog(object):
-    def __init__(self, time_out=0.1):
-        self._expire_duration = rospy.Duration.from_sec(time_out)
-        self._next_cmd_expected_time = rospy.Time.now()
-        self._initialized = False
+class Actuator(BaseObject):
+    def __init__(self, a_name, time_out=0.1):
+        """
+        Constructor
+        :param a_name:
+        """
+        super(Actuator, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
+        self.object_type = "ACTUATOR"
+        self.body_type = "KINEMATIC"
 
-    def acknowledge_wd(self):
-        self._initialized = True
-        self._next_cmd_expected_time = rospy.Time.now() + self._expire_duration
+    def _clear_command(self):
+        """
+        Clear wrench if watchdog is expired
+        :return:
+        """
 
-    def is_wd_expired(self):
-        if rospy.Time.now() > self._next_cmd_expected_time and self._initialized:
-            return True
-        else:
-            return False
+    def actuate(self, obj_name, pose=None):
+        """
+        :param obj_name:
+        :param pose:
+        :return:
+        """
+        self._cmd.body_name.data = obj_name
+        self._cmd.actuate = True
 
-    def console_print(self, class_name):
-        if self._initialized:
-            print('Watch Dog Expired, Resetting {} command'.format(class_name))
-            self._initialized = False
+    def actuate_from_sensor_data(self, sensor_identifer):
+        """
+        :param sensor_name:
+        :return:
+        """
+        self._cmd.use_sensor_data = True
+        self._cmd.sensor_identifier.data = sensor_identifer
+        self._cmd.actuate = True
 
-    def set_timeout(self, time_out):
-        self._expire_duration = rospy.Duration.from_sec(time_out)
+    def deactuate(self):
+        """
+        :return:
+        """
+        self._cmd.actuate = False
+        self._cmd.use_sensor_data = False
+        self._cmd.sensor_identifier.data = ''

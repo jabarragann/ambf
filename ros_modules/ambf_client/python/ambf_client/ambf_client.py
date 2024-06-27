@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # //==============================================================================
 # /*
 #     Software License Agreement (BSD License)
@@ -42,7 +41,21 @@
 # */
 # //==============================================================================
 
-import rospy
+# ROS version
+import os
+__ros_version_string = os.environ['ROS_VERSION']
+if __ros_version_string == '1':
+    ROS = 1
+    import rospy
+elif __ros_version_string == '2':
+    ROS = 2
+    import rclpy
+else:
+    print('environment variable ROS_VERSION must be either 1 or 2, did you source your setup.bash?')
+
+import threading
+from difflib import SequenceMatcher
+
 from ambf_msgs.msg import ActuatorState, ActuatorCmd
 from ambf_msgs.msg import CameraState, CameraCmd
 from ambf_msgs.msg import LightState, LightCmd
@@ -51,18 +64,18 @@ from ambf_msgs.msg import RigidBodyState, RigidBodyCmd
 from ambf_msgs.msg import WorldState, WorldCmd
 from ambf_msgs.msg import SensorState, SensorCmd
 from ambf_msgs.msg import VehicleState, VehicleCmd
+
 from std_msgs.msg import Empty
-import threading
 from geometry_msgs.msg import WrenchStamped
-from ambf_actuator import Actuator
-from ambf_camera import Camera
-from ambf_light import Light
-from ambf_object import Object
-from ambf_rigid_body import RigidBody
-from ambf_sensor import Sensor
-from ambf_vehicle import Vehicle
-from ambf_world import World
-from difflib import SequenceMatcher
+
+from .ambf_actuator import Actuator
+from .ambf_camera import Camera
+from .ambf_light import Light
+from .ambf_object import Object
+from .ambf_rigid_body import RigidBody
+from .ambf_sensor import Sensor
+from .ambf_vehicle import Vehicle
+from .ambf_world import World
 
 
 class Client:
@@ -83,7 +96,7 @@ class Client:
         self._rate = rospy.Rate(rate)
 
     def create_objs_from_rostopics(self, publish_rate):
-        
+
         # Check if a node is running, if not create one
         # else get the name of the node
         if "/unnamed" == rospy.get_name():
