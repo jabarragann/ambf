@@ -46,8 +46,19 @@ from ambf_client import Client
 import time
 from obj_control_gui import ObjectGUI
 from jnt_control_gui import JointGUI
-import rospy
 from argparse import ArgumentParser
+
+# ROS version
+import os
+__ros_version_string = os.environ['ROS_VERSION']
+if __ros_version_string == '1':
+    ROS = 1
+    import rospy
+elif __ros_version_string == '2':
+    ROS = 2
+    import rclpy
+else:
+    print('environment variable ROS_VERSION must be either 1 or 2, did you source your setup.bash?')
 
 
 class ObjectControl:
@@ -84,8 +95,13 @@ class ObjectControl:
             self._n_jnts = len(jnt_names)
             self.jnt_gui = JointGUI(obj_name, self._n_jnts, jnt_names)
 
+    def is_shutdown(self):
+        if ROS == 1:
+            return rospy.is_shutdown()
+        return not rclpy.ok()
+
     def run(self):
-        while not rospy.is_shutdown():
+        while not self.is_shutdown():
 
             if self._ctrl_c_space is True:
                 self.obj_gui.App.update()

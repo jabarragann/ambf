@@ -50,10 +50,12 @@ if __ros_version_string == '1':
 elif __ros_version_string == '2':
     ROS = 2
     import rclpy
+    import rclpy.node
 else:
     print('environment variable ROS_VERSION must be either 1 or 2, did you source your setup.bash?')
 
 import threading
+import time
 from difflib import SequenceMatcher
 
 from ambf_msgs.msg import ActuatorState, ActuatorCmd
@@ -83,34 +85,58 @@ class Client:
         self._ros_topics = []
         self._sub_list = []
         self._objects_dict = {}
-        self._sub_thread = []
         self._pub_thread = []
         self._world_name = ''
         self._common_obj_namespace = ''
         self._client_name = client_name
         self._world_handle = None
         self._rate = None
+        if ROS == 2:
+            self._node = None
+            self._executor = None
+            self._executor_thread = None
         pass
 
     def set_publish_rate(self, rate):
-        self._rate = rospy.Rate(rate)
+        if ROS == 1:
+            self._rate = rospy.Rate(rate)
+        else:
+            self._rate = self._node.create_rate(rate)
 
     def create_objs_from_rostopics(self, publish_rate):
-
-        # Check if a node is running, if not create one
-        # else get the name of the node
-        if "/unnamed" == rospy.get_name():
-            rospy.init_node(self._client_name)
+        if ROS == 1:
+            # Check if a node is running, if not create one
+            # else get the name of the node
+            if "/unnamed" == rospy.get_name():
+                rospy.init_node(self._client_name)
+            else:
+                self._client_name = rospy.get_name()
+                rospy.on_shutdown(self.clean_up)
+                self._ros_topics = rospy.get_published_topics()
         else:
-            self._client_name = rospy.get_name()
+            if not rclpy.ok():
+                rclpy.init()
+            self._node = rclpy.node.Node(self._client_name)
+            self._executor = rclpy.executors.MultiThreadedExecutor()
+            self._executor.add_node(self._node)
+            self._executor_thread = threading.Thread(target = self._executor.spin, daemon = True)
+            self._executor_thread.start()
+            time.sleep(1.0) # so the new node can discover other nodes
+            for [node_name, node_namespace] in self._node.get_node_names_and_namespaces():
+                self._ros_topics += self._node.get_publisher_names_and_types_by_node(node_name, node_namespace)
+
         self.set_publish_rate(publish_rate)
-        rospy.on_shutdown(self.clean_up)
-        self._ros_topics = rospy.get_published_topics()
+
         # Find the common longest substring to make the object names shorter
         first_run = True
         for i in range(len(self._ros_topics)):
             topic_name = self._ros_topics[i][0]
-            msg_type = self._ros_topics[i][1]
+            if ROS == 1:
+                msg_type = self._ros_topics[i][1]
+            else:
+                msg_type = self._ros_topics[i][1][0]
+                msg_type = msg_type.replace('/msg/', '/')
+
             if msg_type in ['ambf_msgs/ActuatorState',
                             'ambf_msgs/CameraState',
                             'ambf_msgs/LightState',
@@ -134,7 +160,11 @@ class Client:
 
         for i in range(len(self._ros_topics)):
             topic_name = self._ros_topics[i][0]
-            msg_type = self._ros_topics[i][1]
+            if ROS == 1:
+                msg_type = self._ros_topics[i][1]
+            else:
+                msg_type = self._ros_topics[i][1][0]
+                msg_type = msg_type.replace('/msg/', '/')
             if msg_type == 'ambf_msgs/WorldState':
                 self._world_name = 'World'
                 world_obj = World(self._world_name)
@@ -190,13 +220,22 @@ class Client:
             elif msg_type == 'ambf_msgs/RigidBodyState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = RigidBody(post_trimmed_name)
+                base_obj = RigidBody(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = RigidBodyState()
                 base_obj._cmd = RigidBodyCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, RigidBodyState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=RigidBodyCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                if ROS == 1:
+                    base_obj._sub = rospy.Subscriber(topic_name, RigidBodyState, base_obj.ros_cb)
+                    base_obj._pub = rospy.Publisher(name = topic_name.replace('/State', '/Command'),
+                                                    data_class = RigidBodyCmd,
+                                                    tcp_nodelay = True, queue_size = 10)
+                else:
+                    history = rclpy.qos.HistoryPolicy.KEEP_LAST
+                    qos = rclpy.qos.QoSProfile(depth = 10, history = history)
+                    base_obj._sub = self._node.create_subscription(RigidBodyState, topic_name, base_obj.ros_cb, qos)
+                    base_obj._pub = self._node.create_publisher(RigidBodyCmd, topic_name.replace('/State', '/Command'), qos)
+                print(f'Added RigidBody {post_trimmed_name}')
                 self._objects_dict[base_obj.get_name()] = base_obj
+
             elif msg_type == 'ambf_msgs/SensorState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
@@ -218,8 +257,8 @@ class Client:
                                                 tcp_nodelay=True, queue_size=10)
                 self._objects_dict[base_obj.get_name()] = base_obj
 
-    def connect(self, default_publish_rate=120):
-        self.create_objs_from_rostopics(default_publish_rate)
+    def connect(self, default_publish_rate = 120):
+        self.create_objs_from_rostopics(publish_rate = default_publish_rate)
         self.start()
 
     def refresh(self):
@@ -304,8 +343,15 @@ class Client:
         self._pub_thread.daemon = True
         self._pub_thread.start()
 
+    def _is_shutdown(self):
+        if ROS == 1:
+            return rospy.is_shutdown()
+        else:
+            return (not rclpy.ok())
+
+
     def _run_obj_publishers(self):
-        while not rospy.is_shutdown():
+        while not self._is_shutdown():
             for key, obj in self._objects_dict.items():
                 if obj.is_active():
                     obj.run_publisher()
@@ -332,3 +378,6 @@ class Client:
             val.pub_flag = False
             print('Closing publisher for: ', key)
         self._objects_dict.clear()
+        if ROS == 2:
+            temporary_node.destroy_node()
+        pass

@@ -61,12 +61,12 @@ from geometry_msgs.msg import Pose, Wrench
 from .watch_dog import WatchDog
 
 class BaseObject(WatchDog):
-    def __init__(self, a_name, time_out):
+    def __init__(self, node, a_name, time_out):
         """
         Constructor
         :param a_name:
         """
-        super(BaseObject, self).__init__(time_out)  # Set duration of Watchdog expiry
+        super(BaseObject, self).__init__(node = node, time_out = time_out)  # Set duration of Watchdog expiry
         self._name = a_name
         self._state = None
         self._cmd = None
@@ -310,8 +310,10 @@ class BaseObject(WatchDog):
         Internal function to synchronized with the publisher and update watchdog
         :return:
         """
-        self._cmd.header.stamp = rospy.Time.now()
-        # self._pub.publish(self._cmd)
+        if ROS == 1:
+            self._cmd.header.stamp = rospy.Time.now()
+        else:
+            self._cmd.header.stamp = self._node.get_clock().now().to_msg()
         self.acknowledge_wd()
 
     def _clear_command(self):
@@ -327,6 +329,6 @@ class BaseObject(WatchDog):
         """
         if self.pub_flag:
             if self.is_wd_expired():
-                # self.console_print(self._name)
+                self.console_print(self._name)
                 self._clear_command()
             self._pub.publish(self._cmd)
