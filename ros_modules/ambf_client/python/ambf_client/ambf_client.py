@@ -103,6 +103,24 @@ class Client:
         else:
             self._rate = self._node.create_rate(rate)
 
+    def create_subscriber(self, topic, data_type, callback, queue_size = 10):
+        if ROS == 1:
+            return rospy.Subscriber(topic, data_type, callback)
+        else:
+            history = rclpy.qos.HistoryPolicy.KEEP_LAST
+            qos = rclpy.qos.QoSProfile(depth = queue_size, history = history)
+            return self._node.create_subscription(data_type, topic, callback, qos)
+
+    def create_publisher(self, topic, data_type, queue_size = 10):
+        if ROS == 1:
+            return rospy.Publisher(name = topic,
+                                   data_class = data_type,
+                                   tcp_nodelay = True, queue_size = queue_size)
+        else:
+            history = rclpy.qos.HistoryPolicy.KEEP_LAST
+            qos = rclpy.qos.QoSProfile(depth = queue_size, history = history)
+            return self._node.create_publisher(data_type, topic, qos)
+
     def create_objs_from_rostopics(self, publish_rate):
         if ROS == 1:
             # Check if a node is running, if not create one
@@ -168,13 +186,10 @@ class Client:
             if msg_type == 'ambf_msgs/WorldState':
                 self._world_name = 'World'
                 world_obj = World(self._world_name)
-                world_obj._sub = rospy.Subscriber(topic_name, WorldState, world_obj.ros_cb)
-                world_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=WorldCmd,
-                                                 queue_size=10)
-                world_obj._reset_pub = rospy.Publisher(name=topic_name.replace('/State', '/Command/Reset'),
-                                                       data_class=Empty, queue_size=1)
-                world_obj._reset_bodies_pub = rospy.Publisher(
-                    name=topic_name.replace('/State', '/Command/Reset/Bodies'), data_class=Empty, queue_size=1)
+                world_obj._sub = self.create_subscriber(topic_name, WorldState, world_obj.ros_cb)
+                world_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), WorldCmd)
+                world_obj._reset_pub = self.create_publisher(topic_name.replace('/State', '/Command/Reset'), Empty, queue_size = 1)
+                world_obj._reset_bodies_pub = self.create_publisher(topic_name.replace('/State', '/Command/Reset/Bodies'), Empty, queue_size = 1)
                 self._world_handle = world_obj
                 self._objects_dict[world_obj.get_name()] = world_obj
             elif msg_type == 'ambf_msgs/ActuatorState':
@@ -183,9 +198,8 @@ class Client:
                 base_obj = Actuator(post_trimmed_name)
                 base_obj._state = ActuatorState()
                 base_obj._cmd = ActuatorCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, ActuatorState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=ActuatorCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, ActuatorState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), ActuatorCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
             elif msg_type == 'ambf_msgs/CameraState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
@@ -193,9 +207,8 @@ class Client:
                 base_obj = Camera(post_trimmed_name)
                 base_obj._state = CameraState()
                 base_obj._cmd = CameraCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, CameraState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=CameraCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, CameraState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), CameraCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
             elif msg_type == 'ambf_msgs/LightState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
@@ -203,9 +216,8 @@ class Client:
                 base_obj = Light(post_trimmed_name)
                 base_obj._state = LightState()
                 base_obj._cmd = LightCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, LightState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=LightCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, LightState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), LightCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
             elif msg_type == 'ambf_msgs/ObjectState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
@@ -213,9 +225,8 @@ class Client:
                 base_obj = Object(post_trimmed_name)
                 base_obj._state = ObjectState()
                 base_obj._cmd = ObjectCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, ObjectState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=ObjectCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, ObjectState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), ObjectCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
             elif msg_type == 'ambf_msgs/RigidBodyState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
@@ -223,17 +234,8 @@ class Client:
                 base_obj = RigidBody(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = RigidBodyState()
                 base_obj._cmd = RigidBodyCmd()
-                if ROS == 1:
-                    base_obj._sub = rospy.Subscriber(topic_name, RigidBodyState, base_obj.ros_cb)
-                    base_obj._pub = rospy.Publisher(name = topic_name.replace('/State', '/Command'),
-                                                    data_class = RigidBodyCmd,
-                                                    tcp_nodelay = True, queue_size = 10)
-                else:
-                    history = rclpy.qos.HistoryPolicy.KEEP_LAST
-                    qos = rclpy.qos.QoSProfile(depth = 10, history = history)
-                    base_obj._sub = self._node.create_subscription(RigidBodyState, topic_name, base_obj.ros_cb, qos)
-                    base_obj._pub = self._node.create_publisher(RigidBodyCmd, topic_name.replace('/State', '/Command'), qos)
-                print(f'Added RigidBody {post_trimmed_name}')
+                base_obj._sub = self.create_subscriber(topic_name, RigidBodyState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), RigidBodyCmd)
                 self._objects_dict[base_obj.get_name()] = base_obj
 
             elif msg_type == 'ambf_msgs/SensorState':
@@ -242,9 +244,8 @@ class Client:
                 base_obj = Sensor(post_trimmed_name)
                 base_obj._state = SensorState()
                 base_obj._cmd = SensorCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, SensorState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=SensorCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, SensorState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), SensorCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
             elif msg_type == 'ambf_msgs/VehicleState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
@@ -252,9 +253,8 @@ class Client:
                 base_obj = Vehicle(post_trimmed_name)
                 base_obj._state = VehicleState()
                 base_obj._cmd = VehicleCmd()
-                base_obj._sub = rospy.Subscriber(topic_name, VehicleState, base_obj.ros_cb)
-                base_obj._pub = rospy.Publisher(name=topic_name.replace('/State', '/Command'), data_class=VehicleCmd,
-                                                tcp_nodelay=True, queue_size=10)
+                base_obj._sub = self.create_subscriber(topic_name, VehicleState, base_obj.ros_cb)
+                base_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), VehicleCmd, queue_size = 10)
                 self._objects_dict[base_obj.get_name()] = base_obj
 
     def connect(self, default_publish_rate = 120):
