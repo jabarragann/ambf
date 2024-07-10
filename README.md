@@ -301,3 +301,51 @@ doi={10.1109/IROS40897.2019.8968568},
 ISSN={2153-0858},
 month={Nov},}
 ```
+
+### 11 New build instructions
+As many users are transitioning to ROS2, we are actively adding this support. These changes have required some structural updates to 
+support colcon build in ROS2. These instructions detail how to set up the workspaces and build AMBF with this new structure.
+
+**ROS1**: 
+```
+mkdir ros_ws
+cd ros_ws
+mkdir src
+cd src
+git clone https://github.com/LauraConnolly/ambf.git
+cd ambf 
+git checkout ros2-support
+cd ../../
+catkin build
+```
+**Developer note**: If you have another build of ambf on your computer, the ros_comm_plugin may fail. After it fails, re-run the build with this command:
+```
+catkin build --cmake-args -DAMBF_DIR:PATH=/home/your_user_name/ros_ws/build/AMBF/share/AMBF/cmake
+```
+
+The executables for ambf_simulator will now be in devel/bin.
+
+**ROS2**:
+```
+mkdir ros2_ws
+cd ros2_ws
+mkdir src
+cd src
+git clone https://github.com/LauraConnolly/ambf.git
+cd ambf 
+git checkout ros2-support
+cd ../../
+colcon build
+```
+
+The executables will be in build/AMBF/bin
+
+If you want to keep a ROS1 and a ROS2 build on your system. It is probably simplest to create a symbollic link to the src directory so you don't have 2 copies of the code. 
+```
+ln -s /path/to/original /path/to/simlink
+```
+
+For example:
+```
+ln -s ~/ros_ws/src/ambf ~/ros2_ws/src
+```
