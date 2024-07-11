@@ -2123,6 +2123,7 @@ struct afRenderOptions{
 class afWorld: public afIdentification, public afComm, public afModelManager{
 
     friend class afModel;
+    friend class afModelManager;
 
 public:
     afWorld();

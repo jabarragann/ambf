@@ -3,6 +3,7 @@
 # Link: https://github.com/WPI-AIM/ambf_addon
 # Generated on: 2019-04-10 14:16:46
 bodies: [BODY Chassis, BODY ShockBL, BODY ShockBR, BODY ShockFL, BODY ShockFR, BODY WheelBL, BODY WheelBR, BODY WheelFL, BODY WheelFR]
+cameras: [cameraTest]
 joints: [JOINT Chassis-ShockBL, JOINT ShockBL-WheelBR, JOINT Chassis-ShockBR, JOINT
     ShockBR-WheelBL, JOINT Chassis-ShockFL, JOINT ShockFL-WheelFR, JOINT Chassis-ShockFR,
     JOINT ShockFR-WheelFL]
@@ -10,6 +11,32 @@ high resolution path: ../../../meshes/blender_afmb/toy_car/high_res/
 low resolution path: ../../../meshes/blender_afmb/toy_car/low_res/
 ignore inter-collision: false
 namespace: /ambf/env/
+
+cameraTest:
+  namespace: cameras/
+  name: cameraTest
+  location: {x: 4.0, y: 0.0, z: 2.0}
+  look at: {x: 0.0, y: 0.0, z: -0.5}
+  up: {x: 0.0, y: 0.0, z: 1.0}
+  clipping plane: {near: 0.1, far: 10.0}
+  field view angle: 0.8
+  monitor: 0
+  # multipass: True
+  publish image: True
+  # preprocessing shaders:
+  #   path: ../../../ambf_shaders/preprocessing/
+  #   vertex: "shader.vs"
+  #   fragment: "shader.fs"
+  # publish image interval: 1 # Publish every nth scene update
+  publish depth: True
+  # publish depth noise: {mean: 0.1, std_dev: 0.01, bias: 0.0}
+  # publish depth interval: 1 # Publish every nth scene update
+  # publish image resolution: {width: 640, height: 480}
+  # depth compute shaders:
+  #   path: ../../../ambf_shaders/depth
+  #   vertex: "shader.vs"
+  #   fragment: "shader.fs"
+
 BODY Chassis:
   name: Chassis
   mesh: Chassis.STL
@@ -90,7 +117,7 @@ BODY WheelBR:
     transparency: 1.0
   plugins: [
     {
-      name: object_comm, 
+      name: object_comm,
       filename: libobject_comm_plugin.so
     },
   ]

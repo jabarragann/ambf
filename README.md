@@ -349,3 +349,9 @@ For example:
 ```
 ln -s ~/ros_ws/src/ambf ~/ros2_ws/src
 ```
+
+### 11 Plugin loader
+
+I have added the plugin loader as one of the folders in the project "plugin_loader". I'm not sure if this is the best way to organize this.
+Currently, it builds in ROS2 by default but with catkin, the user has to run the cmake and make separately. I'll work on fixing this but I just
+want to push for now.

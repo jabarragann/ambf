@@ -5093,6 +5093,7 @@ string afModelManager::addModel(afModelPtr a_model){
 
     // Add models objects to world
     addModelsChildrenToWorld(a_model);
+    m_afWorld->m_pluginManager.onModelAdd(a_model);
 
     return remaped_identifier;
 }
@@ -5123,6 +5124,7 @@ void afModelManager::addModelsChildrenToWorld(afModelPtr a_model)
         for (afBaseObjectMap::iterator oIt = cIt->second.begin() ; oIt != cIt->second.end() ; ++oIt){
             afBaseObject* childObj = oIt->second;
             m_afWorld->addBaseObject(childObj);
+            m_afWorld->m_pluginManager.onObjectAdd(childObj);
             m_afWorld->addChildsSceneObjectsToWorld(childObj);
         }
     }
@@ -6484,13 +6486,13 @@ bool afCamera::createFromAttribs(afCameraAttributes *a_attribs)
         std::cerr << "In file " << __FILE__ << " function " << __FUNCTION__ << " line " << __LINE__
                   << " need to fix this" << std::endl;
         if(m_publishImage){
-            // enableImagePublishing(&a_attribs->m_publishImageResolution);
+             enableImagePublishing(&a_attribs->m_publishImageResolution);
             // afCameraVideoStreamerPlugin* videoPlugin = new afCameraVideoStreamerPlugin();
             // m_pluginManager.loadPlugin(this, a_attribs, videoPlugin);
         }
 
         if (m_publishDepth){
-            // enableDepthPublishing(&a_attribs->m_publishImageResolution, &a_attribs->m_depthNoiseAttribs, &a_attribs->m_depthComputeShaderAttribs);
+             enableDepthPublishing(&a_attribs->m_publishImageResolution, &a_attribs->m_depthNoiseAttribs, &a_attribs->m_depthComputeShaderAttribs);
             // afCameraDepthStreamerPlugin* depthPlugin = new afCameraDepthStreamerPlugin();
             // m_pluginManager.loadPlugin(this, a_attribs, depthPlugin);
         }

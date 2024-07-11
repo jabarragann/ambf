@@ -91,8 +91,8 @@ class Client:
         self._client_name = client_name
         self._world_handle = None
         self._rate = None
+        self._node = None
         if ROS == 2:
-            self._node = None
             self._executor = None
             self._executor_thread = None
         pass
@@ -129,8 +129,9 @@ class Client:
                 rospy.init_node(self._client_name)
             else:
                 self._client_name = rospy.get_name()
-                rospy.on_shutdown(self.clean_up)
-                self._ros_topics = rospy.get_published_topics()
+
+            rospy.on_shutdown(self.clean_up)
+            self._ros_topics = rospy.get_published_topics()
         else:
             if not rclpy.ok():
                 rclpy.init()
@@ -161,7 +162,7 @@ class Client:
                             'ambf_msgs/ObjectState',
                             'ambf_msgs/RigidBodyState',
                             'ambf_msgs/SensorState',
-                            'ambf_msgs/VehicletState']:
+                            'ambf_msgs/VehicleState']:
                 if first_run:
                     first_run = False
                     self._common_obj_namespace = topic_name
