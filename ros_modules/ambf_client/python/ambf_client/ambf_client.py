@@ -186,7 +186,7 @@ class Client:
                 msg_type = msg_type.replace('/msg/', '/')
             if msg_type == 'ambf_msgs/WorldState':
                 self._world_name = 'World'
-                world_obj = World(self._world_name)
+                world_obj = World(self._world_name, self._node)
                 world_obj._sub = self.create_subscriber(topic_name, WorldState, world_obj.ros_cb)
                 world_obj._pub = self.create_publisher(topic_name.replace('/State', '/Command'), WorldCmd)
                 world_obj._reset_pub = self.create_publisher(topic_name.replace('/State', '/Command/Reset'), Empty, queue_size = 1)
@@ -196,7 +196,7 @@ class Client:
             elif msg_type == 'ambf_msgs/ActuatorState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Actuator(post_trimmed_name)
+                base_obj = Actuator(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = ActuatorState()
                 base_obj._cmd = ActuatorCmd()
                 base_obj._sub = self.create_subscriber(topic_name, ActuatorState, base_obj.ros_cb)
@@ -205,7 +205,7 @@ class Client:
             elif msg_type == 'ambf_msgs/CameraState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Camera(post_trimmed_name)
+                base_obj = Camera(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = CameraState()
                 base_obj._cmd = CameraCmd()
                 base_obj._sub = self.create_subscriber(topic_name, CameraState, base_obj.ros_cb)
@@ -214,7 +214,7 @@ class Client:
             elif msg_type == 'ambf_msgs/LightState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Light(post_trimmed_name)
+                base_obj = Light(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = LightState()
                 base_obj._cmd = LightCmd()
                 base_obj._sub = self.create_subscriber(topic_name, LightState, base_obj.ros_cb)
@@ -223,7 +223,7 @@ class Client:
             elif msg_type == 'ambf_msgs/ObjectState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Object(post_trimmed_name)
+                base_obj = Object(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = ObjectState()
                 base_obj._cmd = ObjectCmd()
                 base_obj._sub = self.create_subscriber(topic_name, ObjectState, base_obj.ros_cb)
@@ -242,7 +242,7 @@ class Client:
             elif msg_type == 'ambf_msgs/SensorState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Sensor(post_trimmed_name)
+                base_obj = Sensor(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = SensorState()
                 base_obj._cmd = SensorCmd()
                 base_obj._sub = self.create_subscriber(topic_name, SensorState, base_obj.ros_cb)
@@ -251,7 +251,7 @@ class Client:
             elif msg_type == 'ambf_msgs/VehicleState':
                 # pre_trimmed_name = topic_niyme.replace(self._common_obj_namespace, '')
                 post_trimmed_name = topic_name.replace('/State', '')
-                base_obj = Vehicle(post_trimmed_name)
+                base_obj = Vehicle(node = self._node, a_name = post_trimmed_name)
                 base_obj._state = VehicleState()
                 base_obj._cmd = VehicleCmd()
                 base_obj._sub = self.create_subscriber(topic_name, VehicleState, base_obj.ros_cb)

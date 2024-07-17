@@ -68,24 +68,24 @@ void WorldRosCom::init(){
     ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, WorldState)>
       (m_pubPtr,
        m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/State",
+        m_namespace + m_name + "/State",
        10, false);
     ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, WorldCmd), WorldRosCom>
       (m_subPtr,
        m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/Command",
+       m_namespace + m_name + "/Command",
        10,
        &WorldRosCom::sub_cb, this);
     ambf_ral::create_subscriber<AMBF_RAL_MSG(std_msgs, Empty), WorldRosCom>
       (m_resetSubPtr,
        m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/Command/Reset",
+       m_namespace + m_name + "/Command/Reset",
        1,
        &WorldRosCom::reset_cb, this);
     ambf_ral::create_subscriber<AMBF_RAL_MSG(std_msgs, Empty), WorldRosCom>
       (m_resetBodiesSubPtr,
        m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/Command/Reset/Bodies",
+       m_namespace + m_name + "/Command/Reset/Bodies",
        1,
        &WorldRosCom::reset_bodies_cb, this);
 

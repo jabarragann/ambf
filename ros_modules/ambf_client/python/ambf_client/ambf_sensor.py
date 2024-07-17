@@ -47,12 +47,12 @@ from .ambf_base_object import BaseObject
 
 
 class Sensor(BaseObject):
-    def __init__(self, a_name, time_out=0.1):
+    def __init__(self, node, a_name, time_out=0.1):
         """
         Constructor
         :param a_name:
         """
-        super(Sensor, self).__init__(a_name, time_out)  # Set duration of Watchdog expiry
+        super(Sensor, self).__init__(node = node, a_name = a_name, time_out = time_out)  # Set duration of Watchdog expiry
         self.object_type = "SENSOR"
         self.body_type = "KINEMATIC"
 
