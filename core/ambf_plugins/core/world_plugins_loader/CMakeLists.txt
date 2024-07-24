@@ -37,5 +37,28 @@
 #  $Date:  $
 #  $Rev:  $
 
-add_subdirectory(core)
-# add_subdirectory(examples)
+cmake_minimum_required (VERSION 3.1)
+project (world_plugins_loader)
+
+set(CMAKE_CXX_STANDARD 11)
+
+find_package(AMBF)
+find_package(Boost COMPONENTS program_options filesystem)
+
+include_directories(${AMBF_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
+
+link_directories(${AMBF_LIBRARY_DIRS})
+
+add_definitions(${AMBF_DEFINITIONS})
+
+add_library(world_plugins_loader SHARED world/WorldPluginsLoader.h world/WorldPluginsLoader.cpp)
+target_link_libraries(world_plugins_loader ${AMBF_LIBRARIES})
+set_property(TARGET world_plugins_loader PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+
+install (
+  TARGETS world_plugins_loader
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  )

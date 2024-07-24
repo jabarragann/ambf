@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -45,8 +45,6 @@
 
 #include "afFramework.h"
 
-
-// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 #include <ambf_server/Actuator.h>
 #include <ambf_server/Camera.h>
 #include <ambf_server/Light.h>
@@ -55,7 +53,6 @@
 #include <ambf_server/Sensor.h>
 #include <ambf_server/Vehicle.h>
 #include <ambf_server/World.h>
-// #endif
 
 using namespace ambf;
 
@@ -77,7 +74,6 @@ struct afRigidBodyState{
 
 class afObjectCommunicationPlugin: public afObjectPlugin{
 public:
-// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs) override;
 
     virtual void graphicsUpdate() override;
@@ -131,8 +127,9 @@ protected:
     afRigidBodyState m_rbState;
 
 private:
-
-    bool m_paramsSet=false;
+    ambf_ral::node_ptr_t m_node = nullptr;
+  
+    bool m_paramsSet = false;
 
     // Counter for the times we have written to ambf_comm API
     // This is only for internal use as it could be reset
@@ -141,11 +138,6 @@ private:
     // Counter for the times we have read from ambf_comm API
     // This is only for internal use as it could be reset
     unsigned int m_read_count = 0;
-// #else
-//     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
-//         return -1;
-//     }
-// #endif
 };
 
 #endif

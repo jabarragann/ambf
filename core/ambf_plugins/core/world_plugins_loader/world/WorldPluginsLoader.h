@@ -35,45 +35,34 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-    \author    <amunawar@wpi.edu>
+    \author    <amunawa2@jh.edu>
     \author    Adnan Munawar
 */
 //==============================================================================
 
-#ifndef WORLDROSCOM_H
-#define WORLDROSCOM_H
+#ifndef AF_WORLDPLUGINSLOADER_PLUGIN
+#define AF_WORLDPLUGINSLOADER_PLUGIN
 
-#include <ambf_server/RosComBase.h>
+#include "afFramework.h"
 
-class WorldRosCom: public RosComBase<AMBF_RAL_MSG(ambf_msgs, WorldState), AMBF_RAL_MSG(ambf_msgs, WorldCmd)>{
+
+using namespace ambf;
+
+class afWorldPluginsLoader: public afWorldPlugin{
 public:
-    WorldRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out);
-    virtual void init();
-
-    bool get_reset_flag(){return m_resetFlag;}
-    void clear_reset_flag(){m_resetFlag = false;}
-
-    bool get_reset_bodies_flag(){return m_resetBodiesFlag;}
-    void clear_reset_bodies_flag(){m_resetBodiesFlag = false;}
+    virtual int init(const afWorldPtr a_afWorld, const afWorldAttribsPtr a_worldAttribs) override;
+    virtual void graphicsUpdate() override;
+    virtual void physicsUpdate(double dt) override;
+    virtual bool close() override;
+    virtual void onObjectAdd(const afBaseObjectPtr a_objectPtr) override;
+    virtual void onModelAdd(const afModelPtr a_modelPtr) override;
 
 protected:
-    bool m_enableSimThrottle;
-    bool m_stepSim;
-    int m_num_skip_steps;
-    int m_skip_steps_ctr;
-    virtual void reset_cmd();
-    void sub_cb(const AMBF_RAL_MSG(ambf_msgs, WorldCmd) & msg);
-
-private:
-    bool m_resetFlag;
-    bool m_resetBodiesFlag;
-
-    AMBF_RAL_SUBSCRIBER_PTR(AMBF_RAL_MSG(std_msgs, Empty))
-        m_resetBodiesSubPtr, m_resetSubPtr;
-
-    void reset_cb(const AMBF_RAL_MSG(std_msgs, Empty) & msg);
-    void reset_bodies_cb(const AMBF_RAL_MSG(std_msgs, Empty) & msg);
+    vector<afPluginAttributes> m_worldPluginsAttribs;
+    vector<afPluginAttributes> m_modelPluginsAttribs;
+    vector<afPluginAttributes> m_objectPluginsAttribs;
 };
 
+AF_REGISTER_WORLD_PLUGIN(afWorldPluginsLoader)
 
 #endif

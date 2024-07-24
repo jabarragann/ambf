@@ -44,6 +44,9 @@
 #define AMBF_RAL_MSG_MODIFIER(package, message) package::message##Modifier
 #define AMBF_RAL_MSG_ITERATOR(package, message) package::message##Iterator
 
+#define AMBF_RAL_PUBLISHER_PTR(type) std::shared_ptr<ros::Publisher>
+#define AMBF_RAL_SUBSCRIBER_PTR(type) std::shared_ptr<ros::Subscriber>
+
 namespace ambf_ral {
     typedef std::shared_ptr<ros::NodeHandle> node_ptr_t;
     typedef ros::Rate rate_t;
@@ -78,6 +81,11 @@ namespace ambf_ral {
 
     inline void shutdown(void) {
         ros::shutdown();
+    }
+
+    inline ambf_ral::node_ptr_t create_node(const std::string & name) {
+        // AMBF ROS1 shouldn't create nodes besides the one in afROSNode
+        return nullptr;
     }
 
     template <typename _ros_t>
@@ -153,9 +161,12 @@ namespace ambf_ral {
 #define AMBF_RAL_FATAL(...) RCLCPP_FATAL(rclcpp::get_logger("rclcpp"), __VA_ARGS__)
 
 #define AMBF_RAL_MSG(package, message) package::msg::message
-#define AMBF_RAL_MSG_PTR(package, message) package::msg::message::Ptr
+#define AMBF_RAL_MSG_PTR(package, message) package::msg::message::SharedPtr
 #define AMBF_RAL_MSG_MODIFIER(package, message) package::msg::message::Modifier
 #define AMBF_RAL_MSG_ITERATOR(package, message) package::msg::message::Iterator
+
+#define AMBF_RAL_PUBLISHER_PTR(type) typename rclcpp::Publisher<type>::SharedPtr
+#define AMBF_RAL_SUBSCRIBER_PTR(type) typename rclcpp::Subscription<type>::SharedPtr
 
 namespace ambf_ral {
     typedef std::shared_ptr<rclcpp::Node> node_ptr_t;
@@ -192,6 +203,20 @@ namespace ambf_ral {
 
     inline void shutdown(void) {
         rclcpp::shutdown();
+    }
+
+    inline ambf_ral::node_ptr_t create_node(const std::string & name) {
+        if (!rclcpp::ok()) {
+            // create fake argc/argv
+            std::string context_name = "ambf";
+            typedef char * char_pointer;
+            char_pointer * argv = new char_pointer[1];
+            argv[0]= new char[context_name.size() + 1];
+            strcpy(argv[0], context_name.c_str());
+            int argc = 1;
+            rclcpp::init(argc, argv);
+        }
+        return std::make_shared<rclcpp::Node>("ambf_" + name);
     }
 
     template <typename _ros_t>

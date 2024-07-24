@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -61,8 +61,9 @@ WorldParams::WorldParams(){
 }
 
 
-PointCloudHandler::PointCloudHandler(std::string a_topicName)
+PointCloudHandler::PointCloudHandler(const std::string & a_topicName)
 {
+    m_node = ambf_ral::create_node(a_topicName);
     m_topicName = a_topicName;
     init();
 }
@@ -70,13 +71,10 @@ PointCloudHandler::PointCloudHandler(std::string a_topicName)
 ///
 /// \brief PointCloudHandler::init
 ///
-void PointCloudHandler::init(){
-#if ROS1
-    m_pcSub = afROSNode::getNode()->subscribe(m_topicName, 5, &PointCloudHandler::pc_sub_cb, this);
-    m_radiusSub = afROSNode::getNode()->subscribe(m_topicName + "/radius", 5, &PointCloudHandler::radius_sub_cb, this);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+void PointCloudHandler::init()
+{
+    ambf_ral::create_subscriber(m_pcSub, m_node,m_topicName, 5, &PointCloudHandler::pc_sub_cb, this);
+    ambf_ral::create_subscriber(m_radiusSub, m_node, m_topicName + "/radius", 5, &PointCloudHandler::radius_sub_cb, this);
 }
 
 
@@ -86,13 +84,13 @@ void PointCloudHandler::init(){
 ///
 void PointCloudHandler::pc_sub_cb(const AMBF_RAL_MSG(sensor_msgs, PointCloud) & msg)
 {
-  std::cerr << __FILE__ << __LINE__ << std::endl;
-  // m_StatePtr = msg;
+    std::cerr << __FILE__ << " " << __LINE__ << " assignment is missing " << std::endl;
+    // m_StatePtr = msg;
 }
 
 void PointCloudHandler::radius_sub_cb(const AMBF_RAL_MSG(std_msgs, Float32) & msg)
 {
-    set_radius((double)msg.data);
+    set_radius(static_cast<double>(msg.data));
 }
 
 
@@ -103,11 +101,7 @@ AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) PointCloudHandler::get_point_cloud(){
 void PointCloudHandler::remove(){
 //    m_StatePtr->points.clear();
 //    m_StatePtr->channels.clear();
-#if ROS1
-    m_pcSub.shutdown();
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    ambf_ral::subscriber_shutdown(m_pcSub);
 }
 
 
@@ -119,7 +113,8 @@ void World::set_params_on_server(){
 #if ROS1
     m_nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_point_cloud_topics);
 #elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
+    m_nodePtr->declare_parameter(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics),
+                                 m_point_cloud_topics);
 #endif
 }
 

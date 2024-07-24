@@ -121,7 +121,7 @@ public: static TPtr Create(const std::string &_filename,
         TPtr result = nullptr;
         // PluginPtr result;
         struct stat st;
-        bool found = false;
+        bool foundUsingPath = false;
         string fullname, filename(_filename);
         list<string>::iterator iter;
         list<string> pluginPaths = afSystemPaths::getPluginPath();
@@ -163,13 +163,13 @@ public: static TPtr Create(const std::string &_filename,
             fullname = afPath(fullname).c_str();
             if (stat(fullname.c_str(), &st) == 0)
             {
-                found = true;
+                foundUsingPath = true;
                 break;
             }
         }
 
-        if (!found){
-            cerr << "WARNING! PLUGIN: " << fullname << " NOT FOUND. TRYING WITHOUT PATH!"  "\n";
+        // try using name only
+        if (!foundUsingPath) {
             fullname = filename;
         }
 
@@ -183,7 +183,11 @@ public: static TPtr Create(const std::string &_filename,
                   << dlerror() << "!\n";
             return result;
         }
-        cerr << "INFO! FOUND PLUGIN: " << filename << " USING LD_LIBRARY_PATH!" << endl;
+        if (foundUsingPath) {
+          cerr << "INFO! FOUND PLUGIN: " << fullname << " USING USER PATH" << endl;
+        } else {
+          cerr << "INFO! FOUND PLUGIN: " << filename << " USING LD_LIBRARY_PATH!" << endl;
+        }
 
         registerFunc.ptr = dlsym(dlHandle, registerName.c_str());
 

@@ -1,5 +1,5 @@
 #  Software License Agreement (BSD License)
-#  Copyright (c) 2019-2021, AMBF.
+#  Copyright (c) 2019-2024, AMBF.
 #  (https://github.com/WPI-AIM/ambf)
 #
 #  All rights reserved.
@@ -218,8 +218,6 @@ file (GLOB_RECURSE source_ambf_math RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOU
 # static library source files
 file (GLOB_RECURSE source_adf_loader RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/adf_loader/*.cpp ${PROJECT_SOURCE_DIR}/adf_loader/*.h)
 # static library source files
-file (GLOB_RECURSE source_ambf_plugins RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/ambf_plugins/core/*.cpp ${PROJECT_SOURCE_DIR}/ambf_plugins/core/*.h)
-# static library source files
 file (GLOB_RECURSE source_ambf_framework RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/ambf_framework/*.cpp ${PROJECT_SOURCE_DIR}/ambf_framework/*.h)
 
 # static library external dependencies source files
@@ -349,8 +347,8 @@ set (AMBF_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 #
 
 # AMBF Simulator
-add_subdirectory (${PROJECT_SOURCE_DIR}/ambf_simulator)
-
+add_subdirectory (ambf_simulator)
+add_subdirectory (ambf_plugins)
 
 #
 # export package

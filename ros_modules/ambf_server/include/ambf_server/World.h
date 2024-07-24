@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -67,7 +67,7 @@ public:
 
     WorldParams();
 
-    inline void set_qualified_namespace(std::string a_base_prefix){m_base_prefix = a_base_prefix;}
+    inline void set_qualified_namespace(const std::string & a_base_prefix){m_base_prefix = a_base_prefix;}
 
     // This a flag to check if any param has been updated
     bool m_paramsChanged;
@@ -76,7 +76,7 @@ public:
 
     std::vector<std::string> get_defunct_topic_names(){return m_defunct_topic_names;}
 
-    void append_point_cloud_topic(std::string name){m_new_topic_names.push_back(name);}
+    void append_point_cloud_topic(const std::string & name){m_new_topic_names.push_back(name);}
 
 protected:
 
@@ -95,7 +95,7 @@ protected:
 
 class PointCloudHandler{
 public:
-    PointCloudHandler(std::string a_topicName);
+  PointCloudHandler(const std::string & a_topicName);
     ~PointCloudHandler(){
         remove();
     }
@@ -111,13 +111,10 @@ public:
 private:
     void pc_sub_cb(const AMBF_RAL_MSG(sensor_msgs, PointCloud) & msg);
     void radius_sub_cb(const AMBF_RAL_MSG(std_msgs, Float32) & msg);
-#if ROS1
-    ros::Subscriber m_pcSub;
-    ros::Subscriber m_radiusSub;
-    ros::Subscriber m_colorSub;
-#elif ROS2
+    AMBF_RAL_SUBSCRIBER_PTR(AMBF_RAL_MSG(sensor_msgs, PointCloud)) m_pcSub;
+    AMBF_RAL_SUBSCRIBER_PTR(AMBF_RAL_MSG(std_msgs, Float32)) m_radiusSub;
 
-#endif
+    ambf_ral::node_ptr_t m_node;
     std::string m_topicName;
     AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) m_StatePtr;
 

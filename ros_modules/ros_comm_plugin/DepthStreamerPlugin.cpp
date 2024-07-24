@@ -79,6 +79,7 @@ bool afCameraDepthStreamerPlugin::close()
     return true;
 #elif ROS2
     std::cerr << __FILE__ << __LINE__ << std::endl;
+    return false;
 #endif
 }
 // #endif

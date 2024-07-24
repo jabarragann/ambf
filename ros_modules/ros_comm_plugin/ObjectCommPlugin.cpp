@@ -64,7 +64,6 @@ void afRigidBodyState::setJointEfforts(afRigidBodyPtr afRBPtr){
     }
 }
 
-// #ifdef AF_ENABLE_AMBF_COMM_SUPPORT
 
 int afObjectCommunicationPlugin::init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs)
 {
@@ -968,7 +967,7 @@ void afObjectCommunicationPlugin::vehicleUpdateState(afVehiclePtr vehPtr, double
 void afObjectCommunicationPlugin::pointCloudFetchCommand(afPointCloudPtr pointCloudPtr, double)
 {
     AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud) pcPtr = m_pointCloudCommPtr->get_point_cloud();
-    if(pcPtr){
+    if (pcPtr) {
         double radius = m_pointCloudCommPtr->get_radius();
         pointCloudPtr->m_mpPtr->setPointSize(radius);
         int pc_size = pcPtr->points.size();
@@ -1044,5 +1043,3 @@ void afObjectCommunicationPlugin::volumeUpdateState(afVolumePtr volPtr, double d
 {
 
 }
-// #endif
-

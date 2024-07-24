@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -178,18 +178,11 @@ protected:
     std::string m_namespace;
 
     std::string m_name;
-  
+
     tf2::Transform m_trans;
 
-#if ROS1
-    std::shared_ptr<ros::Publisher> m_pubPtr;
-    std::shared_ptr<ros::Subscriber> m_subPtr;
-#elif ROS2
-    typedef typename rclcpp::Publisher<T_state> publisher_t;
-    typename publisher_t::SharedPtr m_pubPtr;
-    typedef rclcpp::Subscription<T_cmd> subscriber_t;
-    typename subscriber_t::SharedPtr m_subPtr;
-#endif
+    AMBF_RAL_PUBLISHER_PTR(T_state) m_pubPtr;
+    AMBF_RAL_SUBSCRIBER_PTR(T_cmd) m_subPtr;
 
     T_state m_State;
 
@@ -201,8 +194,6 @@ protected:
 
 #if ROS1
     ros::CallbackQueue m_custom_queue;
-#elif ROS2
-
 #endif
 
     virtual void reset_cmd() = 0;

@@ -37,5 +37,4 @@
 #  $Date:  $
 #  $Rev:  $
 
-
-add_subdirectory(ros_comm_plugin)
+add_subdirectory(world_plugins_loader)
