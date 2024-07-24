@@ -64,7 +64,12 @@ else (catkin_FOUND)
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
-    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs ambf_server)
+    set (ROS2_depends
+      rclcpp
+      std_msgs geometry_msgs sensor_msgs diagnostic_msgs
+      tf2_ros tf2_msgs
+      ambf_msgs ambf_server
+      cv_bridge image_transport)
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
     endforeach()
@@ -128,7 +133,7 @@ else ()
     )
 
   foreach (_plugin ${ROS_COMM_PLUGINS})
-    ament_target_dependencies (${_plugin} ambf_server)
+    ament_target_dependencies (${_plugin} ambf_server ${ROS2_depends})
   endforeach ()
   ament_package ()
 

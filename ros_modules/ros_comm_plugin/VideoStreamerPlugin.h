@@ -47,7 +47,13 @@
 
 #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 #include <ambf_server/RosComBase.h>
+
+#if ROS1
 #include <image_transport/image_transport.h>
+#elif ROS2
+#include <image_transport/image_transport.hpp>
+#endif
+
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
 #endif

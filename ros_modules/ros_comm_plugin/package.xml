@@ -36,6 +36,8 @@
   <depend condition="$ROS_VERSION == 2">ambf_msgs</depend>
   <depend condition="$ROS_VERSION == 2">ambf_server</depend>
   <depend condition="$ROS_VERSION == 2">tf2</depend>
+  <depend condition="$ROS_VERSION == 2">cv_bridge</depend>
+  <depend condition="$ROS_VERSION == 2">image_transport</depend>
 
   <export>
     <build_type condition="$ROS_VERSION == 2">ament_cmake</build_type>

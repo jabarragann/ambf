@@ -75,6 +75,11 @@ namespace ambf_ral {
         return ros::Duration(duration);
     }
 
+    inline ros::Time time_from_seconds(const double & seconds) {
+        ros::Time t;
+        return t.fromSec(seconds);
+    }
+
     inline void spin(node_ptr_t) {
         ros::spin();
     }
@@ -195,6 +200,10 @@ namespace ambf_ral {
 
     inline rclcpp::Duration duration_from_seconds(const double & duration) {
         return rclcpp::Duration::from_seconds(duration);
+    }
+
+    inline rclcpp::Time time_from_seconds(const double & seconds) {
+        return rclcpp::Time(static_cast<uint64_t>(seconds * 1e9));
     }
 
     inline void spin(node_ptr_t node) {

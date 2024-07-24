@@ -11,8 +11,12 @@ int afCameraVideoStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
     m_cameraPtr = (afCameraPtr)a_afObjectPtr;
     afCameraAttributes* camAttribs = (afCameraAttributes*) a_objectAttribs;
     m_rosNode = afROSNode::getNode();
-    if (s_imageTransport == nullptr){
+    if (s_imageTransport == nullptr) {
+#if ROS1
         s_imageTransport = new image_transport::ImageTransport(*m_rosNode);
+#elif ROS2
+        s_imageTransport = new image_transport::ImageTransport(m_rosNode);
+#endif
     }
     m_imagePublisher = s_imageTransport->advertise(m_cameraPtr->getQualifiedName() + "/ImageData", 1);
 
@@ -28,8 +32,8 @@ void afCameraVideoStreamerPlugin::graphicsUpdate()
         m_cameraPtr->m_bufferColorImage->flipHorizontal();
         m_imageMatrix = cv::Mat(m_cameraPtr->m_bufferColorImage->getHeight(), m_cameraPtr->m_bufferColorImage->getWidth(), CV_8UC4, m_cameraPtr->m_bufferColorImage->getData());
         cv::cvtColor(m_imageMatrix, m_imageMatrix, cv::COLOR_RGBA2RGB);
-        sensor_msgs::ImagePtr rosMsg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", m_imageMatrix).toImageMsg();
-        rosMsg->header.stamp.fromSec(m_cameraPtr->getRenderTimeStamp());
+        AMBF_RAL_MSG_PTR(sensor_msgs, Image) rosMsg = cv_bridge::CvImage(AMBF_RAL_MSG(std_msgs, Header)(), "rgb8", m_imageMatrix).toImageMsg();
+        rosMsg->header.stamp = ambf_ral::time_from_seconds(m_cameraPtr->getRenderTimeStamp());
         m_imagePublisher.publish(rosMsg);
         m_cameraPtr->m_bufferColorImage->flipHorizontal();
     }
