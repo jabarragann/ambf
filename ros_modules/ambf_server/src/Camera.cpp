@@ -120,19 +120,33 @@ CameraParams::CameraParams(){
 }
 
 void Camera::set_params_on_server(){
-#if ROS1
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::near_plane), m_near_plane);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::far_plane), m_far_plane);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::field_view_angle), m_field_view_angle);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width), m_orthographic_view_width);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation), m_stereo_eye_separation);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length), m_stereo_focal_length);
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::projection), projection_type_enum_to_str(m_projection_type));
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::mode), view_mode_enum_to_str(m_view_mode));
-    m_nodePtr->setParam(m_base_prefix + "/" + camera_param_enum_to_str(CameraParamsEnum::parent_name), m_State.parent_name.data);
-#elif ROS2
-    std::cerr <<  __FILE__ << __LINE__ << std::endl;
-#endif
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::near_plane),
+                                m_near_plane);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::far_plane),
+                                m_far_plane);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::field_view_angle),
+                                m_field_view_angle);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::orthographic_view_width),
+                                m_orthographic_view_width);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::stereo_eye_separation),
+                                m_stereo_eye_separation);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::stereo_focal_length),
+                                m_stereo_focal_length);
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::projection),
+                                projection_type_enum_to_str(m_projection_type));
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::mode),
+                                view_mode_enum_to_str(m_view_mode));
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + camera_param_enum_to_str(CameraParamsEnum::parent_name),
+                                m_State.parent_name.data);
 }
 
 void Camera::update_params_from_server(){
@@ -212,7 +226,7 @@ void Camera::update_params_from_server(){
 }
 
 Camera::Camera(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): CameraRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
-    m_base_prefix = a_namespace + '/' + a_name;
+    m_base_prefix = a_namespace + a_name + '/';
 }
 
 void Camera::cur_position(double px, double py, double pz){

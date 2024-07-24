@@ -119,6 +119,14 @@ namespace ambf_ral {
         }
     }
 
+    template <typename _ros_t>
+    void declare_parameter(node_ptr_t node,
+                           const std::string & name,
+                           const _ros_t & value
+                           ) {
+        node->setParam(name, value);
+    }
+
     template <typename _pub_t>
     inline size_t nb_subscribers(_pub_t publisher) {
         return publisher->getNumSubscribers();
@@ -260,6 +268,14 @@ namespace ambf_ral {
         if (!subscriber) {
             std::cerr << "Failed to create subscriber for " << topic << std::endl;
         }
+    }
+
+    template <typename _ros_t>
+    void declare_parameter(node_ptr_t node,
+                           const std::string & name,
+                           const _ros_t & value
+                           ) {
+        node->declare_parameter(name, value);
     }
 
     template <typename _pub_t>

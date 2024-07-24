@@ -110,12 +110,9 @@ void PointCloudHandler::remove(){
 /// \brief World::set_params_on_server
 ///
 void World::set_params_on_server(){
-#if ROS1
-    m_nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_point_cloud_topics);
-#elif ROS2
-    m_nodePtr->declare_parameter(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics),
-                                 m_point_cloud_topics);
-#endif
+    ambf_ral::declare_parameter(m_nodePtr,
+                                m_base_prefix + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics),
+                                m_point_cloud_topics);
 }
 
 ///
@@ -124,7 +121,7 @@ void World::set_params_on_server(){
 void World::update_params_from_server(){
     std::vector<std::string> topic_names;
 #if ROS1
-    m_nodePtr->getParamCached(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), topic_names);
+    m_nodePtr->getParamCached(m_base_prefix + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), topic_names);
 #elif ROS2
     std::cerr << __FILE__ << __LINE__ << std::endl;
 #endif
@@ -136,7 +133,7 @@ void World::update_params_from_server(){
     }
     else {
 #if ROS1
-        m_nodePtr->setParam(m_base_prefix + "/" + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_new_topic_names);
+        m_nodePtr->setParam(m_base_prefix + world_param_enum_to_str(WorldParamsEnum::point_cloud_topics), m_new_topic_names);
 #elif ROS2
     std::cerr << __FILE__ << __LINE__ << std::endl;
 #endif
@@ -206,7 +203,7 @@ void World::update_params_from_server(){
 World::World(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): WorldRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
     m_num_skip_steps = 10;
     m_skip_steps_ctr = 0;
-    m_base_prefix = a_namespace + '/' + a_name;
+    m_base_prefix = a_namespace + a_name + '/';
 }
 
 
