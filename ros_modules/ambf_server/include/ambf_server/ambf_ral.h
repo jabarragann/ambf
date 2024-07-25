@@ -120,11 +120,19 @@ namespace ambf_ral {
     }
 
     template <typename _ros_t>
-    void declare_parameter(node_ptr_t node,
-                           const std::string & name,
-                           const _ros_t & value
-                           ) {
+    void set_parameter(node_ptr_t node,
+                       const std::string & name,
+                       const _ros_t & value
+                       ) {
         node->setParam(name, value);
+    }
+
+    template <typename _ros_t>
+    bool get_parameter(node_ptr_t node,
+                       const std::string & name,
+                       _ros_t & value
+                       ) {
+      return node->getParamCached(name, value);
     }
 
     template <typename _pub_t>
@@ -219,7 +227,9 @@ namespace ambf_ral {
     }
 
     inline void shutdown(void) {
-        rclcpp::shutdown();
+        if (rclcpp::ok()) {
+            rclcpp::shutdown();
+        }
     }
 
     inline ambf_ral::node_ptr_t create_node(const std::string & name) {
@@ -271,11 +281,22 @@ namespace ambf_ral {
     }
 
     template <typename _ros_t>
-    void declare_parameter(node_ptr_t node,
-                           const std::string & name,
-                           const _ros_t & value
-                           ) {
-        node->declare_parameter(name, value);
+    void set_parameter(node_ptr_t node,
+                       const std::string & name,
+                       const _ros_t & value
+                       ) {
+      if (!node->has_parameter(name)) {
+          node->declare_parameter(name, value);
+      }
+      node->set_parameter(rclcpp::Parameter(name, value));
+    }
+
+    template <typename _ros_t>
+    bool get_parameter(node_ptr_t node,
+                       const std::string & name,
+                       _ros_t & value
+                       ) {
+      return node->get_parameter(name, value);
     }
 
     template <typename _pub_t>

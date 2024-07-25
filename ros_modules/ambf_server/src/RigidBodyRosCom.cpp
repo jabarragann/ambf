@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -51,16 +51,16 @@ void RigidBodyRosCom::init(){
     m_State.sim_step = 0;
 
     ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, RigidBodyState)>
-      (m_pubPtr,
-       m_nodePtr,
-       m_namespace + m_name + "/State",
-       10, false);
+        (m_pubPtr,
+         m_nodePtr,
+         m_namespace + m_name + "/State",
+         10, false);
     ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd), RigidBodyRosCom>
-      (m_subPtr,
-       m_nodePtr,
-       m_namespace + m_name + "/Command",
-       10,
-       &RigidBodyRosCom::sub_cb, this);
+        (m_subPtr,
+         m_nodePtr,
+         m_namespace + m_name + "/Command",
+         10,
+         &RigidBodyRosCom::sub_cb, this);
 
     m_thread = std::thread(std::bind(&RigidBodyRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;

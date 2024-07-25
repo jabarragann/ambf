@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -52,16 +52,16 @@ void CameraRosCom::init(){
     m_State.sim_step = 0;
 
     ambf_ral::create_publisher<AMBF_RAL_MSG(ambf_msgs, CameraState)>
-      (m_pubPtr,
-       m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/State",
-       10, false);
+        (m_pubPtr,
+         m_nodePtr,
+         "/" + m_namespace + "/" + m_name + "/State",
+         10, false);
     ambf_ral::create_subscriber<AMBF_RAL_MSG(ambf_msgs, CameraCmd), CameraRosCom>
-      (m_subPtr,
-       m_nodePtr,
-       "/" + m_namespace + "/" + m_name + "/Command",
-       10,
-       &CameraRosCom::sub_cb, this);
+        (m_subPtr,
+         m_nodePtr,
+         "/" + m_namespace + "/" + m_name + "/Command",
+         10,
+         &CameraRosCom::sub_cb, this);
 
     m_thread = std::thread(std::bind(&CameraRosCom::run_publishers, this));
     std::cerr << "INFO! Thread Joined: " << m_name << std::endl;

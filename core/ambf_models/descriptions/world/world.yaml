@@ -8,7 +8,6 @@ gravity: {x: 0.0, y: 0.0, z: -9.81}
 plugins: [
   {
     name: "world_comm_plugin",
-    path: "/home/lauraconnolly/dev/AMBF-ROS2/comm_plugin/build/",
     filename: "libworld_plugins_loader.so"
   }
 ]

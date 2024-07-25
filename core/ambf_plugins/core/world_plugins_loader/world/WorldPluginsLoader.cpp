@@ -45,27 +45,26 @@
 int afWorldPluginsLoader::init(const afWorldPtr a_afWorld, const afWorldAttribsPtr a_worldAttribs){
     m_worldPtr = a_afWorld;
 
-
-    for (auto obj : m_worldPtr->getCameras()){
+    for (auto obj : m_worldPtr->getCameras()) {
         onObjectAdd(obj);
     }
 
-    for (auto obj : m_worldPtr->getLights()){
+    for (auto obj : m_worldPtr->getLights()) {
         onObjectAdd(obj);
     }
 
-    for (auto obj : m_worldPtr->getRigidBodies()){
+    for (auto obj : m_worldPtr->getRigidBodies()) {
         onObjectAdd(obj);
     }
+
     afPluginAttributes commPluginAttribs;
+
     commPluginAttribs.m_name = "world_comm";
     commPluginAttribs.m_filename = "libworld_comm_plugin.so";
-
     m_worldPluginsAttribs.push_back(commPluginAttribs);
 
     commPluginAttribs.m_name = "object_comm";
     commPluginAttribs.m_filename = "libobject_comm_plugin.so";
-
     m_objectPluginsAttribs.push_back(commPluginAttribs);
 
     m_worldPtr->loadPlugins(m_worldPtr, a_worldAttribs, &m_worldPluginsAttribs);
@@ -91,9 +90,10 @@ bool afWorldPluginsLoader::close()
 
 void afWorldPluginsLoader::onObjectAdd(const afBaseObjectPtr a_objectPtr){
     cerr << "INFO! WORLD PLUGIN! OBJECT ADDED:\n " << a_objectPtr->getName() << endl;
-    if (!a_objectPtr->getAttributes()->m_communicationAttribs.m_passive)
+    if (!a_objectPtr->getAttributes()->m_communicationAttribs.m_passive) {
         a_objectPtr->loadPlugins(a_objectPtr, a_objectPtr->getAttributes(), &m_objectPluginsAttribs);
-
+    }
+    
     if (a_objectPtr->getType() == afType::CAMERA){
         vector<afPluginAttributes> morePlugins;
         afPluginAttributes videoPlugin;

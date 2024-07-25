@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -64,13 +64,15 @@ LightParams::LightParams(){
 }
 
 void Light::set_params_on_server(){
-#if ROS1
-    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), m_cuttoff_angle);
-    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), m_State.parent_name.data);
-    m_nodePtr->setParam(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), light_type_enum_to_str(m_light_type));
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    ambf_ral::set_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::cuttoff_angle),
+                            m_cuttoff_angle);
+    ambf_ral::set_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::parent_name),
+                            m_State.parent_name.data);
+    ambf_ral::set_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::type),
+                            light_type_enum_to_str(m_light_type));
 }
 
 void Light::update_params_from_server(){
@@ -78,13 +80,15 @@ void Light::update_params_from_server(){
     std::string pn;
     std::string lt;
     LightType lt_enum;
-#if ROS1
-    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::cuttoff_angle), ca);
-    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::parent_name), pn);
-    m_nodePtr->getParamCached(m_base_prefix + "/" + light_param_enum_to_str(LightParamsEnum::type), lt);
-#elif ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
-#endif
+    ambf_ral::get_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::cuttoff_angle),
+                            ca);
+    ambf_ral::get_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::parent_name),
+                            pn);
+    ambf_ral::get_parameter(m_nodePtr,
+                            m_base_prefix + light_param_enum_to_str(LightParamsEnum::type),
+                            lt);
 
     if (lt.compare(light_type_enum_to_str(LightType::SPOT)) == 0){
         lt_enum = LightType::SPOT;
@@ -119,8 +123,9 @@ void Light::update_params_from_server(){
     m_light_type = lt_enum;
 }
 
-Light::Light(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): LightRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
-    m_base_prefix = a_namespace + '/' + a_name;
+Light::Light(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out):
+    LightRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
+    m_base_prefix = a_namespace + a_name + '/';
 }
 
 void Light::cur_position(double px, double py, double pz){
