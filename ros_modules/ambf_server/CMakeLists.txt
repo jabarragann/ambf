@@ -66,7 +66,7 @@ else (catkin_FOUND)
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
     message(STATUS "ROS VERSION = 2")
-    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2_ros tf2_msgs ambf_msgs)
+    set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2 tf2_ros tf2_msgs tf2_geometry_msgs ambf_msgs)
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
     endforeach()
@@ -134,11 +134,7 @@ else ()
   ament_target_dependencies (
     ambf_server
     ${ROS2_depends})
-  
-  target_link_libraries (
-    ambf_server
-    ${rclcpp_LIBRARIES})
-  
+
   install (
     DIRECTORY include/${PROJECT_NAME}
     DESTINATION include

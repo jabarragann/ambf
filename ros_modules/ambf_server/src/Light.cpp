@@ -139,13 +139,13 @@ void Light::cur_orientation(double roll, double pitch, double yaw){
     tf2::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
-    m_State.pose.orientation = toMsg(rot_quat);
+    m_State.pose.orientation = tf2::toMsg(rot_quat);
 }
 
 void Light::cur_orientation(double qx, double qy, double qz, double qw){
     tf2::Quaternion rot_quat(qx, qy, qz, qw);
     m_trans.setRotation(rot_quat);
-    m_State.pose.orientation = toMsg(rot_quat);
+    m_State.pose.orientation = tf2::toMsg(rot_quat);
 }
 
 

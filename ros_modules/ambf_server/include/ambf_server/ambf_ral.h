@@ -157,6 +157,7 @@ namespace ambf_ral {
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/point_cloud.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include <ambf_msgs/msg/object_state.hpp>
 #include <ambf_msgs/msg/object_cmd.hpp>
