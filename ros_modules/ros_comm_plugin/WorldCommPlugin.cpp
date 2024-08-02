@@ -45,7 +45,7 @@ void afWorldCommunicationPlugin::physicsUpdate(double dt)
 
 bool afWorldCommunicationPlugin::close()
 {
-    afROSNode::destroyNode();
+    afROSNode::destroyNode(m_worldPtr->getQualifiedName());
     return 1;
 }
 

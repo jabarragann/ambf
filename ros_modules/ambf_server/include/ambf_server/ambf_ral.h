@@ -157,7 +157,7 @@ namespace ambf_ral {
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/point_cloud.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <ambf_msgs/msg/object_state.hpp>
 #include <ambf_msgs/msg/object_cmd.hpp>
@@ -332,6 +332,14 @@ namespace ambf_ral {
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), ')', '_');
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), '[', '_');
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), ']', '_');
+    }
+
+      inline void clean_nodename(std::string & _node_name) {
+        clean_namespace(_node_name);
+        std::replace(_node_name.begin(), _node_name.end(), '/', '_');
+        while (_node_name.at(0) == '_') {
+          _node_name.erase(0, 1);
+        }
     }
 
     class ral

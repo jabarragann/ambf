@@ -51,21 +51,25 @@
 
 class afROSNode{
 public:
-    static ambf_ral::node_ptr_t getNodeAndRegister(void) {
+    static ambf_ral::node_ptr_t getNodeAndRegister(const std::string & node_name) {
         s_registeredInstances++;
-        return getNode();
+        return getNode(node_name);
     }
 
-  static ambf_ral::node_ptr_t getNode(void) {
+    static ambf_ral::node_ptr_t getNode(const std::string & node_name) {
+        std::string _real_name = node_name;
+        ambf_ral::clean_nodename(_real_name);
         if (s_initialized == false) {
-          s_ral = new ambf_ral::ral("ambf_comm_node");
-          s_initialized = true;
-          std::cerr << "INFO! INITIALIZING ROS NODE HANDLE\n";
+            s_ral = new ambf_ral::ral(_real_name);
+#if ROS1
+            s_initialized = true;
+#endif
+            std::cerr << "INFO! INITIALIZING ROS NODE HANDLE " << _real_name << std::endl;
         }
         return s_ral->node();
     }
 
-    static void destroyNode(void) {
+    static void destroyNode(const std::string & ) {
         if (s_initialized) {
             s_initialized = false;
 
@@ -143,11 +147,7 @@ public:
     }
 
     inline void set_time_stamp(double a_sec){
-#if ROS1
-        m_State.header.stamp.fromSec(a_sec);
-#elif ROS2
-        m_State.header.stamp = rclcpp::Time(static_cast<uint64_t>(a_sec * 1e9));
-#endif
+        m_State.header.stamp = ambf_ral::time_from_seconds(a_sec);
     }
 
     inline void set_wall_time(double a_sec){

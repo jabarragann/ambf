@@ -64,11 +64,9 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
 
     m_freq_min = a_freq_min;
     m_freq_max = a_freq_max;
+    m_nodePtr = afROSNode::getNodeAndRegister(a_name);
 #if ROS1
-    m_nodePtr = afROSNode::getNodeAndRegister();
     m_nodePtr->setCallbackQueue(&m_custom_queue);
-#elif ROS2
-    m_nodePtr = ambf_ral::create_node(a_name);
 #endif
     m_watchDogPtr.reset(new CmdWatchDog(m_nodePtr, a_freq_min, a_freq_max, time_out));
 }

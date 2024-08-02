@@ -44,17 +44,20 @@ ambf_ral::ral::ral(int & argc, char * argv[], const std::string & node_name, boo
 
 ambf_ral::ral::ral(const std::string & node_name, bool)
 {
+    const std::string ambf_context = "AMBF";
     if (!rclcpp::ok()) {
         // create fake argc/argv
         typedef char * char_pointer;
         char_pointer * argv = new char_pointer[1];
-        argv[0]= new char[node_name.size() + 1];
-        strcpy(argv[0], node_name.c_str());
+        argv[0]= new char[ambf_context.size() + 1];
+        strcpy(argv[0], ambf_context.c_str());
         int argc = 1;
         rclcpp::init(argc, argv);
     }
-    m_node = std::make_shared<rclcpp::Node>(node_name);
-    m_stripped_arguments.push_back(node_name);
+    std::string _real_name = node_name;
+    clean_nodename(_real_name);
+    m_node = std::make_shared<rclcpp::Node>(_real_name);
+    m_stripped_arguments.push_back(_real_name);
 }
 
 void ambf_ral::ral::init(int & argc, char * argv[], const std::string & node_name, bool)

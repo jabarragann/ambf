@@ -14,7 +14,7 @@ int afCameraDepthStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
     m_depthPointCloudModifier = new sensor_msgs::PointCloud2Modifier(*m_depthPointCloudMsg);
     m_depthPointCloudModifier->setPointCloud2FieldsByString(2, "xyz", "rgb");
     m_depthPointCloudModifier->resize(camAttribs->m_publishImageResolution.m_width*camAttribs->m_publishImageResolution.m_height);
-    m_rosNode = afROSNode::getNode();
+    m_rosNode = afROSNode::getNode(m_cameraPtr->getQualifiedName());
     m_depthPointCloudPub = m_rosNode->advertise<sensor_msgs::PointCloud2>(m_cameraPtr->getQualifiedName() + "/DepthData", 1);
 
     m_publishInterval = camAttribs->m_publishDepthInterval;

@@ -10,7 +10,7 @@ int afCameraVideoStreamerPlugin::init(const afBaseObjectPtr a_afObjectPtr, const
     m_objectPtr = a_afObjectPtr;
     m_cameraPtr = (afCameraPtr)a_afObjectPtr;
     afCameraAttributes* camAttribs = (afCameraAttributes*) a_objectAttribs;
-    m_rosNode = afROSNode::getNode();
+    m_rosNode = afROSNode::getNode(m_cameraPtr->getQualifiedName());
     if (s_imageTransport == nullptr) {
 #if ROS1
         s_imageTransport = new image_transport::ImageTransport(*m_rosNode);

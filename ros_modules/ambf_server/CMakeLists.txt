@@ -1,5 +1,5 @@
 #  Software License Agreement (BSD License)
-#  Copyright (c) 2020, AMBF.
+#  Copyright (c) 2020-2024, AMBF.
 #  (https://github.com/WPI-AIM/ambf)
 #
 #  All rights reserved.
