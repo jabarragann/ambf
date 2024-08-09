@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -62,14 +62,14 @@ public:
     inline void set_mass(double a_mass){m_State.mass = a_mass;}
     inline void set_principal_inertia(double Ixx, double Iyy, double Izz){m_State.p_inertia.x = Ixx; m_State.p_inertia.y = Iyy; m_State.p_inertia.z = Izz;}
     // This method is to set any additional data that could for debugging purposes or future use
-    void set_userdata(std::vector<float> &a_data);
-    void set_children_names(std::vector<std::string> children_names);
-    inline std::vector<std::string> get_children_names(){return m_State.children_names;}
-    void set_joint_names(std::vector<std::string> joint_names);
-    inline std::vector<std::string> get_joint_names(){return m_State.joint_names;}
-    void set_joint_positions(std::vector<float> joint_positions);
-    void set_joint_velocities(std::vector<float> joint_velocities);
-    void set_joint_efforts(std::vector<float> joint_efforts);
+    void set_userdata(const std::vector<float> &a_data);
+    void set_children_names(const std::vector<std::string> & children_names);
+    inline const std::vector<std::string> & get_children_names() const {return m_State.children_names;}
+    void set_joint_names(const std::vector<std::string> & joint_names);
+    inline const std::vector<std::string> & get_joint_names() const {return m_State.joint_names;}
+    void set_joint_positions(const std::vector<float> & joint_positions);
+    void set_joint_velocities(const std::vector<float> & joint_velocities);
+    void set_joint_efforts(const std::vector<float> & joint_efforts);
 };
 }
 

@@ -42,15 +42,22 @@
 
 #include <ambf_server/RosComBase.h>
 
+std::mutex afROSNode::s_mutex;
+
 bool afROSNode::s_initialized;
+#if ROS1
 size_t afROSNode::s_registeredInstances = 0;
 ambf_ral::ral * afROSNode::s_ral = nullptr;
+#elif ROS2
+std::map<std::string, ambf_ral::ral*> afROSNode::s_rals;
+#endif
 
 template<class T_state, class T_cmd>
 ///
 /// \brief RosComBase::cleanUp
 ///
-void RosComBase<T_state, T_cmd>::cleanUp(){
+void RosComBase<T_state, T_cmd>::cleanUp()
+{
     ambf_ral::publisher_shutdown(m_pubPtr);
     ambf_ral::subscriber_shutdown(m_subPtr);
 }

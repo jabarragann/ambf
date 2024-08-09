@@ -49,58 +49,127 @@
 #include <mutex>
 #include <cstdint>
 
-class afROSNode{
+/*! Class afROSNode.  Singleton that owns the ROS node(s) and allow to
+  access them from anywhere, including plugins.  ROS1 implementation
+  creates a single node and uses custom queues to manage difference
+  spin rates using callAvailable.  ROS 2 allows to create multiple
+  nodes per process so it's easier to manage.  For ROS 2, the nodes
+  are managed throught the RAL class found in ambf_ral and stored in a
+  std::map so they can be retrieved by name. To create a new node, use
+  getNodeAndRegister.  To retrieve an existing node, use getNode.  Any
+  class calling getNodeAndRegister should also call destroyNode at the
+  end (cleanUp, destructor...). */
+class afROSNode {
 public:
     static ambf_ral::node_ptr_t getNodeAndRegister(const std::string & node_name) {
+        ambf_ral::node_ptr_t result = nullptr;
+        s_mutex.lock();
+#if ROS1
         s_registeredInstances++;
-        return getNode(node_name);
-    }
-
-    static ambf_ral::node_ptr_t getNode(const std::string & node_name) {
+        if (s_initialized == false) {
+            s_ral = new ambf_ral::ral("AMBF");
+            s_initialized = true;
+            std::cerr << "INFO! INITIALIZING ROS 1 NODE HANDLE FOR AMBF" << std::endl;
+        }
+        result = s_ral->node();
+#elif ROS2
         std::string _real_name = node_name;
         ambf_ral::clean_nodename(_real_name);
-        if (s_initialized == false) {
-            s_ral = new ambf_ral::ral(_real_name);
-#if ROS1
+        // find in map
+        auto found = s_rals.find(_real_name);
+        if (found != s_rals.end()) {
+            std::cerr << "ERROR! Trying to create a new ROS2 node with an existing name: "
+                      << _real_name << " (based on user provided name " << node_name << ")" << std::endl;
+        } else {
+            std::cerr << "INFO! Created a new ROS2 node for: "
+                      << _real_name << " (based on user provided name " << node_name << ")" << std::endl;
+            ambf_ral::ral * _ral = new ambf_ral::ral(_real_name);
+            s_rals[_real_name] = _ral;
+            result = _ral->node();
             s_initialized = true;
-#endif
-            std::cerr << "INFO! INITIALIZING ROS NODE HANDLE " << _real_name << std::endl;
         }
-        return s_ral->node();
+#endif
+        s_mutex.unlock();
+        return result;
     }
 
-    static void destroyNode(const std::string & ) {
-        if (s_initialized) {
-            s_initialized = false;
+public:
 
-            std::cerr << "INFO! TOTAL ACTIVE COMM INSTANCES: " << s_registeredInstances << std::endl;
-            std::cerr << "INFO! WAITING FOR ALL COMM INSTANCES TO UNREGISTER ... \n";
-            while (s_registeredInstances > 0) {
-                std::cerr << "\tINFO! REMAINING ACTIVE COMMs: " << s_registeredInstances << std::endl;
-                usleep(10000);
-            }
-            std::cerr << "INFO! DESTROYING ROS NODE HANDLE\n";
+    static ambf_ral::node_ptr_t getNode(const std::string & node_name) {
+        s_mutex.lock();
+        ambf_ral::node_ptr_t result = nullptr;
+#if ROS1
+        if (s_initialized) {
+            result = s_ral->node();
+        } else {
+            std::cerr << "INFO! getNode CALLED BEFORE getNodeAndRegister FOR: " << node_name << std::endl;
+        }
+#elif ROS2
+        std::string _real_name = node_name;
+        ambf_ral::clean_nodename(_real_name);
+        // find in map
+        auto found = s_rals.find(_real_name);
+        if (found != s_rals.end()) {
+            result = found->second->node();
+        } else {
+            std::cerr << "INFO! getNode CALLED BEFORE getNodeAndRegister FOR: "
+                      << _real_name << " (based on user provided name " << node_name << ")" << std::endl;
+        }
+#endif
+        s_mutex.unlock();
+        return result;
+    }
+
+    static void destroyNode(const std::string & node_name) {
+        s_mutex.lock();
+        s_initialized = false;
+#if ROS1
+        if (s_registeredInstances == 0) {
+          std::cerr << "WARNING: TRYING TO DESTROY MORE COMM INSTANCES THAN REGISTERED FOR: " << node_name << std::endl;
+          return;
+        }
+        s_registeredInstances--;
+        std::cerr << "INFO! TOTAL ACTIVE COMM INSTANCES AFTER destroyNode for "
+                  << node_name << ": " << s_registeredInstances << std::endl;
+        if (s_registeredInstances == 0) {
+            std::cerr << "INFO! DESTROYING ROS 1 NODE HANDLE\n";
             ambf_ral::shutdown();
             delete s_ral;
         }
-    }
-
-    static bool isNodeActive(void ) {
-#if ROS1
-        return s_initialized;
 #elif ROS2
-        return true;
+        std::string _real_name = node_name;
+        ambf_ral::clean_nodename(_real_name);
+        // find in map
+        auto found = s_rals.find(_real_name);
+        if (found != s_rals.end()) {
+            std::cerr << "INFO! DESTROYING ROS 2 NODE ROS: "
+                      << _real_name << " (based on user provided name " << node_name << ")" << std::endl;
+            delete(found->second);
+            s_rals.erase(found);
+        } else {
+            std::cerr << "INFO! destroyNode couldn't find ROS 2 node for: "
+                      << _real_name << " (based on user provided name " << node_name << ")" << std::endl;
+        }
+        if (s_rals.size() == 0) {
+            ambf_ral::shutdown();
+        }
 #endif
+        s_mutex.unlock();
     }
 
-    static void unRegister(void) {
-        s_registeredInstances--;
+    static bool isNodeActive(void) {
+        return s_initialized;
     }
 
 private:
+    static std::mutex s_mutex;
     static bool s_initialized;
+#if ROS1
     static size_t s_registeredInstances;
     static ambf_ral::ral * s_ral;
+#elif ROS2
+    static std::map<std::string, ambf_ral::ral*> s_rals;
+#endif
 };
 
 template <class T_state, class T_cmd>
@@ -212,7 +281,7 @@ private:
 };
 
 template<class T_state, class T_cmd>
-void RosComBase<T_state, T_cmd>::run_publishers() {
+void RosComBase<T_state, T_cmd>::run_publishers(void) {
     while (afROSNode::isNodeActive()) {
         if (m_enableComm) {
             // Call callbacks
@@ -221,7 +290,7 @@ void RosComBase<T_state, T_cmd>::run_publishers() {
 #elif ROS2
             rclcpp::spin_some(m_nodePtr);
 #endif
-            if(m_watchDogPtr->is_wd_expired()){
+            if (m_watchDogPtr->is_wd_expired()) {
                 m_watchDogPtr->consolePrint(m_name);
                 reset_cmd();
             }
@@ -231,11 +300,13 @@ void RosComBase<T_state, T_cmd>::run_publishers() {
         }
         m_watchDogPtr->m_ratePtr->sleep();
     }
-    afROSNode::unRegister();
 }
 
 template<class T_state, class T_cmd>
 RosComBase<T_state, T_cmd>::~RosComBase(){
+    m_thread.join();
+    cleanUp();
+    afROSNode::destroyNode(m_name);
     std::cerr << "INFO! Thread ShutDown: " << m_name << std::endl;
 }
 

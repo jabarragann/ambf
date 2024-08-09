@@ -306,13 +306,13 @@ namespace ambf_ral {
     }
 
     template <typename _pub_t>
-    inline void publisher_shutdown(_pub_t) {
-        // publisher->shutdown();
+    inline void publisher_shutdown(_pub_t & publisher) {
+        publisher.reset();
     }
 
     template <typename _pub_t>
-    inline void subscriber_shutdown(_pub_t) {
-        // subscriber->shutdown();
+    inline void subscriber_shutdown(_pub_t & subscriber) {
+        subscriber.reset();
     }
 }
 

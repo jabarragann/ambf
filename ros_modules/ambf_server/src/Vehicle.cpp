@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -40,7 +40,8 @@
 */
 //==============================================================================
 
-#include "ambf_server/Vehicle.h"
+#include <ambf_server/Vehicle.h>
+
 namespace ambf_comm{
 
 Vehicle::Vehicle(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): VehicleRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){

@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -40,7 +40,8 @@
 */
 //==============================================================================
 
-#include "ambf_server/RigidBody.h"
+#include <ambf_server/RigidBody.h>
+
 namespace ambf_comm{
 
 RigidBody::RigidBody(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): RigidBodyRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
@@ -164,7 +165,7 @@ AMBF_RAL_MSG(ambf_msgs, RigidBodyCmd) RigidBody::get_command(){
 /// \brief RigidBody::set_children_names
 /// \param children_names
 ///
-void RigidBody::set_children_names(std::vector<std::string> children_names){
+void RigidBody::set_children_names(const std::vector<std::string> & children_names){
     m_State.children_names = children_names;
 }
 
@@ -173,7 +174,7 @@ void RigidBody::set_children_names(std::vector<std::string> children_names){
 /// \brief RigidBody::set_joint_names
 /// \param joint_names
 ///
-void RigidBody::set_joint_names(std::vector<std::string> joint_names){
+void RigidBody::set_joint_names(const std::vector<std::string> & joint_names){
     m_State.joint_names = joint_names;
 }
 
@@ -182,7 +183,7 @@ void RigidBody::set_joint_names(std::vector<std::string> joint_names){
 /// \brief RigidBody::set_joint_positions
 /// \param joint_positions
 ///
-void RigidBody::set_joint_positions(std::vector<float> joint_positions){
+void RigidBody::set_joint_positions(const std::vector<float> & joint_positions){
     if (m_State.joint_positions.size() != joint_positions.size()){
         m_State.joint_positions.resize(joint_positions.size());
     }
@@ -194,7 +195,7 @@ void RigidBody::set_joint_positions(std::vector<float> joint_positions){
 /// \brief RigidBody::set_joint_velocities
 /// \param joint_velocities
 ///
-void RigidBody::set_joint_velocities(std::vector<float> joint_velocities){
+void RigidBody::set_joint_velocities(const std::vector<float> & joint_velocities){
     if (m_State.joint_velocities.size() != joint_velocities.size()){
         m_State.joint_velocities.resize(joint_velocities.size());
     }
@@ -206,7 +207,7 @@ void RigidBody::set_joint_velocities(std::vector<float> joint_velocities){
 /// \brief RigidBody::set_joint_efforts
 /// \param joint_efforts
 ///
-void RigidBody::set_joint_efforts(std::vector<float> joint_efforts){
+void RigidBody::set_joint_efforts(const std::vector<float> & joint_efforts){
     if (m_State.joint_efforts.size() != joint_efforts.size()){
         m_State.joint_efforts.resize(joint_efforts.size());
     }

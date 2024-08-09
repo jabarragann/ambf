@@ -40,7 +40,8 @@
 */
 //==============================================================================
 
-#include "ambf_server/Camera.h"
+#include <ambf_server/Camera.h>
+
 namespace ambf_comm{
 
 const std::string projection_type_enum_to_str(ProjectionType enumVal)

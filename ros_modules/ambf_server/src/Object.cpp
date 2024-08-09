@@ -1,7 +1,7 @@
 //==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2019-2021, AMBF
+    Copyright (c) 2019-2024, AMBF
     (https://github.com/WPI-AIM/ambf)
 
     All rights reserved.
@@ -40,7 +40,7 @@
 */
 //==============================================================================
 
-#include "ambf_server/Object.h"
+#include <ambf_server/Object.h>
 namespace ambf_comm{
 
 Object::Object(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max, double time_out): ObjectRosCom(a_name, a_namespace, a_freq_min, a_freq_max, time_out){
@@ -103,22 +103,22 @@ void Object::set_userdata(float a_data){
     m_State.userdata[0] = a_data;
 }
 
-void Object::set_userdata(std::vector<float> &a_data){
+void Object::set_userdata(const std::vector<float> & a_data){
     if (m_State.userdata.size() != a_data.size()){
         m_State.userdata.resize(a_data.size());
     }
     m_State.userdata = a_data;
 }
 
-void Object::set_children_names(std::vector<std::string> children_names){
+void Object::set_children_names(const std::vector<std::string> & children_names){
     m_State.children_names = children_names;
 }
 
-void Object::set_joint_names(std::vector<std::string> joint_names){
+void Object::set_joint_names(const std::vector<std::string> & joint_names) {
     m_State.joint_names = joint_names;
 }
 
-void Object::set_joint_positions(std::vector<float> joint_positions){
+void Object::set_joint_positions(const std::vector<float> & joint_positions) {
     if (m_State.joint_positions.size() != joint_positions.size()){
         m_State.joint_positions.resize(joint_positions.size());
     }
