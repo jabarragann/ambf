@@ -1,5 +1,5 @@
 #  Software License Agreement (BSD License)
-#  Copyright (c) 2019-2021, AMBF.
+#  Copyright (c) 2019-2024, AMBF.
 #  (http://practicepoint.wpi.edu)
 #
 #  All rights reserved.
@@ -37,97 +37,78 @@
 #  $Date:  $
 #  $Rev: $
 
-cmake_minimum_required(VERSION 2.8.3)
-if(POLICY CMP0057)
-  cmake_policy(SET CMP0057 NEW)
-endif()
-project(ambf_msgs)
+cmake_minimum_required (VERSION 3.10)
+project (ambf_msgs)
 
-find_package(catkin QUIET COMPONENTS
+find_package (catkin QUIET COMPONENTS
   message_generation
   std_msgs
   geometry_msgs
 )
 
+set (MESSAGES
+  ObjectState.msg
+  ObjectCmd.msg
+  ActuatorState.msg
+  ActuatorCmd.msg
+  SensorState.msg
+  SensorCmd.msg
+  CameraState.msg
+  CameraCmd.msg
+  LightState.msg
+  LightCmd.msg
+  RigidBodyState.msg
+  RigidBodyCmd.msg
+  VehicleState.msg
+  VehicleCmd.msg
+  WorldState.msg
+  WorldCmd.msg
+  )
+
 # ROS 1
 if (catkin_FOUND)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
-  message(STATUS "ROS VERSION = 1")
 else (catkin_FOUND)
   # look for ROS2
   find_package(ament_cmake QUIET)
-  if(ament_cmake_FOUND)
-    add_compile_definitions(ROS2)
-    set(ROS_VERSION 2)
-    find_package(rosidl_default_generators REQUIRED)
-    find_package(std_msgs REQUIRED)
-    find_package(geometry_msgs REQUIRED)
-  endif(ament_cmake_FOUND)
+  if (ament_cmake_FOUND)
+    add_compile_definitions (ROS2)
+    set (ROS_VERSION 2)
+    find_package (rosidl_default_generators REQUIRED)
+    find_package (std_msgs REQUIRED)
+    find_package (geometry_msgs REQUIRED)
+  endif (ament_cmake_FOUND)
 endif(catkin_FOUND)
 
-if (ROS_VERSION EQUAL 1) 
-  add_message_files(
+if (ROS_VERSION EQUAL 1)
+  add_message_files (
     FILES
-    ObjectState.msg
-    ObjectCmd.msg
-    ActuatorState.msg
-    ActuatorCmd.msg
-    SensorState.msg
-    SensorCmd.msg
-    CameraState.msg
-    CameraCmd.msg
-    LightState.msg
-    LightCmd.msg
-    RigidBodyState.msg
-    RigidBodyCmd.msg
-    VehicleState.msg
-    VehicleCmd.msg
-    WorldState.msg
-    WorldCmd.msg
+    ${MESSAGES}
   )
-  generate_messages(
+  generate_messages (
     DEPENDENCIES
     geometry_msgs
     std_msgs
   )
-
-  catkin_package(
-  CATKIN_DEPENDS message_runtime
+  catkin_package (
+    CATKIN_DEPENDS message_runtime
   )
-
-
   include_directories(
     ${catkin_INCLUDE_DIRS}
   )
-else(ROS_VERSION EQUAL 2)
 
-  set(msg_files
-      msg/ObjectState.msg
-      msg/ObjectCmd.msg
-      msg/ActuatorState.msg
-      msg/ActuatorCmd.msg
-      msg/SensorState.msg
-      msg/SensorCmd.msg
-      msg/CameraState.msg
-      msg/CameraCmd.msg
-      msg/LightState.msg
-      msg/LightCmd.msg
-      msg/RigidBodyState.msg
-      msg/RigidBodyCmd.msg
-      msg/VehicleState.msg
-      msg/VehicleCmd.msg
-      msg/WorldState.msg
-      msg/WorldCmd.msg
-    )  
+else (ROS_VERSION EQUAL 2)
 
-  # this doesn't work (causing issues in other parts of the code)
-  # set(msg_dir "${CMAKE_CURRENT_SOURCE_DIR}/msg")
+  set (MESSAGES_ROS2 "")
+  foreach (_msg ${MESSAGES})
+    list (APPEND MESSAGES_ROS2  "msg/${_msg}")
+  endforeach ()
+
   rosidl_generate_interfaces (
     ambf_msgs
-    ${msg_files}
+    ${MESSAGES_ROS2}
     DEPENDENCIES builtin_interfaces std_msgs geometry_msgs)
 
-  ament_package()
-endif()
-
+  ament_package ()
+endif ()
