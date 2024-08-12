@@ -48,7 +48,6 @@ find_package (catkin QUIET
 if (catkin_FOUND)
   add_definitions (-DROS1)
   set (ROS_VERSION 1)
-  message(STATUS "ROS VERSION = 1")
   catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ambf_server
@@ -61,17 +60,14 @@ else (catkin_FOUND)
   # look for ROS2
   find_package (ament_cmake QUIET)
   if (ament_cmake_FOUND)
-    # set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${AMBF_BINARY_DIR}/ambf_ros_modules/ambf_msgs/ament_cmake_core")
-    # set (ambf_msgs_DIR "${AMBF_BINARY_DIR}/ambf_ros_modules/ambf_msgs/ament_cmake_core")
     add_definitions (-DROS2)
     set (ROS_VERSION 2)
-    message(STATUS "ROS VERSION = 2")
     set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2 tf2_ros tf2_msgs tf2_geometry_msgs ambf_msgs)
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
-    endforeach()
+    endforeach ()
     include_directories (include)
-    link_directories(${ament_cmake_LIBRARY_DIRS})
+    link_directories (${ament_cmake_LIBRARY_DIRS})
 
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
@@ -126,9 +122,8 @@ set (SRC_FILES
 add_library(ambf_server SHARED ${HDR_FILES} ${SRC_FILES})
 
 if (ROS_VERSION EQUAL 1)
-  add_dependencies(ambf_server ${catkin_EXPORTED_TARGETS})
-  ## Specify libraries to link a library or executable target against
-  target_link_libraries(ambf_server ${catkin_LIBRARIES})
+  add_dependencies (ambf_server ${catkin_EXPORTED_TARGETS})
+  target_link_libraries (ambf_server ${catkin_LIBRARIES})
 
 else ()
   ament_target_dependencies (
