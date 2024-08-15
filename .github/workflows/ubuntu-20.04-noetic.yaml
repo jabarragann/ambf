@@ -17,3 +17,21 @@ jobs:
         with:
           required-ros-distributions: noetic
         
+      - name: Create Workspace
+        run: |
+          source /opt/ros/noetic/setup.bash
+          mkdir -p ~/catkin_ws/src
+          cd ~/catkin_ws
+          catkin init
+          catkin build
+
+       - name: Retrieve Code
+        run: |
+          cd ~/catkin_ws/src
+          vcs import --input https://raw.githubusercontent.com/LauraConnolly/ambf/ros2-support/ambf.repos
+
+      - name: Compile
+        run: |
+          source ~/catkin_ws/devel/setup.bash
+          cd ~/catkin_ws
+          catkin build --no-status --summary     
