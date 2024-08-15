@@ -18,4 +18,4 @@ jobs:
         with:
           package-name: AMBF
           target-ros1-distro: noetic
-          vcs-repo-file-url: https://raw.githubusercontent.com/LauraConnolly/ambf/blob/ros2-support/ambf.repos
+          vcs-repo-file-url: https://raw.githubusercontent.com/LauraConnolly/ambf/ros2-support/ambf.repos
