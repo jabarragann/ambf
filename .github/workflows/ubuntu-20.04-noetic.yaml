@@ -8,14 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_docker:
     runs-on: ubuntu-20.04
+    container:
+      image: ubuntu:focal
     steps:
-      - name: Setup ROS
-        uses: ros-tooling/setup-ros@v0.7
-      - name: Compile AMBF
-        uses: ros-tooling/action-ros-ci@v0.3
+      - uses: ros-tooling/setup-ros@v0.7
         with:
-          package-name: AMBF
-          target-ros1-distro: noetic
-          vcs-repo-file-url: https://raw.githubusercontent.com/LauraConnolly/ambf/ros2-support/ambf.repos
+          required-ros-distributions: noetic
+        
