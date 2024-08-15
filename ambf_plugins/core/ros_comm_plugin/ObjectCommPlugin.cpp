@@ -429,6 +429,13 @@ void afObjectCommunicationPlugin::actuatorUpdateState(afActuatorPtr actPtr, doub
     m_actuatorCommPtr->m_writeMtx.lock();
     setTimeStamps(m_objectPtr->m_afWorld->getWallTime(), m_objectPtr->m_afWorld->getSimulationTime(), m_objectPtr->getCurrentTimeStamp());
     m_actuatorCommPtr->set_parent_name(actPtr->m_parentName);
+
+    cVector3d localPos = actPtr->getLocalPos();
+    m_actuatorCommPtr->cur_position(localPos.x(), localPos.y(), localPos.z());
+    cQuaternion q;
+    q.fromRotMat(actPtr->getLocalRot());
+    m_actuatorCommPtr->cur_orientation(q.x, q.y, q.z, q.w);
+
     m_actuatorCommPtr->m_writeMtx.unlock();
     m_actuatorCommPtr->enableComm();
     m_write_count++;
