@@ -1,4 +1,4 @@
-name: Ubuntu 20.04 ROS Galactic
+name: Ubuntu 22.04 ROS Humble
 
 on:
   push:
@@ -9,15 +9,15 @@ on:
 
 jobs:
   build_docker:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     container:
-      image: ubuntu:focal
+      image: ubuntu:jammy
 
     steps:
       - name: Install ROS
         uses: ros-tooling/setup-ros@v0.7
         with:
-          required-ros-distributions: galactic
+          required-ros-distributions: humble
 
       - name: Install missing debian packages
         shell: bash
@@ -27,7 +27,7 @@ jobs:
       - name: Create Workspace
         shell: bash
         run: |
-          source /opt/ros/galactic/setup.bash
+          source /opt/ros/humble/setup.bash
           mkdir -p ~/ros2_ws/src
           
       - name: Retrieve Code
