@@ -16,6 +16,5 @@ jobs:
       - name: Compile AMBF
         uses: ros-tooling/action-ros-ci@v0.3
         with:
-          package-name: AMBF
           target-ros2-distro: galactic
           vcs-repo-file-url: https://raw.githubusercontent.com/LauraConnolly/ambf/ros2-support/ambf.repos
