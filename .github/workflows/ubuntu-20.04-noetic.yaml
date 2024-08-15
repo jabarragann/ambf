@@ -19,6 +19,11 @@ jobs:
         with:
           required-ros-distributions: noetic
 
+      - name: Install missing packages
+        shell: bash
+        run: |
+          sudo apt install python3-vcstool python3-catkin-tools python3-osrf-pycommon libasound2-dev libgl1-mesa-dev xorg-dev
+          
       - name: Create Workspace
         shell: bash
         run: |
