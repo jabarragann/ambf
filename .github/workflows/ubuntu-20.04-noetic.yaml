@@ -19,7 +19,7 @@ jobs:
         with:
           required-ros-distributions: noetic
 
-      - name: Install missing packages
+      - name: Install missing debian packages
         shell: bash
         run: |
           sudo apt-get install --yes python3-vcstool python3-catkin-tools python3-osrf-pycommon libasound2-dev libgl1-mesa-dev xorg-dev libusb-dev
