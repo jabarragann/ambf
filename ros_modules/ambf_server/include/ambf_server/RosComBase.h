@@ -102,9 +102,7 @@ public:
         if (s_initialized) {
             result = s_ral->node();
         } else {
-            std::cerr << "INFO! getNode CALLED BEFORE getNodeAndRegister FOR: " << node_name << std::endl;
-            s_mutex.unlock();
-            return afROSNode::getNodeAndRegister(node_name);
+            std::cerr << "ERROR! getNode CALLED BEFORE getNodeAndRegister FOR: " << node_name << std::endl;
         }
 #elif ROS2
         std::string _real_name = node_name;

@@ -5,6 +5,14 @@
 // should probably try to merge this and distribute in a single
 // package (Anton)
 
+#include <string>
+#include <regex>
+
+// forward declaration
+namespace ambf_ral {
+    void clean_namespace(std::string &);
+}
+
 #include <tf2/utils.h>
 #include <tf2/LinearMath/Transform.h>
 
@@ -99,9 +107,11 @@ namespace ambf_ral {
                           const std::string & topic,
                           const size_t queue_size,
                           const bool latched) {
-        publisher = std::make_shared<ros::Publisher>(node->advertise<_ros_t>(topic, queue_size, latched));
+        std::string clean_topic = topic;
+        ambf_ral::clean_namespace(clean_topic);
+        publisher = std::make_shared<ros::Publisher>(node->advertise<_ros_t>(clean_topic, queue_size, latched));
         if (!publisher) {
-            std::cerr << "Failed to create publisher for " << topic << std::endl;
+            std::cerr << "Failed to create publisher for " << clean_topic << std::endl;
         }
     }
 
@@ -113,9 +123,11 @@ namespace ambf_ral {
                            void (_object_cb_t::*cb)(const _ros_t &),
                            _object_cb_t * instance
                            ) {
-        subscriber = std::make_shared<ros::Subscriber>(node->subscribe(topic, queue_size, cb, instance));
+        std::string clean_topic = topic;
+        ambf_ral::clean_namespace(clean_topic);
+        subscriber = std::make_shared<ros::Subscriber>(node->subscribe(clean_topic, queue_size, cb, instance));
         if (!subscriber) {
-            std::cerr << "Failed to create subscriber for " << topic << std::endl;
+            std::cerr << "Failed to create subscriber for " << clean_topic << std::endl;
         }
     }
 
@@ -132,7 +144,7 @@ namespace ambf_ral {
                        const std::string & name,
                        _ros_t & value
                        ) {
-      return node->getParamCached(name, value);
+        return node->getParamCached(name, value);
     }
 
     template <typename _pub_t>
@@ -253,13 +265,15 @@ namespace ambf_ral {
                           const std::string & topic,
                           const size_t queue_size,
                           const bool latched) {
+        std::string clean_topic = topic;
+        ambf_ral::clean_namespace(clean_topic);
         rclcpp::QoS qos(queue_size);
         if (latched) {
             qos.transient_local();
         }
-        publisher = node->create_publisher<_ros_t>(topic, qos);
+        publisher = node->create_publisher<_ros_t>(clean_topic, qos);
         if (!publisher) {
-          std::cerr << "Failed to create publisher for " << topic << std::endl;
+          std::cerr << "Failed to create publisher for " << clean_topic << std::endl;
         }
     }
 
@@ -271,13 +285,15 @@ namespace ambf_ral {
                            void (_object_cb_t::*cb)(const _ros_t &),
                            _object_cb_t * instance
                            ) {
-        subscriber = node->create_subscription<_ros_t>(topic,
+        std::string clean_topic = topic;
+        ambf_ral::clean_namespace(clean_topic);
+        subscriber = node->create_subscription<_ros_t>(clean_topic,
                                                        queue_size,
                                                        std::bind(cb,
                                                                  instance,
                                                                  std::placeholders::_1));
         if (!subscriber) {
-            std::cerr << "Failed to create subscriber for " << topic << std::endl;
+            std::cerr << "Failed to create subscriber for " << clean_topic << std::endl;
         }
     }
 
@@ -332,6 +348,9 @@ namespace ambf_ral {
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), ')', '_');
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), '[', '_');
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), ']', '_');
+        _ros_namespace = std::regex_replace(_ros_namespace, std::regex("//"), "/");
+        _ros_namespace = std::regex_replace(_ros_namespace, std::regex("//"), "/");
+
     }
 
       inline void clean_nodename(std::string & _node_name) {
