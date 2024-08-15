@@ -14,7 +14,8 @@ jobs:
       image: ubuntu:focal
 
     steps:
-      - uses: ros-tooling/setup-ros@v0.7
+      - name: Install ROS
+        uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: noetic
 
@@ -25,8 +26,8 @@ jobs:
           cd ~/catkin_ws
           catkin init
           catkin build
-
-       - name: Retrieve Code
+          
+      - name: Retrieve Code
         run: |
           cd ~/catkin_ws/src
           vcs import --input https://raw.githubusercontent.com/LauraConnolly/ambf/ros2-support/ambf.repos
