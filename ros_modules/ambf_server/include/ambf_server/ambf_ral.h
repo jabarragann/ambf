@@ -92,6 +92,9 @@ namespace ambf_ral {
         ros::spin();
     }
 
+    inline void spin_some(node_ptr_t) {
+    }
+
     inline void shutdown(void) {
         ros::shutdown();
     }
@@ -237,6 +240,10 @@ namespace ambf_ral {
 
     inline void spin(node_ptr_t node) {
         rclcpp::spin(node);
+    }
+
+    inline void spin_some(node_ptr_t node) {
+        rclcpp::spin_some(node);
     }
 
     inline void shutdown(void) {

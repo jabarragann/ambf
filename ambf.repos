@@ -1,0 +1,5 @@
+repositories:
+  AMBF:
+    type: git
+    url: git@github.com:LauraConnolly/AMBF
+    version: ros2-support

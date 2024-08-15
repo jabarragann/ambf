@@ -54,7 +54,7 @@ if (catkin_FOUND)
   include_directories(include ${catkin_INCLUDE_DIRS})
   catkin_package (
     LIBRARIES depth_streamer_plugin object_comm_plugin video_streamer_plugin world_comm_plugin
-    CATKIN_DEPENDS ambf_server # Removed AMBF from here
+    CATKIN_DEPENDS ambf_server
     )
 else (catkin_FOUND)
 

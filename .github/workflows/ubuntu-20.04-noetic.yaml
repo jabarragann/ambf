@@ -1,0 +1,14 @@
+name: Ubuntu 20.04 ROS Noetic
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@v0.7
+      - run: 
+        uses: ros-tooling/action-ros-ci@v0.3
+          with:
+            package-name: AMBF
+            target-ros1-distro: noetic
+            vcs-repo-file-url: https://raw.githubusercontent.com/LauraConnolly/ambf/blob/ros2-support/ambf.repos
