@@ -12,11 +12,12 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:focal
+
     steps:
       - uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: noetic
-        
+
       - name: Create Workspace
         run: |
           source /opt/ros/noetic/setup.bash
