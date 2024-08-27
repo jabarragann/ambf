@@ -71,7 +71,7 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
 
     m_freq_min = a_freq_min;
     m_freq_max = a_freq_max;
-    m_nodePtr = afROSNode::getNodeAndRegister(a_name);
+    m_nodePtr = afROSNode::getNodeAndRegister(a_namespace + "_" + a_name);
 #if ROS1
     m_nodePtr->setCallbackQueue(&m_custom_queue);
 #endif

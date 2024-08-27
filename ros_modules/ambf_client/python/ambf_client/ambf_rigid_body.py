@@ -662,9 +662,9 @@ class RigidBody(BaseObject):
         :return:
         """
         # self._cmd.cartesian_cmd_type = RigidBodyCmd.TYPE_FORCE
-        self._cmd.wrench.force.x = 0
-        self._cmd.wrench.force.y = 0
-        self._cmd.wrench.force.z = 0
-        self._cmd.wrench.torque.x = 0
-        self._cmd.wrench.torque.y = 0
-        self._cmd.wrench.torque.z = 0
+        self._cmd.wrench.force.x = 0.0
+        self._cmd.wrench.force.y = 0.0
+        self._cmd.wrench.force.z = 0.0
+        self._cmd.wrench.torque.x = 0.0
+        self._cmd.wrench.torque.y = 0.0
+        self._cmd.wrench.torque.z = 0.0
