@@ -50,12 +50,14 @@
 
 #if ROS1
 #include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
 #elif ROS2
 #include <image_transport/image_transport.hpp>
+#include <cv_bridge/cv_bridge.hpp>
 #endif
 
 #include <opencv2/highgui/highgui.hpp>
-#include <cv_bridge/cv_bridge.hpp>
+
 #endif
 
 using namespace ambf;
