@@ -105,7 +105,7 @@ for r in rate_list:
     g1D.reset()
     g2D.reset()
     collection_enabled = False
-    print 'Setting Rate to {} Hz and testing'.format(r)
+    print('Setting Rate to {} Hz and testing'.format(r))
     time_offset = rospy.Time.now().to_sec() + 4.0
     while not g1D.is_done() or not g2D.is_done():
         wCmd.step_clock = not wCmd.step_clock
@@ -113,7 +113,7 @@ for r in rate_list:
         rate.sleep()
         if not collection_enabled and rospy.Time.now().to_sec() > time_offset:
             collection_enabled = True
-            print 'Enabling Data Collection'
+            print('Enabling Data Collection')
             g1D.enable_collectoin()
             g2D.enable_collectoin()
     g1D.compute_data_metrics()

@@ -73,7 +73,7 @@ def compute_number_of_clutches(topic_name, t_start=-1, t_end=-1):
     return num_clutches, clutch_press_times
 
 
-print (os.listdir('.'))
+print(os.listdir('.'))
 os.chdir('./user_study_data/')
 print(os.listdir('.')[0])
 
@@ -110,9 +110,9 @@ for cur_file in files:
     mtmr_force_traj = get_force_trajectory('/ambf/env/simulated_device_1/MTML/State', t_end=final_time)
     mtml_force_traj = get_force_trajectory('/ambf/env/simulated_device_2/MTMR/State', t_end=final_time)
 
-    print "MTMR Path Length: ", mtmr_path_len
-    print "MTML Path Length: ", mtml_path_len
-    print "Number of Clutches: ", compute_number_of_clutches('/dvrk/footpedals/clutch', t_end=final_time)
+    print("MTMR Path Length: ", mtmr_path_len)
+    print("MTML Path Length: ", mtml_path_len)
+    print("Number of Clutches: ", compute_number_of_clutches('/dvrk/footpedals/clutch', t_end=final_time))
 
 # fig = plt.figure()
 # ax = plt.axes(projection='3d')
