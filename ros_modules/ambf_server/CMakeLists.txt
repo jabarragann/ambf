@@ -46,31 +46,42 @@ find_package (catkin QUIET
 
 # ROS 1
 if (catkin_FOUND)
-  add_definitions (-DROS1)
   set (ROS_VERSION 1)
   catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ambf_server
     CATKIN_DEPENDS ${ROS1_depends}
     )
-  include_directories( include ${catkin_INCLUDE_DIRS})
+  include_directories (include ${catkin_INCLUDE_DIRS})
 
 else (catkin_FOUND)
 
   # look for ROS2
   find_package (ament_cmake QUIET)
   if (ament_cmake_FOUND)
-    add_definitions (-DROS2)
     set (ROS_VERSION 2)
+    set (ROS_DISTRO_STRING $ENV{ROS_DISTRO})
+    if ("${ROS_DISTRO_STRING}" STREQUAL "galactic")
+      set (ROS_DISTRO 7) # g is seventh letter
+    elseif ("${ROS_DISTRO_STRING}" STREQUAL "humble")
+      set (ROS_DISTRO 8)
+    elseif ("${ROS_DISTRO_STRING}" STREQUAL "jazzy")
+      set (ROS_DISTRO 9)
+    endif ()
+
     set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2 tf2_ros tf2_msgs tf2_geometry_msgs ambf_msgs)
     foreach (_dep ${ROS2_depends})
       find_package (${_dep} REQUIRED)
     endforeach ()
     include_directories (include)
     link_directories (${ament_cmake_LIBRARY_DIRS})
-
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
+
+set (BUILD_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include/ambf_server")
+make_directory(${BUILD_INCLUDE_DIR})
+configure_file (ambf_ral_config.h.in "${BUILD_INCLUDE_DIR}/ambf_ral_config.h")
+include_directories (${BUILD_INCLUDE_DIR}/..)
 
 ###########
 ## Build ##
@@ -136,6 +147,11 @@ else ()
     )
 
   install (
+    DIRECTORY ${BUILD_INCLUDE_DIR}
+    DESTINATION include
+    )
+
+  install (
     TARGETS ambf_server
     EXPORT ambf_server
     LIBRARY DESTINATION lib
@@ -147,5 +163,5 @@ else ()
   ament_export_targets (ambf_server HAS_LIBRARY_TARGET)
   ament_export_dependencies (${ROS2_depends})
   ament_package ()
-  
+
 endif()

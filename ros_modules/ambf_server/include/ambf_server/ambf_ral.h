@@ -1,6 +1,9 @@
 #ifndef _ambf_ral_h
 #define _ambf_ral_h
 
+// to define ROS1, ROS2 , ROS_DISTRO
+#include <ambf_server/ambf_ral_config.h>
+
 // this file is based on cisst-ros/cisst_ros_bridge cisst_ral.h. we
 // should probably try to merge this and distribute in a single
 // package (Anton)

@@ -1,0 +1,16 @@
+
+#define ROS_GALACTIC 7
+#define ROS_HUMBLE 8
+#define ROS_JAZZY 9
+
+#cmakedefine ROS_VERSION @ROS_VERSION@
+#cmakedefine ROS_DISTRO @ROS_DISTRO@
+
+
+#if (ROS_VERSION == 1)
+  #define ROS1 1
+  #define ROS2 0
+#elif (ROS_VERSION == 2)
+  #define ROS1 0
+  #define ROS2 1
+#endif

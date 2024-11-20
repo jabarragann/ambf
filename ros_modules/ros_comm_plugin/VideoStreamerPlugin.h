@@ -53,7 +53,11 @@
 #include <cv_bridge/cv_bridge.h>
 #elif ROS2
 #include <image_transport/image_transport.hpp>
-#include <cv_bridge/cv_bridge.hpp>
+#if (ROS_DISTRO == ROS_GALACTIC) || (ROS_DISTRO == ROS_HUMBLE)
+  #include <cv_bridge/cv_bridge.h>
+#else
+  #include <cv_bridge/cv_bridge.hpp>
+#endif
 #endif
 
 #include <opencv2/highgui/highgui.hpp>
