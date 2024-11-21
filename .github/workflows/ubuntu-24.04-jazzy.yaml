@@ -22,7 +22,7 @@ jobs:
       - name: Install missing debian packages
         shell: bash
         run: |
-          sudo apt-get install --yes ros-jazzy-rosidl-cmake python3-vcstool python3-colcon-common-extensions libasound2-dev libgl1-mesa-dev xorg-dev libusb-1.0-0-dev libboost-dev
+          sudo apt-get install --yes ros-jazzy-rosidl-cmake python3-vcstool python3-colcon-common-extensions libasound2-dev libgl1-mesa-dev xorg-dev libusb-1.0-0-dev libboost-filesystem-dev 
 
       - name: Create Workspace
         shell: bash
