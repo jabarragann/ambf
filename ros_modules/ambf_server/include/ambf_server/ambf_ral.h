@@ -1,7 +1,7 @@
 #ifndef _ambf_ral_h
 #define _ambf_ral_h
 
-// to define ROS1, ROS2 , ROS_DISTRO
+// to define AMBF_ROS1, AMBF_ROS2 , AMBF_ROS_DISTRO
 #include <ambf_server/ambf_ral_config.h>
 
 // this file is based on cisst-ros/cisst_ros_bridge cisst_ral.h. we
@@ -19,7 +19,7 @@ namespace ambf_ral {
 #include <tf2/utils.h>
 #include <tf2/LinearMath/Transform.h>
 
-#if ROS1
+#if AMBF_ROS1
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -169,13 +169,13 @@ namespace ambf_ral {
     }
 }
 
-#elif ROS2
+#elif AMBF_ROS2
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/point_cloud.hpp>
-#if (ROS_DISTRO == ROS_GALACTIC)
+#if (AMBF_ROS_DISTRO == AMBF_ROS_GALACTIC)
   #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #else
   #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -352,7 +352,7 @@ namespace ambf_ral {
 namespace ambf_ral {
 
     inline void clean_namespace(std::string & _ros_namespace) {
-#if ROS1
+#if AMBF_ROS1
         _ros_namespace = ros::names::clean(_ros_namespace);
 #endif
         std::replace(_ros_namespace.begin(), _ros_namespace.end(), ' ', '_');

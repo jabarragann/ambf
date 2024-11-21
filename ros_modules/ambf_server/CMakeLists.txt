@@ -40,15 +40,18 @@
 cmake_minimum_required(VERSION 3.10)
 project(ambf_server)
 
+set (BUILD_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include/ambf_server")
+make_directory(${BUILD_INCLUDE_DIR})
+
 set (ROS1_depends geometry_msgs ambf_msgs tf2 message_generation)
 find_package (catkin QUIET
   COMPONENTS ${ROS1_depends})
 
 # ROS 1
 if (catkin_FOUND)
-  set (ROS_VERSION 1)
+  set (AMBF_ROS_VERSION 1)
   catkin_package(
-    INCLUDE_DIRS include
+    INCLUDE_DIRS include "${CMAKE_CURRENT_BINARY_DIR}/include"
     LIBRARIES ambf_server
     CATKIN_DEPENDS ${ROS1_depends}
     )
@@ -59,14 +62,14 @@ else (catkin_FOUND)
   # look for ROS2
   find_package (ament_cmake QUIET)
   if (ament_cmake_FOUND)
-    set (ROS_VERSION 2)
-    set (ROS_DISTRO_STRING $ENV{ROS_DISTRO})
-    if ("${ROS_DISTRO_STRING}" STREQUAL "galactic")
-      set (ROS_DISTRO 7) # g is seventh letter
-    elseif ("${ROS_DISTRO_STRING}" STREQUAL "humble")
-      set (ROS_DISTRO 8)
-    elseif ("${ROS_DISTRO_STRING}" STREQUAL "jazzy")
-      set (ROS_DISTRO 9)
+    set (AMBF_ROS_VERSION 2)
+    set (AMBF_ROS_DISTRO_STRING $ENV{ROS_DISTRO})
+    if ("${AMBF_ROS_DISTRO_STRING}" STREQUAL "galactic")
+      set (AMBF_ROS_DISTRO 7) # g is seventh letter
+    elseif ("${AMBF_ROS_DISTRO_STRING}" STREQUAL "humble")
+      set (AMBF_ROS_DISTRO 8)
+    elseif ("${AMBF_ROS_DISTRO_STRING}" STREQUAL "jazzy")
+      set (AMBF_ROS_DISTRO 9)
     endif ()
 
     set (ROS2_depends rclcpp std_msgs geometry_msgs sensor_msgs diagnostic_msgs tf2 tf2_ros tf2_msgs tf2_geometry_msgs ambf_msgs)
@@ -78,8 +81,6 @@ else (catkin_FOUND)
   endif (ament_cmake_FOUND)
 endif (catkin_FOUND)
 
-set (BUILD_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include/ambf_server")
-make_directory(${BUILD_INCLUDE_DIR})
 configure_file (ambf_ral_config.h.in "${BUILD_INCLUDE_DIR}/ambf_ral_config.h")
 include_directories (${BUILD_INCLUDE_DIR}/..)
 
@@ -132,7 +133,7 @@ set (SRC_FILES
 ## Declare a C++ library
 add_library(ambf_server SHARED ${HDR_FILES} ${SRC_FILES})
 
-if (ROS_VERSION EQUAL 1)
+if (AMBF_ROS_VERSION EQUAL 1)
   add_dependencies (ambf_server ${catkin_EXPORTED_TARGETS})
   target_link_libraries (ambf_server ${catkin_LIBRARIES})
 

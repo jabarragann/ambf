@@ -48,9 +48,7 @@ find_package (catkin QUIET
 # ROS 1
 if (catkin_FOUND)
   find_package (Boost COMPONENTS filesystem REQUIRED)
-  add_definitions (-DROS1)
   set (ROS_VERSION 1)
-  message(STATUS "ROS VERSION = 1")
   include_directories(include ${catkin_INCLUDE_DIRS})
   catkin_package (
     LIBRARIES depth_streamer_plugin object_comm_plugin video_streamer_plugin world_comm_plugin
@@ -61,9 +59,7 @@ else (catkin_FOUND)
   # look for ROS2
   find_package (ament_cmake QUIET)
   if (ament_cmake_FOUND)
-    add_definitions (-DROS2)
     set (ROS_VERSION 2)
-    message(STATUS "ROS VERSION = 2")
     set (ROS2_depends
       rclcpp
       std_msgs geometry_msgs sensor_msgs diagnostic_msgs

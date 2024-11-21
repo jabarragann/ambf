@@ -47,10 +47,10 @@
 
 // #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 #include <ambf_server/RosComBase.h>
-#if ROS1
+#if AMBF_ROS1
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
-#elif ROS2
+#elif AMBF_ROS2
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #endif
 // #endif
@@ -81,14 +81,14 @@ private:
     // Image Transport ROS Node
     ambf_ral::node_ptr_t m_rosNode;
     AMBF_RAL_MSG_PTR(sensor_msgs, PointCloud2) m_depthPointCloudMsg;
-#if ROS1
+#if AMBF_ROS1
     AMBF_RAL_MSG_MODIFIER(sensor_msgs, PointCloud2)* m_depthPointCloudModifier = nullptr;
     ros::Publisher m_depthPointCloudPub;
-#elif ROS2
+#elif AMBF_ROS2
     typedef typename rclcpp::Publisher<sensor_msgs::msg::PointCloud2> publisher_t;
     typename publisher_t::SharedPtr m_depthPointCloudPub;
 #endif
-  
+
 // #else
 //     virtual int init(const afBaseObjectPtr a_afObjectPtr, const afBaseObjectAttribsPtr a_objectAttribs){
 //         return -1;

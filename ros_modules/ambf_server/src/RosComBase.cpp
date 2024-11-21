@@ -45,10 +45,10 @@
 std::mutex afROSNode::s_mutex;
 
 bool afROSNode::s_initialized;
-#if ROS1
+#if AMBF_ROS1
 size_t afROSNode::s_registeredInstances = 0;
 ambf_ral::ral * afROSNode::s_ral = nullptr;
-#elif ROS2
+#elif AMBF_ROS2
 std::map<std::string, ambf_ral::ral*> afROSNode::s_rals;
 #endif
 
@@ -72,7 +72,7 @@ RosComBase<T_state, T_cmd>::RosComBase(std::string a_name, std::string a_namespa
     m_freq_min = a_freq_min;
     m_freq_max = a_freq_max;
     m_nodePtr = afROSNode::getNodeAndRegister(a_namespace + "_" + a_name);
-#if ROS1
+#if AMBF_ROS1
     m_nodePtr->setCallbackQueue(&m_custom_queue);
 #endif
     m_watchDogPtr.reset(new CmdWatchDog(m_nodePtr, a_freq_min, a_freq_max, time_out));

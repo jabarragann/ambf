@@ -43,10 +43,10 @@
 
 #ifndef CDVRK_FOOTPEDALSH
 #define CDVRK_FOOTPEDALSH
-#if ROS1
+#if AMBF_ROS1
 #include "ros/ros.h"
 #include "sensor_msgs/Joy.h"
-#elif ROS2
+#elif AMBF_ROS2
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 #endif

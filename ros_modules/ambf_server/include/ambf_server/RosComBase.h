@@ -64,7 +64,7 @@ public:
     static ambf_ral::node_ptr_t getNodeAndRegister(const std::string & node_name) {
         ambf_ral::node_ptr_t result = nullptr;
         s_mutex.lock();
-#if ROS1
+#if AMBF_ROS1
         s_registeredInstances++;
         if (s_initialized == false) {
             s_ral = new ambf_ral::ral("AMBF");
@@ -72,7 +72,7 @@ public:
             std::cerr << "INFO! INITIALIZING ROS 1 NODE HANDLE FOR AMBF" << std::endl;
         }
         result = s_ral->node();
-#elif ROS2
+#elif AMBF_ROS2
         std::string _real_name = node_name;
         ambf_ral::clean_nodename(_real_name);
         // find in map
@@ -98,13 +98,13 @@ public:
     static ambf_ral::node_ptr_t getNode(const std::string & node_name) {
         s_mutex.lock();
         ambf_ral::node_ptr_t result = nullptr;
-#if ROS1
+#if AMBF_ROS1
         if (s_initialized) {
             result = s_ral->node();
         } else {
             std::cerr << "ERROR! getNode CALLED BEFORE getNodeAndRegister FOR: " << node_name << std::endl;
         }
-#elif ROS2
+#elif AMBF_ROS2
         std::string _real_name = node_name;
         ambf_ral::clean_nodename(_real_name);
         // find in map
@@ -123,7 +123,7 @@ public:
     static void destroyNode(const std::string & node_name) {
         s_mutex.lock();
         s_initialized = false;
-#if ROS1
+#if AMBF_ROS1
         if (s_registeredInstances == 0) {
           std::cerr << "WARNING: TRYING TO DESTROY MORE COMM INSTANCES THAN REGISTERED FOR: " << node_name << std::endl;
           return;
@@ -136,7 +136,7 @@ public:
             ambf_ral::shutdown();
             delete s_ral;
         }
-#elif ROS2
+#elif AMBF_ROS2
         std::string _real_name = node_name;
         ambf_ral::clean_nodename(_real_name);
         // find in map
@@ -164,10 +164,10 @@ public:
 private:
     static std::mutex s_mutex;
     static bool s_initialized;
-#if ROS1
+#if AMBF_ROS1
     static size_t s_registeredInstances;
     static ambf_ral::ral * s_ral;
-#elif ROS2
+#elif AMBF_ROS2
     static std::map<std::string, ambf_ral::ral*> s_rals;
 #endif
 };
@@ -261,7 +261,7 @@ protected:
 
     std::thread m_thread;
 
-#if ROS1
+#if AMBF_ROS1
     ros::CallbackQueue m_custom_queue;
 #endif
 
@@ -285,9 +285,9 @@ void RosComBase<T_state, T_cmd>::run_publishers(void) {
     while (afROSNode::isNodeActive()) {
         if (m_enableComm) {
             // Call callbacks
-#if ROS1
+#if AMBF_ROS1
             m_custom_queue.callAvailable();
-#elif ROS2
+#elif AMBF_ROS2
             rclcpp::spin_some(m_nodePtr);
 #endif
             if (m_watchDogPtr->is_wd_expired()) {

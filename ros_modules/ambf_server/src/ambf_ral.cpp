@@ -1,6 +1,6 @@
 #include <ambf_server/ambf_ral.h>
 
-#if ROS1
+#if AMBF_ROS1
 
 ambf_ral::ral::ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
 {
@@ -35,7 +35,7 @@ ambf_ral::ral::~ral()
 {
 }
 
-#elif ROS2
+#elif AMBF_ROS2
 
 ambf_ral::ral::ral(int & argc, char * argv[], const std::string & node_name, bool anonymous_name)
 {

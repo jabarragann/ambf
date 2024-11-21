@@ -44,7 +44,7 @@
 #ifndef CDVRK_BRIDGEH
 #define CDVRK_BRIDGEH
 
-#if ROS1
+#if AMBF_ROS1
 #include "ros/ros.h"
 #include "ros/callback_queue.h"
 #include "geometry_msgs/TransformStamped.h"
@@ -54,7 +54,7 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32.h"
 #include "geometry_msgs/WrenchStamped.h"
-#elif ROS2
+#elif AMBF_ROS2
 #include <rclcpp/rclcpp.hpp>
 // #include "ros/callback_queue.h" # find ROS2 equivalency
 #include "geometry_msgs/msg/transform_stamped.h"

@@ -48,12 +48,12 @@
 #ifdef AF_ENABLE_OPEN_CV_SUPPORT
 #include <ambf_server/RosComBase.h>
 
-#if ROS1
+#if AMBF_ROS1
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
-#elif ROS2
+#elif AMBF_ROS2
 #include <image_transport/image_transport.hpp>
-#if (ROS_DISTRO == ROS_GALACTIC) || (ROS_DISTRO == ROS_HUMBLE)
+#if (AMBF_ROS_DISTRO == AMBF_ROS_GALACTIC) || (AMBF_ROS_DISTRO == AMBF_ROS_HUMBLE)
   #include <cv_bridge/cv_bridge.h>
 #else
   #include <cv_bridge/cv_bridge.hpp>
