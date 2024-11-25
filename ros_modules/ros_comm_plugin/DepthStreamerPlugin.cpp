@@ -60,7 +60,7 @@ void afCameraDepthStreamerPlugin::graphicsUpdate()
     }
     m_write_count++;
 #elif AMBF_ROS2
-    std::cerr << __FILE__ << __LINE__ << std::endl;
+    /* std::cerr << __FILE__ << __LINE__ << std::endl; */
 #endif
 }
 
