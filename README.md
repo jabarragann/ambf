@@ -1,6 +1,7 @@
 # Asynchronous Multi-Body Framework (AMBF)
 
-Author: [Adnan Munawar](https://github.com/adnanmunawar) (amunawar@wpi.edu)
+Author: [Adnan Munawar](https://github.com/adnanmunawar) (amunawar@wpi.edu) <br>
+Author Fork: Juan Antonio Barragan (jbarrag3@jh.edu)
 
 
 #### Build Status  
